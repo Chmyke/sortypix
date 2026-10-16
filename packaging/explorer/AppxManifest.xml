@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+ xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+ xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+ xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+ xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+ xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+ xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
+ IgnorableNamespaces="uap uap10 rescap com desktop4 desktop5">
+ <Identity Name="MickaelMancini.Sortypix.Explorer" Publisher="CN=Mickael Mancini" Version="@VERSION@.0" ProcessorArchitecture="x64"/>
+ <Properties>
+  <DisplayName>Sortypix</DisplayName><PublisherDisplayName>Mickael Mancini</PublisherDisplayName>
+  <Logo>sortypix.png</Logo><uap10:AllowExternalContent>true</uap10:AllowExternalContent>
+ </Properties>
+ <Resources><Resource Language="en-us"/></Resources>
+ <Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0"/></Dependencies>
+ <Applications>
+  <Application Id="Sortypix" Executable="sortypix.exe" uap10:RuntimeBehavior="win32App" uap10:TrustLevel="mediumIL">
+   <uap:VisualElements AppListEntry="none" DisplayName="Sortypix" Description="Open photo folders in Sortypix" BackgroundColor="transparent" Square150x150Logo="sortypix.png" Square44x44Logo="sortypix.png"/>
+   <Extensions>
+    <com:Extension Category="windows.comServer"><com:ComServer><com:SurrogateServer DisplayName="Sortypix Explorer command">
+     <com:Class Id="46DE7F78-C29E-4A6C-A1D7-AA3A6C960281" Path="sortypix_shell-@VERSION@.dll" ThreadingModel="STA"/>
+    </com:SurrogateServer></com:ComServer></com:Extension>
+    <desktop4:Extension Category="windows.fileExplorerContextMenus"><desktop4:FileExplorerContextMenus>
+     <desktop5:ItemType Type="Directory"><desktop5:Verb Id="OpenWithSortypix" Clsid="46DE7F78-C29E-4A6C-A1D7-AA3A6C960281"/></desktop5:ItemType>
+    </desktop4:FileExplorerContextMenus></desktop4:Extension>
+   </Extensions>
+  </Application>
+ </Applications>
+ <Capabilities><rescap:Capability Name="runFullTrust"/><rescap:Capability Name="unvirtualizedResources"/></Capabilities>
+</Package>

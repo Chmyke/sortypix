@@ -1,0 +1,18 @@
+mod benchmark;
+pub mod commands;
+mod controls;
+mod diagnostic;
+mod feedback;
+pub mod gallery;
+mod grid;
+mod help;
+mod icons;
+mod layout;
+mod mouse;
+mod preview_queue;
+mod session_probe;
+mod shortcuts;
+mod textures;
+mod theme;
+mod toolbar;
+mod viewer;

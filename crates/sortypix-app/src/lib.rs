@@ -1,0 +1,14 @@
+pub mod cache;
+pub mod catalog;
+pub mod decode;
+pub mod dialog;
+pub mod duplicates;
+pub mod engine;
+pub mod metadata;
+pub mod settings;
+pub mod shell_thumbnail;
+pub mod storage;
+pub mod thumbnail_cache;
+pub mod wic;
+pub mod window;
+pub mod worker;

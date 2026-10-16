@@ -1,0 +1,19 @@
+[package]
+name = "sortypix-ui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "sortypix"
+path = "src/main.rs"
+
+[dependencies]
+raw-window-handle = "0.6.2"
+sortypix-core = { path = "../sortypix-core" }
+sortypix-app = { path = "../sortypix-app" }
+eframe = { version = "0.36.2", default-features = false, features = ["default_fonts", "glow"] }
+image = { version = "0.25.10", default-features = false, features = ["png", "gif", "jpeg"] }
+
+[dev-dependencies]
+tempfile = "3"

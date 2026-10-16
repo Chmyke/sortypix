@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g id="photo-forward">
+    <rect x="4" y="4" width="120" height="120" rx="19" fill="#1b2e4b"/>
+    <g fill="#f7f9fc">
+      <rect x="71" y="44" width="15" height="15" rx="7.5"/>
+      <polygon points="32,85 48,62 65,81 76,73 87,85"/>
+    </g>
+    <g fill="none" stroke="#f7f9fc" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="103,84 103,32 25,32 25,96 97,96"/>
+      <polyline points="90,89 98,96 90,103"/>
+    </g>
+  </g>
+</svg>
