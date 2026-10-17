@@ -49,11 +49,45 @@ pub struct Window {
     pub size: [f32; 2],
     pub maximized: bool,
 }
+/// The person's settings: `%LOCALAPPDATA%/Sortypix` on Windows, the XDG configuration
+/// folder elsewhere.
 pub fn settings_path() -> PathBuf {
+    if cfg!(windows) {
+        local_app_data().join("settings.json")
+    } else {
+        xdg_home("XDG_CONFIG_HOME", ".config").join("settings.json")
+    }
+}
+/// Disposable previews: beside the settings on Windows, in the XDG cache elsewhere, which
+/// backups leave out.
+pub fn cache_dir() -> PathBuf {
+    if cfg!(windows) {
+        local_app_data().join("cache")
+    } else {
+        xdg_home("XDG_CACHE_HOME", ".cache")
+    }
+}
+fn local_app_data() -> PathBuf {
     std::env::var_os("LOCALAPPDATA")
         .map(PathBuf::from)
         .unwrap_or_else(std::env::temp_dir)
-        .join("Sortypix/settings.json")
+        .join("Sortypix")
+}
+/// `$variable/sortypix`, else `~/fallback/sortypix`. A relative value is ignored, as the
+/// XDG specification asks.
+fn xdg_home(variable: &str, fallback: &str) -> PathBuf {
+    let absolute = |p: PathBuf| p.is_absolute().then_some(p);
+    std::env::var_os(variable)
+        .map(PathBuf::from)
+        .and_then(absolute)
+        .or_else(|| {
+            std::env::var_os("HOME")
+                .map(PathBuf::from)
+                .and_then(absolute)
+                .map(|home| home.join(fallback))
+        })
+        .unwrap_or_else(std::env::temp_dir)
+        .join("sortypix")
 }
 impl Settings {
     pub fn load(path: &Path) -> Self {
@@ -70,13 +104,6 @@ impl Settings {
         settings
     }
     pub fn save(&self, path: &Path) -> Result<(), String> {
-        use std::os::windows::ffi::OsStrExt;
-        use windows::{
-            Win32::Storage::FileSystem::{
-                MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH, MoveFileExW,
-            },
-            core::PCWSTR,
-        };
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
         }
@@ -86,22 +113,42 @@ impl Settings {
             serde_json::to_vec_pretty(self).map_err(|e| e.to_string())?,
         )
         .map_err(|e| e.to_string())?;
-        let from: Vec<u16> = temp.as_os_str().encode_wide().chain(Some(0)).collect();
-        let to: Vec<u16> = path.as_os_str().encode_wide().chain(Some(0)).collect();
         // PITFALL: Only settings are replaced, never photographs.
-        let result = unsafe {
-            MoveFileExW(
-                PCWSTR(from.as_ptr()),
-                PCWSTR(to.as_ptr()),
-                MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH,
-            )
-        }
-        .map_err(|e| e.to_string());
+        let result = replace(&temp, path);
         if result.is_err() {
             let _ = std::fs::remove_file(temp);
         }
         result
     }
+}
+#[cfg(windows)]
+fn replace(from: &Path, to: &Path) -> Result<(), String> {
+    use std::os::windows::ffi::OsStrExt;
+    use windows::{
+        Win32::Storage::FileSystem::{
+            MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH, MoveFileExW,
+        },
+        core::PCWSTR,
+    };
+    let from: Vec<u16> = from.as_os_str().encode_wide().chain(Some(0)).collect();
+    let to: Vec<u16> = to.as_os_str().encode_wide().chain(Some(0)).collect();
+    unsafe {
+        MoveFileExW(
+            PCWSTR(from.as_ptr()),
+            PCWSTR(to.as_ptr()),
+            MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH,
+        )
+    }
+    .map_err(|e| e.to_string())
+}
+/// POSIX rename replaces atomically; the data is flushed first so a crash leaves the old
+/// file or the new one, never an empty one.
+#[cfg(not(windows))]
+fn replace(from: &Path, to: &Path) -> Result<(), String> {
+    std::fs::File::open(from)
+        .and_then(|f| f.sync_all())
+        .and_then(|()| std::fs::rename(from, to))
+        .map_err(|e| e.to_string())
 }
 impl Default for Settings {
     fn default() -> Self {

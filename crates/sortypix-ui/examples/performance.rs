@@ -1,7 +1,8 @@
+#[cfg(windows)]
+use sortypix_app::shell_thumbnail;
 use sortypix_app::{
     catalog::{read_metadata, scan_names},
     decode::decode,
-    shell_thumbnail,
 };
 use sortypix_core::{Photo, PhotoId, Session, Status};
 use std::{
@@ -33,7 +34,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let photos = scan_names(dir.path())?;
     let enumeration = start.elapsed();
     let start = Instant::now();
-    shell_thumbnail::extract(&photos[0].members[0], 256)
+    #[cfg(windows)]
+    let system = shell_thumbnail::extract(&photos[0].members[0], 256);
+    #[cfg(not(windows))]
+    let system = sortypix_app::embedded::quick(&photos[0].members[0], 256);
+    system
         .map(Ok)
         .unwrap_or_else(|| decode(&photos[0].members[0], Some(256)))?;
     let first_preview = start.elapsed();

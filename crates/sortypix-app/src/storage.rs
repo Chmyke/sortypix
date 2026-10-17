@@ -11,6 +11,7 @@ pub trait FileOps {
     fn move_no_replace(&mut self, from: &Path, to: &Path) -> std::io::Result<()>;
 }
 pub struct NativeFiles;
+#[cfg(windows)]
 impl FileOps for NativeFiles {
     fn move_no_replace(&mut self, from: &Path, to: &Path) -> std::io::Result<()> {
         use std::os::windows::ffi::OsStrExt;
@@ -20,6 +21,53 @@ impl FileOps for NativeFiles {
         // PITFALL: MoveFileW refuses existing destinations atomically; fs::rename replaces them.
         unsafe { MoveFileW(PCWSTR(from.as_ptr()), PCWSTR(to.as_ptr())) }
             .map_err(std::io::Error::other)
+    }
+}
+/// PITFALL: `fs::rename` replaces an existing destination on POSIX. Linux refuses it
+/// atomically with `RENAME_NOREPLACE`; a filesystem without that flag (FUSE mounts such as
+/// NTFS-3G) falls back to a hard link, then to a checked rename (only unsafe if another
+/// program creates the very same name in between).
+#[cfg(not(windows))]
+impl FileOps for NativeFiles {
+    fn move_no_replace(&mut self, from: &Path, to: &Path) -> std::io::Result<()> {
+        use std::io::{Error, ErrorKind};
+        #[cfg(target_os = "linux")]
+        {
+            use std::{ffi::CString, os::unix::ffi::OsStrExt};
+            let c = |p: &Path| CString::new(p.as_os_str().as_bytes()).map_err(Error::other);
+            let (source, target) = (c(from)?, c(to)?);
+            // SAFETY: both paths are NUL-terminated strings that outlive the call.
+            let done = unsafe {
+                libc::renameat2(
+                    libc::AT_FDCWD,
+                    source.as_ptr(),
+                    libc::AT_FDCWD,
+                    target.as_ptr(),
+                    libc::RENAME_NOREPLACE,
+                )
+            };
+            if done == 0 {
+                return Ok(());
+            }
+            let error = Error::last_os_error();
+            if !matches!(error.raw_os_error(), Some(libc::EINVAL | libc::ENOSYS)) {
+                return Err(error);
+            }
+        }
+        match fs::hard_link(from, to) {
+            // Never two names for one photo: a failed removal takes the new name back.
+            Ok(()) => {
+                return fs::remove_file(from).inspect_err(|_| {
+                    let _ = fs::remove_file(to);
+                });
+            }
+            Err(error) if error.kind() == ErrorKind::AlreadyExists => return Err(error),
+            Err(_) => {}
+        }
+        if fs::symlink_metadata(to).is_ok() {
+            return Err(Error::new(ErrorKind::AlreadyExists, "destination exists"));
+        }
+        fs::rename(from, to)
     }
 }
 #[derive(Default, Debug)]

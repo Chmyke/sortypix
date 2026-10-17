@@ -87,6 +87,11 @@ impl crate::gallery::Gallery {
             return;
         }
         if b.frame == 0 {
+            // Scroll only once the first screen is fully refined: at 125 px per frame,
+            // cells leave before their refined preview or animation could arrive.
+            if !self.textures.settled() {
+                return;
+            }
             let start = Instant::now();
             let originals = self.photos.clone();
             self.photos = (0..50000)
@@ -143,12 +148,13 @@ impl crate::gallery::Gallery {
             .copied()
             .unwrap_or(f64::INFINITY);
         let text = format!(
-            "Grid entries: 50000\nProvisional catalog: {:.3} ms\nFirst preview: {:.3} ms\nFirst viewport: {:.3} ms\nFinal metadata: {:.3} ms\nList construction: {:.3} ms\nRendered frame CPU p95: {cpu:.3} ms\nFrame interval p95: {interval:.3} ms\nPreloaded next image: {next:.3} ms\nCache: runtime\n",
+            "Grid entries: 50000\nProvisional catalog: {:.3} ms\nFirst preview: {:.3} ms\nFirst viewport: {:.3} ms\nFinal metadata: {:.3} ms\nList construction: {:.3} ms\nRendered frame CPU p95: {cpu:.3} ms\nFrame interval p95: {interval:.3} ms\nPreloaded next image: {next:.3} ms\nAnimations loaded: {}\nCache: runtime\n",
             b.opening.provisional_ms.unwrap_or(f64::INFINITY),
             b.opening.first_preview_ms.unwrap_or(f64::INFINITY),
             b.opening.viewport_ms.unwrap_or(f64::INFINITY),
             b.opening.metadata_ms.unwrap_or(f64::INFINITY),
             b.open_ms,
+            self.textures.animated,
         );
         let _ = std::fs::create_dir_all(&b.folder);
         let _ = std::fs::write(b.folder.join("performance.txt"), &text);

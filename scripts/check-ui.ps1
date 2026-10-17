@@ -7,9 +7,15 @@ $benchmark = Join-Path $run 'benchmark'
 & (Join-Path $root 'target/release/examples/fixtures.exe') $photos
 if ($LASTEXITCODE -ne 0) { throw 'Fixture generation failed' }
 $before = @(Get-ChildItem -LiteralPath $photos -File | Sort-Object Name | Get-FileHash | Select-Object -ExpandProperty Hash)
+# A folder full of animated GIFs runs the same native benchmark: they must play within budgets.
+$gifs = Join-Path $run 'gifs'
+$gifBenchmark = Join-Path $run 'gif-benchmark'
+& (Join-Path $root 'target/release/examples/fixtures.exe') $gifs '--gif'
+if ($LASTEXITCODE -ne 0) { throw 'GIF fixture generation failed' }
 $exe = Join-Path $root 'target/release/sortypix.exe'
-foreach ($mode in @(@('--diagnostic', $screens), @('--benchmark', $benchmark))) {
-    $arguments = @($mode[0], ('"' + $photos + '"'), ('"' + $mode[1] + '"'))
+$peaks = @{}
+foreach ($mode in @(@('--diagnostic', $screens, $photos), @('--benchmark', $benchmark, $photos), @('--benchmark', $gifBenchmark, $gifs))) {
+    $arguments = @($mode[0], ('"' + $mode[2] + '"'), ('"' + $mode[1] + '"'))
     $process = Start-Process -FilePath $exe -ArgumentList $arguments -WindowStyle Hidden -PassThru
     $timer = [Diagnostics.Stopwatch]::StartNew()
     $peakBytes = [long]0
@@ -27,7 +33,12 @@ foreach ($mode in @(@('--diagnostic', $screens), @('--benchmark', $benchmark))) 
     $memory = ('Peak working set ({0}): {1:N1} MiB' -f $mode[0], ($peakBytes / 1MB))
     [IO.File]::WriteAllText((Join-Path $mode[1] 'memory.txt'), $memory)
     Write-Output $memory
+    $peaks[$mode[1]] = $peakBytes
 }
+# Budgets: 192 MiB of animations + 256 MiB of stills + about 110 MiB of baseline process.
+$gifReport = [IO.File]::ReadAllText((Join-Path $gifBenchmark 'PASS.txt'))
+if ($gifReport -notmatch 'Animations loaded: (\d+)' -or [int]$Matches[1] -lt 12) { throw "GIFs did not animate: $gifReport" }
+if ($peaks[$gifBenchmark] -gt 600MB) { throw ('GIF benchmark exceeded 600 MiB: {0:N1} MiB' -f ($peaks[$gifBenchmark] / 1MB)) }
 $session = Join-Path $run 'session'
 $other = Join-Path $run 'other'
 & (Join-Path $root 'target/release/examples/fixtures.exe') $other

@@ -15,8 +15,24 @@ impl<K: Ord + Clone, V> Cache<K, V> {
         }
     }
     pub fn insert(&mut self, key: K, value: V, bytes: usize) {
-        if bytes > self.budget {
-            return;
+        let _ = self.insert_protecting(key, value, bytes, |_| false);
+    }
+    /// Inserts only if the oldest unprotected entries can make room; protected ones stay.
+    pub fn insert_protecting(
+        &mut self,
+        key: K,
+        value: V,
+        bytes: usize,
+        protected: impl Fn(&K) -> bool,
+    ) -> bool {
+        let evictable: usize = self
+            .entries
+            .iter()
+            .filter(|(k, _)| **k == key || !protected(k))
+            .map(|(_, (_, size, _))| *size)
+            .sum();
+        if bytes > self.budget || self.used - evictable + bytes > self.budget {
+            return false;
         }
         if let Some((_, size, _)) = self.entries.remove(&key) {
             self.used -= size;
@@ -25,17 +41,18 @@ impl<K: Ord + Clone, V> Cache<K, V> {
             let oldest = self
                 .entries
                 .iter()
+                .filter(|(k, _)| !protected(k))
                 .min_by_key(|(_, (_, _, tick))| tick)
                 .map(|(key, _)| key.clone());
-            if let Some(key) = oldest
-                && let Some((_, size, _)) = self.entries.remove(&key)
-            {
-                self.used -= size;
-            }
+            let Some((_, size, _)) = oldest.and_then(|key| self.entries.remove(&key)) else {
+                return false;
+            };
+            self.used -= size;
         }
         self.tick += 1;
         self.used += bytes;
         self.entries.insert(key, (value, bytes, self.tick));
+        true
     }
     pub fn get(&mut self, key: &K) -> Option<&V> {
         self.tick += 1;

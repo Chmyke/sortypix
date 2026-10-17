@@ -15,5 +15,10 @@ sortypix-app = { path = "../sortypix-app" }
 eframe = { version = "0.36.2", default-features = false, features = ["default_fonts", "glow"] }
 image = { version = "0.25.10", default-features = false, features = ["png", "gif", "jpeg"] }
 
+# Wayland and X11 windows; client-side decorations for compositors without server ones (GNOME).
+[target.'cfg(target_os = "linux")'.dependencies]
+eframe = { version = "0.36.2", default-features = false, features = ["wayland", "x11"] }
+winit = { version = "0.30.13", default-features = false, features = ["wayland-csd-adwaita"] }
+
 [dev-dependencies]
 tempfile = "3"

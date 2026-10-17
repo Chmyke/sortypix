@@ -101,7 +101,8 @@ impl Gallery {
                         painter.rect_filled(rect, 8, crate::theme::CARD);
                         let photo_rect = rect;
                         let source = photo.display_source(false);
-                        let edge = textures::thumbnail_edge(
+                        let edge = textures::display_edge(
+                            source,
                             photo_rect.size(),
                             ui.ctx().pixels_per_point(),
                         );

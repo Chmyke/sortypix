@@ -3,7 +3,7 @@
 Sortypix is developed by a single maintainer.
 
 - **Bug reports and ideas are welcome.** Open an issue and say what you did, what you expected
-  and what happened. The Windows version, the photo formats involved (RAW, HEIC, JPEG) and the
+  and what happened. The system (Windows version or Linux distribution and desktop), the photo formats involved (RAW, HEIC, JPEG) and the
   size of the folder usually matter.
 - **Code contributions are not accepted for now.** Pull requests are closed without review. The
   reason is practical: a single copyright holder keeps the licensing simple. This may change.

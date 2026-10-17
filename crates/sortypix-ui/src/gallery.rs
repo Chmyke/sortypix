@@ -37,7 +37,7 @@ pub struct Gallery {
     pub(crate) undo_count: usize,
     error: Option<String>,
     pub(crate) scanning: bool,
-    chooser: Option<mpsc::Receiver<Option<PathBuf>>>,
+    chooser: Option<mpsc::Receiver<Result<Option<PathBuf>, String>>>,
     pub(crate) diagnostic: Option<crate::diagnostic::Diagnostic>,
     pub(crate) benchmark: Option<crate::benchmark::Benchmark>,
     pub(crate) session_probe: Option<crate::session_probe::Probe>,
@@ -58,13 +58,13 @@ impl Gallery {
     ) -> Self {
         let ctx = cc.egui_ctx.clone();
         crate::theme::apply(&ctx);
-        let path = if let Some(dir) = &diagnostic {
-            dir.join("settings.json")
+        let (path, cache) = if let Some(dir) = &diagnostic {
+            (dir.join("settings.json"), dir.join("cache"))
         } else {
-            std::env::var_os("LOCALAPPDATA")
-                .map(PathBuf::from)
-                .unwrap_or_else(std::env::temp_dir)
-                .join("Sortypix/settings.json")
+            (
+                sortypix_app::settings::settings_path(),
+                sortypix_app::settings::cache_dir(),
+            )
         };
         let settings = Settings::load(&path);
         let open = folder.or_else(|| settings.last_folder.clone());
@@ -74,10 +74,7 @@ impl Gallery {
             photos: Vec::new(),
             turns: Vec::new(),
             settings,
-            textures: Textures::new(
-                ctx,
-                path.parent().expect("settings directory").join("cache/v2"),
-            ),
+            textures: Textures::new(ctx, cache.join("v2")),
             settings_path: path,
             restore_position: false,
             scroll_offset: 0.,
@@ -231,8 +228,10 @@ impl Gallery {
             && let Ok(result) = receiver.try_recv()
         {
             self.chooser = None;
-            if let Some(folder) = result {
-                self.open(folder);
+            match result {
+                Ok(Some(folder)) => self.open(folder),
+                Ok(None) => {}
+                Err(error) => self.error = Some(error),
             }
         }
     }
@@ -263,10 +262,13 @@ impl Gallery {
         self.open_explorer(folder);
     }
     pub(crate) fn open_explorer(&mut self, folder: PathBuf) {
-        if let Err(error) = std::process::Command::new("explorer.exe")
-            .arg(folder)
-            .spawn()
-        {
+        // The system file manager: Explorer, or the one the Linux desktop associates.
+        let manager = if cfg!(windows) {
+            "explorer.exe"
+        } else {
+            "xdg-open"
+        };
+        if let Err(error) = std::process::Command::new(manager).arg(folder).spawn() {
             self.error = Some(format!("Could not open folder: {error}"));
         }
     }
@@ -277,7 +279,7 @@ impl Gallery {
         let (send, receive) = mpsc::channel();
         self.chooser = Some(receive);
         std::thread::spawn(move || {
-            let _ = send.send(sortypix_app::dialog::choose_folder().ok().flatten());
+            let _ = send.send(sortypix_app::dialog::choose_folder());
         });
     }
 }

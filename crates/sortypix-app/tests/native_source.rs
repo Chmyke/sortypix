@@ -1,10 +1,19 @@
 use sortypix_app::{catalog::PhysicalPhoto, decode::decode};
 use sortypix_core::PhotoId;
-use std::path::PathBuf;
+
+/// The shared photo fixtures; `SORTYPIX_FIXTURES` points to a copy where the build path
+/// does not exist (tests cross-compiled for Linux and run on another machine).
+fn fixtures() -> std::path::PathBuf {
+    std::env::var_os("SORTYPIX_FIXTURES")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| {
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures")
+        })
+}
 
 #[test]
 fn small_jpeg_pair_inspects_full_raw_sensor() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures");
+    let root = fixtures();
     let raw = std::fs::read_dir(&root)
         .unwrap()
         .map(|e| e.unwrap().path())
@@ -20,7 +29,13 @@ fn small_jpeg_pair_inspects_full_raw_sensor() {
     assert_eq!(photo.display_source(true), raw);
     let native = decode(photo.display_source(true), None).unwrap();
     let preview = decode(photo.display_source(false), None).unwrap();
-    assert_eq!((native.width, native.height), (3474, 2314));
+    // WIC decodes the sensor with its margins; elsewhere the embedded full-size preview.
+    let sensor = if cfg!(windows) {
+        (3474, 2314)
+    } else {
+        (3456, 2304)
+    };
+    assert_eq!((native.width, native.height), sensor);
     assert!(
         (sortypix_app::decode::aspect_ratio(&raw).unwrap()
             - native.width as f32 / native.height as f32)
@@ -32,7 +47,7 @@ fn small_jpeg_pair_inspects_full_raw_sensor() {
 
 #[test]
 fn layout_proportions_match_exif_oriented_pixels() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures");
+    let root = fixtures();
     for name in ["orientation-1.jpg", "orientation-8.jpg"] {
         let path = root.join(name);
         let image = decode(&path, None).unwrap();

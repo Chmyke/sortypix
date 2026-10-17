@@ -1,6 +1,7 @@
 //! ROLE: Tiny COM command for the modern Windows 11 folder context menu.
 //! OWNER: Windows owns COM objects; no gallery, cache or photo processing in the shell.
 //! INVARIANTS: Only one filesystem folder is accepted. No shell command interpolation.
+#![cfg(windows)] // The Windows 11 folder menu; nothing elsewhere.
 #![allow(non_snake_case)] // WHY: COM interface and DLL export names are defined by Windows.
 use std::{
     ffi::c_void,

@@ -1,5 +1,9 @@
 fn main() {
     println!("cargo:rerun-if-changed=../../assets/sortypix.ico");
+    // The executable icon is a Windows resource; Linux reads it from the desktop entry.
+    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() != Ok("windows") {
+        return;
+    }
     let out =
         std::path::PathBuf::from(std::env::var_os("OUT_DIR").expect("Cargo output directory"));
     let icon = std::path::PathBuf::from("../../assets/sortypix.ico")

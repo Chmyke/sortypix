@@ -1,4 +1,4 @@
-param([switch]$Fast, [switch]$Installer)
+param([switch]$Fast, [switch]$Installer, [switch]$SkipLinux)
 # Single authoritative verification command for Sortypix.
 # Stage 1 (always): project context integrity. Stage 2 (once code exists): Rust pipeline.
 $ErrorActionPreference = 'Stop'
@@ -61,6 +61,11 @@ try {
     if ($LASTEXITCODE -ne 0) { exit 1 }
     cargo test --workspace --locked
     if ($LASTEXITCODE -ne 0) { exit 1 }
+    # Linux builds from the same code: it must lint clean for its target too (when installed).
+    if ((rustup target list --installed) -contains 'x86_64-unknown-linux-gnu') {
+        cargo clippy --workspace --all-targets --locked --target x86_64-unknown-linux-gnu -- -D warnings
+        if ($LASTEXITCODE -ne 0) { exit 1 }
+    } elseif (-not $Fast) { throw 'rustup target add x86_64-unknown-linux-gnu' }
     if (-not $Fast) {
         cargo build --workspace --release --examples --bins --lib --locked
         if ($LASTEXITCODE -ne 0) { exit 1 }
@@ -69,6 +74,9 @@ try {
         & (Join-Path $PSScriptRoot 'target/release/examples/performance.exe')
         if ($LASTEXITCODE -ne 0) { exit 1 }
         & (Join-Path $PSScriptRoot 'scripts/check-ui.ps1')
+        # Tests, the native UI probe and the install scripts on a real Linux desktop (ARM64).
+        if ($SkipLinux) { Write-Output 'Linux: SKIPPED (-SkipLinux)' }
+        else { & (Join-Path $PSScriptRoot 'scripts/check-linux.ps1') -Diagnostic }
         $hash = (Get-FileHash (Join-Path $PSScriptRoot 'target/release/sortypix.exe') -Algorithm SHA256).Hash
         [IO.File]::WriteAllText((Join-Path $PSScriptRoot 'target/reports/verified-sha256.txt'), $hash, $utf8)
         $shellHash = (Get-FileHash (Join-Path $PSScriptRoot 'target/release/sortypix_shell.dll')).Hash

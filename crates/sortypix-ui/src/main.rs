@@ -1,5 +1,6 @@
 #![windows_subsystem = "windows"]
 fn main() -> eframe::Result {
+    #[cfg(windows)]
     sortypix_app::window::initialize_dpi();
     let args: Vec<_> = std::env::args_os().skip(1).collect();
     let benchmark = args.first().is_some_and(|s| s == "--benchmark");
@@ -46,6 +47,16 @@ fn main() -> eframe::Result {
         )
         .with_inner_size([1240., 820.])
         .with_min_inner_size([820., 560.]);
+    // Wayland places windows itself: only the size and the maximized state come back.
+    // The application id ties the window to sortypix.desktop and its icon.
+    #[cfg(not(windows))]
+    let viewport = match &saved {
+        Some(saved) if saved.size.iter().all(|s| s.is_finite() && *s >= 1.) => viewport
+            .with_app_id("sortypix")
+            .with_inner_size(saved.size)
+            .with_maximized(saved.maximized),
+        _ => viewport.with_app_id("sortypix"),
+    };
     let options = eframe::NativeOptions {
         glow_options: eframe::egui_glow::GlowConfiguration {
             vsync: !benchmark,
@@ -58,12 +69,15 @@ fn main() -> eframe::Result {
         "Sortypix",
         options,
         Box::new(move |cc| {
-            use raw_window_handle::{HasWindowHandle, RawWindowHandle};
-            if let Some(saved) = &saved
-                && let Ok(handle) = cc.window_handle()
-                && let RawWindowHandle::Win32(handle) = handle.as_raw()
+            #[cfg(windows)]
             {
-                sortypix_app::window::restore(handle.hwnd, saved);
+                use raw_window_handle::{HasWindowHandle, RawWindowHandle};
+                if let Some(saved) = &saved
+                    && let Ok(handle) = cc.window_handle()
+                    && let RawWindowHandle::Win32(handle) = handle.as_raw()
+                {
+                    sortypix_app::window::restore(handle.hwnd, saved);
+                }
             }
 
             Ok(Box::new(

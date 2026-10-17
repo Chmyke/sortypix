@@ -1,4 +1,4 @@
-#define AppVersion "0.1.9"
+#define AppVersion "0.2.0"
 [Setup]
 AppId={{738617A0-A20C-4305-8CF2-7DB1491952AB}
 AppName=Sortypix

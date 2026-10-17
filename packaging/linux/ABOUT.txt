@@ -1,0 +1,11 @@
+Sortypix - sort large folders of photos quickly
+https://mickaelmancini.com/sortypix/
+
+Copyright (c) 2026 Mickael Mancini
+
+Sortypix is free and open-source software under the MIT License: see
+LICENSE.txt, next to this file.
+
+Source code: https://github.com/Chmyke/sortypix
+
+The licenses of the third-party code it includes are in THIRD-PARTY-NOTICES.txt.
