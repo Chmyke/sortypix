@@ -1,0 +1,54 @@
+[
+  {
+    "version": "0.2.0",
+    "date": "2026-10-17",
+    "items": [
+      {
+        "tag": "new",
+        "en": "Sortypix now runs on Linux too, on regular PCs and on ARM boards like the Raspberry Pi.",
+        "fr": "Sortypix tourne aussi sous Linux, sur PC comme sur cartes ARM type Raspberry Pi."
+      },
+      {
+        "tag": "new",
+        "en": "Animated GIFs actually move, in the grid and full screen. Sorting memes is serious work.",
+        "fr": "Les GIF animés bougent enfin, dans la grille comme en plein écran. Trier des mèmes, c'est du sérieux."
+      },
+      {
+        "tag": "new",
+        "en": "RAW photos show up even without a RAW codec, using the preview your camera tucked inside the file.",
+        "fr": "Les photos RAW s'affichent même sans codec RAW, grâce à l'aperçu que l'appareil a glissé dans le fichier."
+      },
+      {
+        "en": "Rotate sits on the photo itself, the folder you just sorted into lights up, full screen tells you where you are (\"12 / 340\"), and there's a new icon that's easier to spot.",
+        "fr": "La rotation passe sur la photo, le dossier de destination s'allume, le plein écran indique où on en est (« 12 / 340 »), et une nouvelle icône se repère mieux."
+      }
+    ]
+  },
+  {
+    "version": "0.1.8",
+    "date": "2026-09-29",
+    "first": true,
+    "items": [
+      {
+        "tag": "new",
+        "en": "Open a folder, left-click to reject, right-click to keep. Nothing is ever deleted, and Ctrl+Z undoes the whole last gesture.",
+        "fr": "Clic gauche pour rejeter, clic droit pour garder. Rien n'est jamais supprimé, et Ctrl+Z annule tout le dernier geste."
+      },
+      {
+        "tag": "new",
+        "en": "RAW + JPEG pairs travel together, and identical copies are set aside on their own.",
+        "fr": "Les paires RAW + JPEG voyagent ensemble, et les copies identiques sont mises de côté toutes seules."
+      },
+      {
+        "tag": "new",
+        "en": "Huge folders open straight away, and you pick up right where you stopped.",
+        "fr": "Les très gros dossiers s'ouvrent tout de suite, et on reprend là où on s'était arrêté."
+      },
+      {
+        "tag": "new",
+        "en": "Right-click any folder in Windows and pick \"Open with Sortypix\".",
+        "fr": "Clic droit sur un dossier Windows, puis « Open with Sortypix »."
+      }
+    ]
+  }
+]

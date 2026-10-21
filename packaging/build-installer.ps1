@@ -5,6 +5,8 @@ if (git -C $root status --porcelain) { throw 'Commit source changes before build
 $version = [regex]::Match([IO.File]::ReadAllText((Join-Path $root 'Cargo.toml')), 'version = "([^"]+)"').Groups[1].Value
 $issVersion = [regex]::Match([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'sortypix.iss')), 'AppVersion "([^"]+)"').Groups[1].Value
 if ($version -ne $issVersion) { throw 'Installer version mismatch' }
+python -S (Join-Path $root 'scripts/changelog.py') --notes $version | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "No release without its changelog.json entry: $version" }
 $exe = Join-Path $root 'target/release/sortypix.exe'
 $verified = Join-Path $root 'target/reports/verified-sha256.txt'
 if (-not (Test-Path $verified) -or (Get-FileHash $exe).Hash -ne ([IO.File]::ReadAllText($verified)).Trim()) { throw 'Run check.ps1 on this release before packaging.' }

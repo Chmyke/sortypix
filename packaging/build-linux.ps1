@@ -10,6 +10,8 @@ $utf8 = New-Object System.Text.UTF8Encoding $false
 $cargo = [IO.File]::ReadAllText((Join-Path $root 'Cargo.toml'), $utf8)
 $version = [regex]::Match($cargo, '(?ms)^\[workspace\.package\].*?^version\s*=\s*"([^"]+)"').Groups[1].Value
 if (-not $version) { throw 'Cannot read the workspace version.' }
+python -S (Join-Path $root 'scripts/changelog.py') --notes $version | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "No release without its changelog.json entry: $version" }
 $out = Join-Path $PSScriptRoot 'out'
 New-Item -ItemType Directory -Force $out | Out-Null
 $proof = Join-Path $root 'target/reports/verified-linux-arm64-sha256.txt'

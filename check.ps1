@@ -38,6 +38,9 @@ try {
     # (per-user packages are invisible to a sandbox user).
     python -S scripts/build-icon.py --check
     if ($LASTEXITCODE -ne 0) { exit 1 }
+    # The current version has its user-facing entry and CHANGELOG.md matches changelog.json.
+    python -S scripts/changelog.py --check
+    if ($LASTEXITCODE -ne 0) { exit 1 }
     # Maintainer only, the demo media and the publishing tooling are not published.
     if (Test-Path 'scripts/create-demos.py') {
         python -S scripts/create-demos.py --check
