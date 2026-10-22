@@ -2,6 +2,11 @@
 
 What changed in Sortypix, as you would notice it. Newest first.
 
+## 0.2.1 · 2026-10-22
+
+- **New** · Up arrow keeps, down arrow rejects, left and right flip through photos, in the grid and full screen. One hand on the arrows, the other on your coffee.
+- Left click now keeps and right click rejects, which is what most hands expected anyway. Prefer the old way? The mouse icon swaps them back.
+
 ## 0.2.0 · 2026-10-17
 
 - **New** · Sortypix now runs on Linux too, on regular PCs and on ARM boards like the Raspberry Pi.

@@ -108,7 +108,7 @@ impl Gallery {
             match click(
                 photo.id,
                 response.secondary_clicked(),
-                self.settings.inverted,
+                self.settings.swapped,
                 ui.input(|i| i.modifiers.ctrl),
                 response.middle_clicked(),
                 response.dragged(),

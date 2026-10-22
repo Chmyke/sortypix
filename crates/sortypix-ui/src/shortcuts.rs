@@ -90,16 +90,14 @@ impl Action {
     }
     pub fn default_binding(self) -> Shortcut {
         let key = match self {
-            Self::Keep => "K",
-            Self::Reject => "X",
+            Self::Keep => "ArrowUp",
+            Self::Reject => "ArrowDown",
             Self::Undo | Self::Zoom => "Z",
             Self::Expand => "Enter",
             Self::Collapse => "Escape",
             Self::RotateRight | Self::RotateLeft => "R",
             Self::Next => "ArrowRight",
             Self::Previous => "ArrowLeft",
-            Self::Down => "ArrowDown",
-            Self::Up => "ArrowUp",
             _ => "",
         };
         Shortcut {
@@ -110,12 +108,30 @@ impl Action {
         }
     }
 }
+/// A saved choice always wins: a default that a later version gave to keys the person
+/// already chose for something else stays unassigned (shown in the editor), never shared.
 pub fn binding(settings: &Settings, action: Action) -> Shortcut {
-    settings
+    if let Some(saved) = settings.shortcuts.get(action.id()) {
+        return saved.clone();
+    }
+    let default = action.default_binding();
+    if settings
         .shortcuts
-        .get(action.id())
-        .cloned()
-        .unwrap_or_else(|| action.default_binding())
+        .values()
+        .any(|saved| same_keys(saved, &default))
+    {
+        Shortcut::default()
+    } else {
+        default
+    }
+}
+fn same_keys(a: &Shortcut, b: &Shortcut) -> bool {
+    !a.key.is_empty()
+        && Key::from_name(&a.key).is_some()
+        && Key::from_name(&a.key) == Key::from_name(&b.key)
+        && a.ctrl == b.ctrl
+        && a.shift == b.shift
+        && a.alt == b.alt
 }
 pub fn label(binding: &Shortcut) -> String {
     if binding.key.is_empty() {
@@ -146,25 +162,16 @@ pub fn resolve(settings: &Settings, key: Key, modifiers: Modifiers) -> Option<Ac
     if modifiers.mac_cmd {
         return None;
     }
-    Action::ALL.into_iter().find(|action| {
-        let b = binding(settings, *action);
-        Key::from_name(&b.key) == Some(key)
-            && b.ctrl == modifiers.ctrl
-            && b.shift == modifiers.shift
-            && b.alt == modifiers.alt
-    })
+    let pressed = from_key(key, modifiers);
+    Action::ALL
+        .into_iter()
+        .find(|action| same_keys(&binding(settings, *action), &pressed))
 }
 pub fn assign(settings: &mut Settings, action: Action, candidate: Shortcut) -> Result<(), String> {
     if !candidate.key.is_empty() {
-        let key = Key::from_name(&candidate.key).ok_or("Unknown key")?;
+        Key::from_name(&candidate.key).ok_or("Unknown key")?;
         for other in Action::ALL {
-            let b = binding(settings, other);
-            if other != action
-                && Key::from_name(&b.key) == Some(key)
-                && b.ctrl == candidate.ctrl
-                && b.shift == candidate.shift
-                && b.alt == candidate.alt
-            {
+            if other != action && same_keys(&binding(settings, other), &candidate) {
                 return Err(format!(
                     "{} is already used for {}.",
                     label(&candidate),
@@ -254,7 +261,7 @@ mod tests {
             repeat,
             modifiers: Modifiers::NONE,
         };
-        assert!(!editor.capture(&mut s, &[event(Key::X, false)]));
+        assert!(!editor.capture(&mut s, &[event(Key::ArrowDown, false)]));
         assert!(editor.error.is_some());
         assert!(!editor.capture(&mut s, &[event(Key::A, true)]));
         assert!(s.shortcuts.is_empty());
@@ -265,6 +272,42 @@ mod tests {
         assert!(editor.capture(&mut s, &[event(Key::A, false)]));
         assert_eq!(editor.capturing, None);
         assert_eq!(resolve(&s, Key::A, Modifiers::NONE), Some(Action::Keep));
+    }
+    #[test]
+    fn arrows_sort_by_default_and_rows_have_no_key() {
+        let s = Settings::default();
+        let n = Modifiers::NONE;
+        assert_eq!(resolve(&s, Key::ArrowUp, n), Some(Action::Keep));
+        assert_eq!(resolve(&s, Key::ArrowDown, n), Some(Action::Reject));
+        assert_eq!(resolve(&s, Key::ArrowRight, n), Some(Action::Next));
+        assert_eq!(resolve(&s, Key::ArrowLeft, n), Some(Action::Previous));
+        assert_eq!(resolve(&s, Key::K, n), None);
+        assert_eq!(resolve(&s, Key::X, n), None);
+        assert!(binding(&s, Action::Down).key.is_empty());
+        assert!(binding(&s, Action::Up).key.is_empty());
+    }
+    #[test]
+    fn saved_choice_wins_over_a_newer_default_without_hidden_conflict() {
+        let arrow_up = from_key(Key::ArrowUp, Modifiers::NONE);
+        // Saved by an older version, where Up was not yet the keep key.
+        let mut s = Settings::default();
+        s.shortcuts.insert("up".into(), arrow_up.clone());
+        s.shortcuts.insert("down".into(), Shortcut::default());
+        s.shortcuts.insert(
+            "rotate_right".into(),
+            from_key(Key::ArrowDown, Modifiers::NONE),
+        );
+        assert_eq!(resolve(&s, Key::ArrowUp, Modifiers::NONE), Some(Action::Up));
+        assert_eq!(
+            resolve(&s, Key::ArrowDown, Modifiers::NONE),
+            Some(Action::RotateRight)
+        );
+        assert_eq!(label(&binding(&s, Action::Keep)), "Not assigned");
+        assert_eq!(label(&binding(&s, Action::Reject)), "Not assigned");
+        // Shown and editable, never a second silent owner of the same keys.
+        assign(&mut s, Action::Keep, from_key(Key::K, Modifiers::NONE)).unwrap();
+        assert_eq!(resolve(&s, Key::K, Modifiers::NONE), Some(Action::Keep));
+        assert!(assign(&mut s, Action::Reject, arrow_up).is_err());
     }
     #[test]
     fn default_shortcuts_are_unique_and_recognized() {

@@ -21,7 +21,7 @@ ENTRY_KEYS = {"version", "date", "first", "quiet", "items"}
 ITEM_KEYS = {"tag", "en", "fr"}
 VERSION = re.compile(r"^\d+\.\d+\.\d+$")
 # Visible text never carries a long dash (author's writing rule).
-DASH = re.compile(r"\u2014| \u2013 ")
+DASH = re.compile(r"\u2014| \u2013 ")  # dash-ok: the rule itself
 HEADER = "# Changelog\n\nWhat changed in Sortypix, as you would notice it. Newest first.\n"
 QUIET = "Nothing you would notice in this one: upkeep under the hood."
 
@@ -157,7 +157,7 @@ def self_test(version):
         "current version absent": json.dumps([older]).encode(),
         "silent empty release": json.dumps([{**good, "items": []}]).encode(),
         "unknown tag": json.dumps([{**good, "items": [{"tag": "tweak", "en": "A", "fr": "B"}]}]).encode(),
-        "long dash": json.dumps([{**good, "items": [{"en": "A \u2014 B", "fr": "B"}]}]).encode(),
+        "long dash": json.dumps([{**good, "items": [{"en": "A \u2014 B", "fr": "B"}]}]).encode(),  # dash-ok: refused input
     }
     if validate(json.dumps([good, older]).encode(), version):
         return ["self-test: a valid changelog was refused"]

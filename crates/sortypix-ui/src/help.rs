@@ -89,14 +89,14 @@ impl Gallery {
                         });
                     ui.separator();
                     ui.strong("Mouse");
-                    ui.label(if self.settings.inverted {
-                        "Left: keep · Right: reject"
-                    } else {
+                    ui.label(if self.settings.swapped {
                         "Left: reject · Right: keep"
+                    } else {
+                        "Left: keep · Right: reject"
                     });
                     ui.weak("Middle / Ctrl+click: reject through this photo");
                     ui.weak("Drag at 100%: pan · Wheel over size: resize thumbnails");
-                    ui.checkbox(&mut self.settings.inverted, "Swap left and right clicks");
+                    ui.checkbox(&mut self.settings.swapped, "Swap left and right clicks");
                 });
             ui.separator();
             if ui.button("Restore default shortcuts").clicked() {

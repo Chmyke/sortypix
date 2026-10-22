@@ -1,5 +1,20 @@
 [
   {
+    "version": "0.2.1",
+    "date": "2026-10-22",
+    "items": [
+      {
+        "tag": "new",
+        "en": "Up arrow keeps, down arrow rejects, left and right flip through photos, in the grid and full screen. One hand on the arrows, the other on your coffee.",
+        "fr": "Flèche haut pour garder, flèche bas pour rejeter, gauche et droite pour passer d'une photo à l'autre, dans la grille comme en plein écran. Une main sur les flèches, l'autre sur le café."
+      },
+      {
+        "en": "Left click now keeps and right click rejects, which is what most hands expected anyway. Prefer the old way? The mouse icon swaps them back.",
+        "fr": "Clic gauche pour garder, clic droit pour rejeter, comme la plupart des mains s'y attendaient. L'ancien sens vous manque ? L'icône de souris les inverse."
+      }
+    ]
+  },
+  {
     "version": "0.2.0",
     "date": "2026-10-17",
     "items": [

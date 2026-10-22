@@ -88,8 +88,8 @@ impl Gallery {
                 let (mouse, response) =
                     ui.allocate_exact_size(egui::vec2(32., 32.), Sense::click());
                 if response.clicked() {
-                    self.settings.inverted = !self.settings.inverted;
-                    let [left, right] = crate::mouse::legend(self.settings.inverted);
+                    self.settings.swapped = !self.settings.swapped;
+                    let [left, right] = crate::mouse::legend(self.settings.swapped);
                     self.notice = Some((format!("Buttons swapped · {left} · {right}"), now));
                 }
                 if let Some(d) = &mut self.diagnostic {
@@ -98,9 +98,9 @@ impl Gallery {
                 crate::mouse::paint(
                     ui.painter(),
                     egui::Rect::from_center_size(mouse.center(), crate::mouse::visual_size(32.)),
-                    self.settings.inverted,
+                    self.settings.swapped,
                 );
-                let [left, right] = crate::mouse::legend(self.settings.inverted);
+                let [left, right] = crate::mouse::legend(self.settings.swapped);
                 response
                     .on_hover_cursor(egui::CursorIcon::PointingHand)
                     .on_hover_text(format!(

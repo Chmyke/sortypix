@@ -2233,7 +2233,7 @@ dependencies = [
 
 [[package]]
 name = "sortypix-app"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "image",
  "kamadak-exif",
@@ -2248,11 +2248,11 @@ dependencies = [
 
 [[package]]
 name = "sortypix-core"
-version = "0.2.0"
+version = "0.2.1"
 
 [[package]]
 name = "sortypix-shell"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "tempfile",
  "windows",
@@ -2261,7 +2261,7 @@ dependencies = [
 
 [[package]]
 name = "sortypix-ui"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "eframe",
  "image",

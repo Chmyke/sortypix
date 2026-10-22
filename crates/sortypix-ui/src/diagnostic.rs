@@ -193,7 +193,7 @@ impl crate::gallery::Gallery {
                 }
                 ctx.send_viewport_cmd(egui::ViewportCommand::Screenshot(egui::UserData::default()))
             }
-            2 => d.keys.push((egui::Key::K, false)),
+            2 => d.keys.push((egui::Key::ArrowUp, false)),
             4 => d.keys.push((egui::Key::Z, true)),
             6 => d.click_pending = true,
             8 => d.keys.push((egui::Key::Z, true)),
@@ -254,7 +254,7 @@ impl crate::gallery::Gallery {
             27 => d.pointer = d.help_target.map(|p| (p, false)),
             28 => d.pointer = d.binding_target.map(|p| (p, true)),
             29 => d.pointer = d.binding_target.map(|p| (p, false)),
-            30 => d.keys.push((egui::Key::X, false)),
+            30 => d.keys.push((egui::Key::ArrowDown, false)),
             31 => {
                 if self.shortcut_editor.error.is_none()
                     || !self.settings.shortcuts.is_empty()
@@ -286,7 +286,7 @@ impl crate::gallery::Gallery {
                 ctx.send_viewport_cmd(egui::ViewportCommand::Screenshot(egui::UserData::default()));
             }
             33 => d.keys.push((egui::Key::Escape, false)),
-            34 => d.keys.push((egui::Key::K, false)),
+            34 => d.keys.push((egui::Key::ArrowUp, false)),
             35 => {
                 if self.photos.len() != d.count || self.shortcut_editor.open {
                     let _ = std::fs::write(
@@ -402,7 +402,7 @@ impl crate::gallery::Gallery {
             52 => d.pointer = d.mouse_target.map(|p| (p, false)),
             53 | 55 => {
                 let swapped = d.stage == 53;
-                if self.settings.inverted != swapped || self.notice.is_none() {
+                if self.settings.swapped != swapped || self.notice.is_none() {
                     let _ = std::fs::write(
                         d.folder.join("FAIL.txt"),
                         format!("Mouse swap notice failed at stage {}", d.stage),

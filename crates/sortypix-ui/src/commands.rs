@@ -7,7 +7,7 @@ pub enum UiCommand {
 pub fn click(
     id: PhotoId,
     right: bool,
-    inverted: bool,
+    swapped: bool,
     control: bool,
     middle: bool,
     dragged: bool,
@@ -20,7 +20,7 @@ pub fn click(
     }
     Some(UiCommand::Decide(
         id,
-        if right != inverted {
+        if right == swapped {
             Decision::Keep
         } else {
             Decision::Reject

@@ -3,15 +3,16 @@
 Sort thousands of photos fast: keep the good ones, set the rest aside.
 Desktop app for Windows and Linux, written in Rust. Download and demos: https://mickaelmancini.com/sortypix/
 
-Preview 0.2.0 for Windows, and for Linux (x86_64 and ARM64). English interface, offline, free and open source (MIT).
+Preview 0.2.1 for Windows, and for Linux (x86_64 and ARM64). English interface, offline, free and open source (MIT).
 
-Open one folder, then left-click to reject or right-click to keep. Photos move into
+Open one folder, then left-click to keep or right-click to reject. Photos move into
 `rejected/` and `keep/`; nothing is deleted or overwritten. Swap mouse buttons using the mouse icon or the shortcut editor.
 RAW + JPEG pairs stay together. Identical copies are set aside automatically.
 
 | Shortcut | Action |
 |---|---|
-| K / X | Keep / reject |
+| Up / Down arrows | Keep / reject |
+| Left / Right arrows | Previous / next photo |
 | Ctrl+click or middle click | Reject through this photo |
 | Ctrl+Z | Undo the whole last gesture, across folders, until the app closes |
 | Enter / Escape | Full screen / grid |

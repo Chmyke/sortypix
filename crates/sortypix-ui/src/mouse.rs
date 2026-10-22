@@ -2,17 +2,17 @@
 use crate::theme;
 use eframe::egui::{self, Color32, Pos2, Rect, Shape, Stroke};
 /// Left and right button meanings, shared by the tooltip, the swap notice and the empty screen.
-pub fn legend(inverted: bool) -> [&'static str; 2] {
-    if inverted {
-        ["Left click: keep", "Right click: reject"]
-    } else {
+pub fn legend(swapped: bool) -> [&'static str; 2] {
+    if swapped {
         ["Left click: reject", "Right click: keep"]
+    } else {
+        ["Left click: keep", "Right click: reject"]
     }
 }
 pub fn visual_size(height: f32) -> egui::Vec2 {
     egui::vec2(30. * height / 46., height)
 }
-pub fn paint(painter: &egui::Painter, rect: Rect, inverted: bool) {
+pub fn paint(painter: &egui::Painter, rect: Rect, swapped: bool) {
     let mut body = vec![egui::pos2(17., 1.)];
     curve(&mut body, [(8., 1.), (2., 6.), (2., 14.)]);
     curve(&mut body, [(1., 19.), (1., 23.), (1., 29.)]);
@@ -26,10 +26,10 @@ pub fn paint(painter: &egui::Painter, rect: Rect, inverted: bool) {
     curve(&mut button, [(3.5, 17.), (3., 19.), (3., 21.)]);
     curve(&mut button, [(6., 23.), (12., 24.), (15.5, 23.)]);
     let right = button.iter().map(|p| egui::pos2(34. - p.x, p.y)).collect();
-    let (left_color, right_color) = if inverted {
-        (theme::GREEN, theme::RED)
-    } else {
+    let (left_color, right_color) = if swapped {
         (theme::RED, theme::GREEN)
+    } else {
+        (theme::GREEN, theme::RED)
     };
     polygon(
         painter,

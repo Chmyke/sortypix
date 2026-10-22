@@ -19,7 +19,7 @@ pub struct Settings {
     pub resume: Option<Resume>,
     pub window: Option<Window>,
     pub thumbnail_size: f32,
-    pub inverted: bool,
+    pub swapped: bool,
     pub newest_first: bool,
     pub shortcuts: BTreeMap<String, Shortcut>,
 }
@@ -157,7 +157,7 @@ impl Default for Settings {
             resume: None,
             window: None,
             thumbnail_size: 190.0,
-            inverted: false,
+            swapped: false,
             newest_first: false,
             shortcuts: BTreeMap::new(),
         }

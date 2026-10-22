@@ -66,7 +66,7 @@ fn settings_survive_restart_and_corruption_is_safe() {
     let s = Settings {
         last_folder: Some(dir.path().join("missing")),
         thumbnail_size: 2400.0,
-        inverted: true,
+        swapped: true,
         newest_first: true,
         shortcuts: [(
             "keep".into(),
@@ -81,13 +81,16 @@ fn settings_survive_restart_and_corruption_is_safe() {
     };
     s.save(&path).expect("save");
     assert_eq!(Settings::load(&path), s);
-    fs::write(&path, r#"{"thumbnail_size":210,"inverted":true}"#).expect("old settings");
+    fs::write(&path, r#"{"thumbnail_size":210,"swapped":true}"#).expect("old settings");
     let old = Settings::load(&path);
-    assert!(old.inverted);
+    assert!(old.swapped);
     assert_eq!(old.thumbnail_size, 210.);
     assert!(old.shortcuts.is_empty());
+    // Before 0.2.1 left click rejected by default; every install now starts with left = keep.
+    fs::write(&path, r#"{"inverted":true}"#).expect("pre-0.2.1 settings");
+    assert!(!Settings::load(&path).swapped);
     fs::write(&path, "broken").expect("corrupt");
-    assert!(!Settings::load(&path).inverted);
+    assert!(!Settings::load(&path).swapped);
     assert!(s.save(dir.path()).is_err());
 }
 #[test]

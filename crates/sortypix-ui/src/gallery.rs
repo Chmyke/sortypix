@@ -343,10 +343,10 @@ impl Gallery {
             crate::mouse::paint(
                 ui.painter(),
                 Rect::from_center_size(rect.center(), crate::mouse::visual_size(64.)),
-                self.settings.inverted,
+                self.settings.swapped,
             );
             ui.add_space(8.);
-            for line in crate::mouse::legend(self.settings.inverted) {
+            for line in crate::mouse::legend(self.settings.swapped) {
                 ui.label(line);
             }
             ui.label(self.shortcut_tip(crate::shortcuts::Action::Undo));

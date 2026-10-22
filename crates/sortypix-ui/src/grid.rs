@@ -168,7 +168,7 @@ impl Gallery {
                             match click(
                                 photo.id,
                                 response.secondary_clicked(),
-                                self.settings.inverted,
+                                self.settings.swapped,
                                 control,
                                 response.middle_clicked(),
                                 response.dragged(),

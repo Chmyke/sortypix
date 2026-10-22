@@ -34,6 +34,14 @@ try {
     if ($failures.Count -gt 0) { $failures | ForEach-Object { Write-Output "FAIL $_" }; exit 1 }
     Write-Output 'Context: OK'
 
+    # Interface text carries no long dash (owner rule, 2026-10-21). Maintainer only until the
+    # checker is listed in publish/public-files.txt.
+    $dashes = Join-Path $PSScriptRoot 'scripts/check-dashes.ps1'
+    if (Test-Path $dashes) {
+        & powershell -NoProfile -ExecutionPolicy Bypass -File $dashes
+        if ($LASTEXITCODE -ne 0) { exit 1 }
+    }
+
     # -S: no installed package is visible, so these checks pass under any account
     # (per-user packages are invisible to a sandbox user).
     python -S scripts/build-icon.py --check
