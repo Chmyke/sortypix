@@ -5,6 +5,12 @@ Desktop app for Windows and Linux, written in Rust. Download and demos: https://
 
 Version 0.3.0 for Windows, and for Linux (x86_64 and ARM64); Sortypix AI 0.3.0 beta for Windows. English interface, offline, free and open source (MIT).
 
+> **Two separate apps, pick one.** **Sortypix** is the light sorter (about 5 MB, Windows and
+> Linux): you decide everything yourself. **Sortypix AI** (beta) is a separate, heavier app (about
+> 400 MB, Windows only): Sortypix plus a model on your own computer that suggests which photos to
+> set aside. Both install side by side and never touch each other.
+> [Which one is for me?](#sortypix-or-sortypix-ai)
+
 Open one folder, then left-click to keep or right-click to reject. Photos move into
 `rejected/` and `keep/`; nothing is deleted or overwritten. Swap mouse buttons using the mouse icon or the shortcut editor.
 RAW + JPEG pairs stay together. Identical copies are set aside automatically.
