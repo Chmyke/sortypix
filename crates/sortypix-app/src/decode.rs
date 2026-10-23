@@ -36,6 +36,15 @@ pub fn decode(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String
         Some(SystemFormat::Other) => return decode_other(path, max_edge),
         None => {}
     }
+    // WIC decodes a JPEG straight at a reduced DCT scale: 2.5 to 3 times faster than a full
+    // decode then a resize on 12 and 24 MP photos (docs/recherche, 2026-10-22).
+    #[cfg(windows)]
+    if let Some(edge) = max_edge
+        && matches!(crate::catalog::extension(path).as_str(), "jpg" | "jpeg")
+        && let Ok(image) = crate::wic::decode(path, Some(edge))
+    {
+        return Ok(image);
+    }
     use image::ImageDecoder;
     let mut reader = image::ImageReader::open(path)
         .map_err(|e| e.to_string())?
@@ -49,7 +58,8 @@ pub fn decode(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String
     let mut image = image::DynamicImage::from_decoder(decoder).map_err(|e| e.to_string())?;
     image.apply_orientation(orientation);
     let native = (image.width(), image.height());
-    if let Some(edge) = max_edge {
+    // Never enlarge: a bigger bucket than the photo would only cost memory and time.
+    if let Some(edge) = max_edge.filter(|&edge| image.width().max(image.height()) > edge) {
         image = image.thumbnail(edge.max(1), edge.max(1));
     }
     let (width, height) = (image.width(), image.height());

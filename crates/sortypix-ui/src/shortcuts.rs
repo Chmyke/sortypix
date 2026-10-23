@@ -22,9 +22,14 @@ pub enum Action {
     OpenKept,
     OpenRejected,
     OpenSource,
+    /// Sortypix AI: the details card of the hovered or selected photo.
+    #[cfg(feature = "ai")]
+    PhotoCard,
 }
+/// Actions of the edition: Sortypix AI adds its photo card.
+const COUNT: usize = 18 + cfg!(feature = "ai") as usize;
 impl Action {
-    pub const ALL: [Self; 18] = [
+    pub const ALL: [Self; COUNT] = [
         Self::Keep,
         Self::Reject,
         Self::Undo,
@@ -43,6 +48,8 @@ impl Action {
         Self::OpenKept,
         Self::OpenRejected,
         Self::OpenSource,
+        #[cfg(feature = "ai")]
+        Self::PhotoCard,
     ];
     pub fn id(self) -> &'static str {
         match self {
@@ -64,6 +71,8 @@ impl Action {
             Self::OpenKept => "open_kept",
             Self::OpenRejected => "open_rejected",
             Self::OpenSource => "open_source",
+            #[cfg(feature = "ai")]
+            Self::PhotoCard => "photo_card",
         }
     }
     pub fn label(self) -> &'static str {
@@ -86,6 +95,8 @@ impl Action {
             Self::OpenKept => "Open kept folder",
             Self::OpenRejected => "Open rejected folder",
             Self::OpenSource => "Open source folder in Explorer",
+            #[cfg(feature = "ai")]
+            Self::PhotoCard => "Photo details",
         }
     }
     pub fn default_binding(self) -> Shortcut {
@@ -98,6 +109,8 @@ impl Action {
             Self::RotateRight | Self::RotateLeft => "R",
             Self::Next => "ArrowRight",
             Self::Previous => "ArrowLeft",
+            #[cfg(feature = "ai")]
+            Self::PhotoCard => "I",
             _ => "",
         };
         Shortcut {
@@ -308,6 +321,31 @@ mod tests {
         assign(&mut s, Action::Keep, from_key(Key::K, Modifiers::NONE)).unwrap();
         assert_eq!(resolve(&s, Key::K, Modifiers::NONE), Some(Action::Keep));
         assert!(assign(&mut s, Action::Reject, arrow_up).is_err());
+    }
+    #[cfg(feature = "ai")]
+    #[test]
+    fn sortypix_ai_adds_the_photo_card_on_i() {
+        let s = Settings::default();
+        assert_eq!(Action::ALL.len(), 19);
+        assert_eq!(
+            resolve(&s, Key::I, Modifiers::NONE),
+            Some(Action::PhotoCard)
+        );
+        // Reassignable like any other action, and kept apart from normal Sortypix's ids.
+        let mut s = s;
+        assign(&mut s, Action::PhotoCard, from_key(Key::D, Modifiers::NONE)).unwrap();
+        assert_eq!(
+            resolve(&s, Key::D, Modifiers::NONE),
+            Some(Action::PhotoCard)
+        );
+        assert_eq!(resolve(&s, Key::I, Modifiers::NONE), None);
+        assert_eq!(Action::PhotoCard.id(), "photo_card");
+    }
+    #[cfg(not(feature = "ai"))]
+    #[test]
+    fn normal_sortypix_keeps_its_eighteen_actions() {
+        assert_eq!(Action::ALL.len(), 18);
+        assert_eq!(resolve(&Settings::default(), Key::I, Modifiers::NONE), None);
     }
     #[test]
     fn default_shortcuts_are_unique_and_recognized() {

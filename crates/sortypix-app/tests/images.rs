@@ -89,6 +89,21 @@ fn settings_survive_restart_and_corruption_is_safe() {
     // Before 0.2.1 left click rejected by default; every install now starts with left = keep.
     fs::write(&path, r#"{"inverted":true}"#).expect("pre-0.2.1 settings");
     assert!(!Settings::load(&path).swapped);
+    // Fields of another edition or a later version survive a load and a save.
+    fs::write(
+        &path,
+        r#"{"swapped":true,"ai":{"suggest_percent":20,"order":"coverage"},"later":[1,2]}"#,
+    )
+    .expect("settings of another edition");
+    let other = Settings::load(&path);
+    assert!(other.swapped);
+    other.save(&path).expect("save over");
+    let written: serde_json::Value =
+        serde_json::from_slice(&fs::read(&path).expect("read back")).expect("json");
+    assert_eq!(written["ai"]["suggest_percent"], 20);
+    assert_eq!(written["ai"]["order"], "coverage");
+    assert_eq!(written["later"], serde_json::json!([1, 2]));
+    assert_eq!(Settings::load(&path), other);
     fs::write(&path, "broken").expect("corrupt");
     assert!(!Settings::load(&path).swapped);
     assert!(s.save(dir.path()).is_err());
@@ -133,6 +148,16 @@ fn real_raster_pixels_and_scaled_resolution_are_correct() {
         let small = decode(&path, Some(20)).expect("small");
         assert_eq!((small.width, small.height), (20, 10));
         assert_eq!(small.resolution, Resolution::Preview);
+    }
+    // A preview bucket larger than the photo never enlarges it: the GPU scales on screen.
+    for ext in ["png", "jpg"] {
+        let path = dir.path().join(format!("small.{ext}"));
+        image::RgbImage::from_pixel(80, 40, image::Rgb([17, 65, 123]))
+            .save(&path)
+            .expect("fixture");
+        let preview = decode(&path, Some(3200)).expect("preview");
+        assert_eq!((preview.width, preview.height), (80, 40), "{ext}");
+        assert_eq!(preview.resolution, Resolution::Native, "{ext}");
     }
     let corrupt = dir.path().join("bad.jpg");
     fs::write(&corrupt, b"broken").expect("fixture");

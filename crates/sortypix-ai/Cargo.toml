@@ -1,0 +1,31 @@
+[package]
+name = "sortypix-ai"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+# No codecs needed here: only resizing of already decoded pixels.
+image = { version = "0.25.10", default-features = false }
+# ONNX Runtime is loaded from a file at run time: nothing is downloaded or linked at build.
+libloading = "0.9"
+# Reads the vocabulary and merges of the CLIP tokenizer.json.
+serde_json = "1"
+# Content key of the embeddings cache (already used by the preview cache of sortypix-app).
+sha2 = "0.10"
+ort = { version = "=2.0.0-rc.15", default-features = false, features = ["std", "load-dynamic"] }
+
+# Process and thread priorities of the analysis (priority.rs); same crate as sortypix-app.
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62.2", features = ["Win32_Foundation", "Win32_System_Threading", "Win32_System_Diagnostics_ToolHelp"] }
+
+# nice(2) for the analysis thread (priority.rs).
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2.189"
+
+[dev-dependencies]
+# Tests decode the JPEG fixtures; production code never decodes (default-features = false above).
+image = { version = "0.25.10", default-features = false, features = ["jpeg"] }
+tempfile = "3"
+# The speed probe decodes real JPEGs the way the application does.
+sortypix-app = { path = "../sortypix-app" }

@@ -409,6 +409,15 @@ pub fn display_edge(path: &std::path::Path, size: egui::Vec2, pixels_per_point: 
     }
     thumbnail_edge(size, pixels_per_point)
 }
+/// Pixels for a photo fitted to the full-screen view; native (0) only for 100% zoom and GIFs.
+/// PITFALL: native 24 MP photos weigh 96 MB each, so the photo and its two preloaded
+/// neighbours overflowed `STILL_BUDGET` and evicted each other in a loop.
+pub fn view_edge(path: &std::path::Path, fitted: egui::Vec2, pixels_per_point: f32) -> u32 {
+    if sortypix_app::catalog::extension(path) == "gif" {
+        return 0;
+    }
+    thumbnail_edge(fitted, pixels_per_point)
+}
 fn request_edges(refined_edge: u32) -> [u32; 2] {
     [QUICK_EDGE, refined_edge]
 }
@@ -444,6 +453,21 @@ mod tests {
         for size in [10., 150., 300., 700.] {
             assert_ne!(display_edge(gif, egui::vec2(size, size), 1.), QUICK_EDGE);
         }
+    }
+    #[test]
+    fn full_screen_requests_screen_pixels_and_three_photos_always_fit() {
+        let jpeg = std::path::Path::new("a.jpg");
+        assert_eq!(view_edge(jpeg, egui::vec2(1200., 800.), 1.), 1600);
+        assert_eq!(view_edge(jpeg, egui::vec2(1920., 1280.), 1.), 3200);
+        assert_eq!(view_edge(jpeg, egui::vec2(1920., 1280.), 2.), 4096);
+        // GIFs keep their native frames and full-screen animation budget.
+        assert_eq!(
+            view_edge(std::path::Path::new("a.gif"), egui::vec2(1920., 1280.), 1.),
+            0
+        );
+        // The photo and both neighbours, square at the largest bucket, never evict each other.
+        let largest = view_edge(jpeg, egui::vec2(1e5, 1e5), 4.) as usize;
+        assert!(3 * largest * largest * 4 <= STILL_BUDGET);
     }
     #[test]
     fn gifs_play_in_the_full_screen_view_and_the_grid() {

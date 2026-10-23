@@ -58,11 +58,13 @@ fn final_metadata_does_not_restore_a_photo_sorted_during_enrichment() {
             key: opened[0].members[0].clone(),
             timestamp: 2,
             aspect_ratio: 0.5,
+            capture_time: None,
         },
         PhotoMetadata {
             key: opened[1].members[0].clone(),
             timestamp: 1,
             aspect_ratio: 2.0,
+            capture_time: Some(1),
         },
     ];
 
@@ -73,4 +75,5 @@ fn final_metadata_does_not_restore_a_photo_sorted_during_enrichment() {
     assert_eq!(remaining.len(), 1);
     assert_eq!(remaining[0].members[0], opened[1].members[0]);
     assert_eq!(remaining[0].aspect_ratio, 2.0);
+    assert_eq!(remaining[0].capture_time, Some(1));
 }

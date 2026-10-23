@@ -47,6 +47,8 @@ pub struct Gallery {
     pub(crate) pending_transition: Option<sortypix_app::settings::Resume>,
     pub(crate) layout: crate::layout::Layout,
     pub(crate) shortcut_editor: crate::shortcuts::Editor,
+    #[cfg(feature = "ai")]
+    pub(crate) ai: crate::ai::Ai,
 }
 pub const ACCENT: Color32 = crate::theme::BLUE;
 impl Gallery {
@@ -110,6 +112,9 @@ impl Gallery {
             pending_transition: None,
             layout: Default::default(),
             shortcut_editor: Default::default(),
+            // Last: the worker and preview threads above must exist first (thread priorities).
+            #[cfg(feature = "ai")]
+            ai: crate::ai::Ai::new(&cache, cc),
         };
         if let Some(folder) = open {
             app.open(folder);
@@ -170,6 +175,8 @@ impl Gallery {
         self.visible_ready_sent = false;
         self.catalog_final = false;
         self.pending_transition = None;
+        #[cfg(feature = "ai")]
+        self.ai.folder_opened();
         self.send(Command::Open(folder));
     }
     pub(crate) fn decide(&mut self, ids: Vec<PhotoId>, decision: Decision) {
@@ -184,7 +191,7 @@ impl Gallery {
         self.photos.get(self.selected).map(|p| p.id)
     }
     fn poll(&mut self, ctx: &egui::Context) {
-        for state in self.worker.events.try_iter() {
+        while let Ok(state) = self.worker.events.try_recv() {
             if let Some(benchmark) = &mut self.benchmark {
                 benchmark.observe_catalog(state.catalog_final);
             }
@@ -202,10 +209,13 @@ impl Gallery {
             self.catalog_final = state.catalog_final;
             self.busy = false;
             self.busy_since = None;
+            #[cfg(not(feature = "ai"))]
             if self.settings.newest_first {
                 self.photos.reverse();
                 self.turns.reverse();
             }
+            #[cfg(feature = "ai")]
+            self.ai_snapshot();
             self.selected = previous_id
                 .and_then(|id| self.photos.iter().position(|p| p.id == id))
                 .unwrap_or(self.selected)
@@ -217,6 +227,8 @@ impl Gallery {
             self.settings.last_folder = self.root.clone();
         }
         self.textures.poll(ctx);
+        #[cfg(feature = "ai")]
+        self.ai_frame();
         if !self.visible_ready_sent
             && self.root.is_some()
             && self.textures.loaded > 0
@@ -321,6 +333,8 @@ impl Gallery {
         {
             ctx.request_repaint();
         }
+        #[cfg(feature = "ai")]
+        self.ai_card(&ctx);
         self.shortcut_dialog(&ctx);
         self.run_diagnostic(&ctx);
         self.run_session_probe(&ctx);

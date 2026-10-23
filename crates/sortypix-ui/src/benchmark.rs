@@ -38,6 +38,9 @@ pub struct Benchmark {
     opening: OpeningMetrics,
     /// Frames can still run while Close is pending; the verdict is written once.
     reported: bool,
+    /// Sortypix AI: the analysis state, photos done and time when the measure started.
+    #[cfg(feature = "ai")]
+    ai_start: (String, usize, Instant),
 }
 impl Benchmark {
     pub fn new(folder: PathBuf) -> Self {
@@ -53,6 +56,8 @@ impl Benchmark {
             scroll: 0.,
             opening: OpeningMetrics::default(),
             reported: false,
+            #[cfg(feature = "ai")]
+            ai_start: (String::new(), 0, Instant::now()),
         }
     }
     pub(crate) fn observe_catalog(&mut self, final_catalog: bool) {
@@ -91,6 +96,14 @@ impl crate::gallery::Gallery {
             // cells leave before their refined preview or animation could arrive.
             if !self.textures.settled() {
                 return;
+            }
+            // Sortypix AI measures while the analysis runs: wait for its first photos.
+            #[cfg(feature = "ai")]
+            {
+                if !self.ai.analysing() {
+                    return;
+                }
+                b.ai_start = (self.ai.describe(), self.ai.done(), Instant::now());
             }
             let start = Instant::now();
             let originals = self.photos.clone();
@@ -156,6 +169,23 @@ impl crate::gallery::Gallery {
             b.open_ms,
             self.textures.animated,
         );
+        // The analysis must still be running when the measure ends, or it proved nothing.
+        #[cfg(feature = "ai")]
+        let (text, analysing) = {
+            let (start, done, at) = &b.ai_start;
+            let analysed = self.ai.done().saturating_sub(*done);
+            let rate = analysed as f64 / at.elapsed().as_secs_f64().max(1e-3);
+            (
+                format!(
+                    "{text}AI models: {}\nAI analysis at start: {start}\nAI analysis at end: {}\nAI analysis during the measure: {analysed} photos, {rate:.1} photos/s\n",
+                    self.ai.models().display(),
+                    self.ai.describe()
+                ),
+                self.ai.analysing(),
+            )
+        };
+        #[cfg(not(feature = "ai"))]
+        let analysing = true;
         let _ = std::fs::create_dir_all(&b.folder);
         let _ = std::fs::write(b.folder.join("performance.txt"), &text);
         let scale = std::env::var("SORTYPIX_BUDGET_SCALE")
@@ -172,7 +202,8 @@ impl crate::gallery::Gallery {
             && b.open_ms < 1000. * scale
             && (cpu as f64) < 16.7 * scale
             && interval < 16.7 * scale
-            && next < 50. * scale;
+            && next < 50. * scale
+            && analysing;
         let _ = std::fs::write(
             b.folder.join(if passed { "PASS.txt" } else { "FAIL.txt" }),
             text,

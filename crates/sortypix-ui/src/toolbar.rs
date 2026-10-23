@@ -123,11 +123,15 @@ impl Gallery {
                     size_marker(ui, Icon::ThumbLarge);
                     size_slider(ui, &mut self.settings.thumbnail_size);
                     size_marker(ui, Icon::ThumbSmall);
+                    #[cfg(feature = "ai")]
+                    self.ai_order_menu(ui);
+                    #[cfg(not(feature = "ai"))]
                     let icon = if self.settings.newest_first {
                         Icon::Descending
                     } else {
                         Icon::Ascending
                     };
+                    #[cfg(not(feature = "ai"))]
                     if icons::button(
                         ui,
                         icon,
@@ -166,6 +170,8 @@ impl Gallery {
                 if undo.clicked() {
                     self.send(Command::Undo);
                 }
+                #[cfg(feature = "ai")]
+                self.ai_controls(ui, busy);
                 if busy || self.scanning {
                     ui.spinner().on_hover_text(if self.scanning {
                         "Checking exact copies…"
@@ -179,9 +185,16 @@ impl Gallery {
                     ))
                     .on_hover_text("Position among the photos remaining");
                 } else {
-                    ui.monospace(photo_count_label(self.photos.len()))
-                        .on_hover_text("Photos remaining");
+                    #[cfg(feature = "ai")]
+                    let count = self
+                        .ai_count_label()
+                        .unwrap_or_else(|| photo_count_label(self.photos.len()));
+                    #[cfg(not(feature = "ai"))]
+                    let count = photo_count_label(self.photos.len());
+                    ui.monospace(count).on_hover_text("Photos remaining");
                 }
+                #[cfg(feature = "ai")]
+                self.ai_search_field(ui);
                 let name = self
                     .root
                     .as_ref()
@@ -202,7 +215,9 @@ impl Gallery {
                 .on_hover_text(&name);
             });
         });
-        ui.add(egui::Separator::default().spacing(4.));
+        let _separator = ui.add(egui::Separator::default().spacing(4.));
+        #[cfg(feature = "ai")]
+        self.ai_progress_line(ui, _separator.rect);
     }
 }
 fn size_marker(ui: &mut egui::Ui, icon: Icon) {

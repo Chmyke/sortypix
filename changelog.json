@@ -1,5 +1,30 @@
 [
   {
+    "version": "0.3.0",
+    "date": "2026-10-23",
+    "items": [
+      {
+        "tag": "new",
+        "en": "Meet Sortypix AI (beta), a separate app that installs next to Sortypix: a model running on your own computer suggests which photos to reject, and one click sends them away. One Ctrl+Z brings them all back.",
+        "fr": "Voici Sortypix AI (bêta), une application à part qui s'installe à côté de Sortypix : un modèle qui tourne sur votre ordinateur suggère les photos à rejeter, et un clic les écarte. Un seul Ctrl+Z les ramène toutes."
+      },
+      {
+        "tag": "new",
+        "en": "Sortypix AI also finds photos by word (\"dog\", \"sunset\"), sorts them by score or by variety, and tells you why a photo looks weak. Your photos never leave the machine, not even for a coffee break.",
+        "fr": "Sortypix AI retrouve aussi les photos par mot (« dog », « sunset »), les trie par note ou par variété, et dit pourquoi une photo semble faible. Vos photos ne quittent jamais la machine, même pas pour une pause café."
+      },
+      {
+        "en": "Camera photos show up two to three times faster in the grid. Sortypix itself stays exactly as light as before.",
+        "fr": "Les photos d'appareil s'affichent deux à trois fois plus vite dans la grille. Sortypix reste aussi léger qu'avant."
+      },
+      {
+        "tag": "fix",
+        "en": "Full screen no longer keeps your processor busy while you are simply looking at a photo.",
+        "fr": "Le plein écran ne fait plus travailler le processeur quand on se contente de regarder une photo."
+      }
+    ]
+  },
+  {
     "version": "0.2.1",
     "date": "2026-10-22",
     "items": [

@@ -5,6 +5,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if std::env::args().nth(2).as_deref() == Some("--gif") {
         return animated(&dir);
     }
+    if std::env::args().nth(2).as_deref() == Some("--large") {
+        return large(&dir);
+    }
     for n in 0..28u32 {
         let (w, h) = [
             (1200, 800),
@@ -50,6 +53,70 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         image.save(format!("{dir}/Alpine-{:03}.jpg", n + 1))?;
     }
+    Ok(())
+}
+
+/// 200 camera-sized JPEGs (4000 x 3000, quality 90, noisy like a sensor), for the Sortypix AI
+/// benchmark. Files already there are kept: the folder lives under `target/` and is reused.
+fn large(dir: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let next = std::sync::atomic::AtomicU32::new(0);
+    let threads = std::thread::available_parallelism().map_or(4, |n| n.get().min(16));
+    std::thread::scope(|s| {
+        let workers: Vec<_> = (0..threads)
+            .map(|_| {
+                s.spawn(|| -> Result<(), String> {
+                    loop {
+                        let n = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        if n >= 200 {
+                            return Ok(());
+                        }
+                        let path = std::path::Path::new(dir).join(format!("Large-{n:03}.jpg"));
+                        if std::fs::metadata(&path).is_ok_and(|m| m.len() > 0) {
+                            continue;
+                        }
+                        large_photo(&path, n).map_err(|e| e.to_string())?;
+                    }
+                })
+            })
+            .collect();
+        workers.into_iter().try_for_each(|w| {
+            w.join()
+                .map_err(|_| "fixture thread panicked".to_string())?
+        })
+    })?;
+    Ok(())
+}
+
+fn large_photo(path: &std::path::Path, n: u32) -> Result<(), Box<dyn std::error::Error>> {
+    let (w, h) = (4000u32, 3000u32);
+    let mut rng = 0x9E37_79B9_7F4A_7C15u64 ^ u64::from(n + 1);
+    let mut image = RgbImage::new(w, h);
+    for (x, y, p) in image.enumerate_pixels_mut() {
+        rng ^= rng << 13;
+        rng ^= rng >> 7;
+        rng ^= rng << 17;
+        let noise = (rng & 31) as i32 - 16;
+        let (xf, yf) = (x as f32 * 0.3, y as f32);
+        let horizon = h as f32 * (0.54 + 0.1 * (xf / 190. + n as f32).sin());
+        let base = if yf > horizon {
+            [55 + (n * 4 % 60), 94 + (n * 3 % 50), 108 + (n * 2 % 45)]
+        } else {
+            let sky = yf / h as f32;
+            [
+                (115. + sky * 35.) as u32,
+                (155. + sky * 25.) as u32,
+                (176. + sky * 20.) as u32,
+            ]
+        };
+        *p = Rgb(base.map(|c| (c as i32 + noise).clamp(0, 255) as u8));
+    }
+    // Under a temporary name, then renamed: an interrupted run leaves no truncated photo.
+    let temp = path.with_extension("tmp");
+    let mut file = std::io::BufWriter::new(std::fs::File::create(&temp)?);
+    image::codecs::jpeg::JpegEncoder::new_with_quality(&mut file, 90).encode_image(&image)?;
+    std::io::Write::flush(&mut file)?;
+    drop(file);
+    std::fs::rename(&temp, path)?;
     Ok(())
 }
 

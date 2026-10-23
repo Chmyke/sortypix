@@ -1,12 +1,16 @@
 [workspace]
-members = ["crates/sortypix-core", "crates/sortypix-app", "crates/sortypix-ui", "crates/sortypix-shell"]
+members = ["crates/sortypix-core", "crates/sortypix-app", "crates/sortypix-ui", "crates/sortypix-shell", "crates/sortypix-ai"]
 resolver = "3"
 
 [workspace.package]
-version = "0.2.1"
+version = "0.3.0"
 edition = "2024"
 license = "MIT"
 
 [profile.release]
 lto = "thin"
 codegen-units = 1
+
+# Analyses run O(n^2) dot products on 768-dim vectors: too slow to test unoptimized.
+[profile.dev.package.sortypix-ai]
+opt-level = 2

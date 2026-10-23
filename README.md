@@ -3,7 +3,7 @@
 Sort thousands of photos fast: keep the good ones, set the rest aside.
 Desktop app for Windows and Linux, written in Rust. Download and demos: https://mickaelmancini.com/sortypix/
 
-Preview 0.2.1 for Windows, and for Linux (x86_64 and ARM64). English interface, offline, free and open source (MIT).
+Version 0.3.0 for Windows, and for Linux (x86_64 and ARM64); Sortypix AI 0.3.0 beta for Windows. English interface, offline, free and open source (MIT).
 
 Open one folder, then left-click to keep or right-click to reject. Photos move into
 `rejected/` and `keep/`; nothing is deleted or overwritten. Swap mouse buttons using the mouse icon or the shortcut editor.
@@ -36,6 +36,54 @@ shown on Linux yet. Unsupported images remain visible as placeholders and can st
 The application never downloads codecs.
 For RAW + JPEG pairs, 100% inspects the native RAW when available; a JPEG fallback is explicitly labelled.
 Windows 11 integration uses a small, signed Explorer extension to offer “Open with Sortypix” directly in the modern folder context menu. The classic menu also retains the command, including on folder backgrounds. The identity package must be signed with a certificate trusted by Windows; local development certificates are never trusted automatically.
+
+## Sortypix or Sortypix AI?
+
+Sortypix AI is a second app, in beta: the same Sortypix, plus a model that runs on your
+computer, looks at every photo of the open folder and suggests which ones to set aside.
+Windows only for now. While it analyses, a thin blue line runs under the toolbar;
+then the photos it would set aside get a red dashed outline with their score (or an amber
+"Off-topic" badge), "Suggest 20%" picks how many, and "Reject suggested" moves them all to
+`rejected/` in one gesture (one Ctrl+Z puts them back). A search field filters the grid by word,
+and the order menu adds "Lowest score first", "Highest score first" and "Most varied first", can
+show only the low scores, the off-topic photos or the bursts, and hides a kind of badge you do
+not want. Press I (or click a badge) for a photo's card: its score and where it stands in the
+folder, and a likely reason when the score is low (an estimate: only blur is told apart reliably
+for now). On Windows the analysis progress also shows on the taskbar button.
+
+- **Pick Sortypix** if you want the lightest and fastest sorter. It knows nothing about what is
+  in your photos, and that is the point: you decide everything, nothing runs in the background.
+- **Pick Sortypix AI** if your folders are huge and you would like a second opinion: a score for
+  each photo, bursts of near-identical shots, photos that do not fit with the rest, and search by
+  word ("dog", "sunset").
+
+| | Sortypix | Sortypix AI (beta) |
+|---|---|---|
+| Download | about 5 MB | about 400 MB |
+| On disk | about 16 MB | about 0.6 GB, plus up to 1 GB of analysis cache (3 KB per photo) |
+| Analysis | none | about 10 to 16 photos per second on a 16-core desktop |
+| Network | never | never |
+
+At that pace, 1,000 photos take one to two minutes, 30,000 photos 30 to 50 minutes and
+300,000 photos five to eight hours (projection from the measured speed). Each photo is analysed
+once: moving it into `keep/` or `rejected/` does not start over.
+
+Good to know before you pick Sortypix AI:
+
+- **Everything stays on your computer.** The model ships inside the installer, the analysis runs
+  locally and the app never goes online, not even to update itself.
+- **The model only suggests.** It never moves, renames or deletes a photo by itself. You still
+  keep with a left click and reject with a right click; a suggested photo goes to `rejected/`
+  only when you say so, and Ctrl+Z brings it back.
+- **Bursts are only marked in this beta.** The model is not yet reliable enough at picking the
+  best shot of a burst, so it points the burst out and leaves the choice to you.
+- **It keeps your processor busy while it analyses.** The analysis runs below normal priority, so
+  scrolling and sorting stay smooth, but fans may spin up and a laptop on battery drains faster.
+  Expect about 1.5 GB of memory in use during the analysis.
+- **Both install side by side.** Each has its own folder, Start menu entry and "Open with" entry
+  on folders, and they share their settings. Installing or removing one never touches the other.
+
+## Build
 
 Build and verify with `powershell -NoProfile -ExecutionPolicy Bypass -File check.ps1`.
 Requires Rust, Visual Studio C++ tools and Windows SDK. Full verification launches isolated

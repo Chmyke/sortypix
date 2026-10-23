@@ -1,15 +1,25 @@
 # Writes the third-party notices of one platform's binary and refuses an incompatible license.
+# -Features ai lists the crates of Sortypix AI (sortypix-ui built with its ai feature).
 param(
     [string]$Triple = 'x86_64-pc-windows-msvc',
     [string]$Output,
-    [string]$Platform = 'Windows'
+    [string]$Platform = 'Windows',
+    [string]$Features
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 if (-not $Output) { $Output = Join-Path $root 'packaging/THIRD-PARTY-NOTICES.txt' }
 Push-Location $root
 try {
-    $metadata = cargo metadata --locked --format-version 1 --filter-platform $Triple | ConvertFrom-Json
+    $metadataFeatures = @()
+    $treeFeatures = @()
+    $product = 'Sortypix'
+    if ($Features) {
+        $metadataFeatures = @('--features', "sortypix-ui/$Features")
+        $treeFeatures = @('--features', $Features)
+        if ($Features -eq 'ai') { $product = 'Sortypix AI' }
+    }
+    $metadata = cargo metadata --locked --format-version 1 --filter-platform $Triple @metadataFeatures | ConvertFrom-Json
     if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect dependency licenses' }
     $packages = @{}
     $nodes = @{}
@@ -29,13 +39,13 @@ try {
     # The resolve graph also holds optional crates a feature only names (wgpu behind
     # eframe's Wayland feature); cargo tree lists what is really compiled.
     $built = New-Object 'System.Collections.Generic.HashSet[string]'
-    foreach ($line in (cargo tree --locked -p sortypix-ui --target $Triple -e normal,build --prefix none --format '{p}')) {
+    foreach ($line in (cargo tree --locked -p sortypix-ui @treeFeatures --target $Triple -e normal,build --prefix none --format '{p}')) {
         if ($line -match '^(\S+) v(\S+)') { [void]$built.Add("$($Matches[1]) $($Matches[2])") }
     }
     if ($LASTEXITCODE -ne 0 -or $built.Count -eq 0) { throw 'Cannot list compiled dependencies' }
     $visited = @($visited | Where-Object { $built.Contains("$($packages[$_].name) $($packages[$_].version)") })
     $text = New-Object Text.StringBuilder
-    [void]$text.AppendLine("Sortypix - third-party notices ($Platform runtime and build dependencies)")
+    [void]$text.AppendLine("$product - third-party notices ($Platform runtime and build dependencies)")
     foreach ($id in ($visited | Sort-Object)) {
         $p = $packages[$id]
         if (-not $p.source) { continue }

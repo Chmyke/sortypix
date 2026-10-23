@@ -22,6 +22,7 @@ fn small_jpeg_pair_inspects_full_raw_sensor() {
     let jpeg = root.join("orientation-1.jpg");
     let photo = PhysicalPhoto {
         aspect_ratio: 1.5,
+        capture_time: None,
         id: PhotoId(1),
         members: vec![jpeg.clone(), raw.clone()],
     };

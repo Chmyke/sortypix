@@ -22,6 +22,10 @@ pub struct Settings {
     pub swapped: bool,
     pub newest_first: bool,
     pub shortcuts: BTreeMap<String, Shortcut>,
+    /// Fields this build does not know (those of Sortypix AI, of a later version), written
+    /// back unchanged so both editions can share one settings file.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 #[derive(Clone, serde::Serialize, serde::Deserialize, Debug, PartialEq)]
 pub struct Resume {
@@ -160,6 +164,7 @@ impl Default for Settings {
             swapped: false,
             newest_first: false,
             shortcuts: BTreeMap::new(),
+            extra: serde_json::Map::new(),
         }
     }
 }

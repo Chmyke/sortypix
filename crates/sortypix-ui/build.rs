@@ -28,4 +28,11 @@ fn main() {
         .expect("Windows SDK resource compiler");
     assert!(status.success(), "Resource compilation failed");
     println!("cargo:rustc-link-arg-bin=sortypix={}", resource.display());
+    // Sortypix AI shows the same icon (its binary exists only with the ai feature).
+    if std::env::var_os("CARGO_FEATURE_AI").is_some() {
+        println!(
+            "cargo:rustc-link-arg-bin=sortypix-ai={}",
+            resource.display()
+        );
+    }
 }

@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "comment": "Sources for the optional Sortypix AI edition. Downloaded by scripts/ai/fetch-models.py with the maintainer's approval (2026-10-22); never shipped from this repository. Fill sha256 and bytes once with --pin, then they do not change.",
+  "sources": [
+    {
+      "name": "onnxruntime-win-x64-1.31.0.zip",
+      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.31.0/onnxruntime-win-x64-1.31.0.zip",
+      "sha256": "3958d8a44984160692c1b4ffd0de3cb48f8c39f9d34bb31e433db06e30b82195",
+      "bytes": 82887349,
+      "license": "MIT",
+      "license_url": "https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE"
+    },
+    {
+      "name": "onnxruntime-linux-x64-1.31.0.tgz",
+      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.31.0/onnxruntime-linux-x64-1.31.0.tgz",
+      "sha256": "cc5c72baf5ae5c8238a6841f0897227be2d02826b9cf98eaf02fdefaeeb03a57",
+      "bytes": 11408003,
+      "license": "MIT",
+      "license_url": "https://github.com/microsoft/onnxruntime/blob/v1.31.0/LICENSE"
+    },
+    {
+      "name": "clip-vit-l14-visual.onnx",
+      "url": "https://huggingface.co/immich-app/ViT-L-14__openai/resolve/9b27c6b49d2ff4957fa0b5a25521eee12f109543/visual/model.onnx",
+      "sha256": "2b02d572f59c509f4b97b9c54a868453cca1a652cd5d60e1d51d0052f055cb8c",
+      "bytes": 1216297719,
+      "license": "MIT (OpenAI CLIP weights, ONNX export by immich-app)",
+      "license_url": "https://github.com/openai/CLIP/blob/main/LICENSE"
+    },
+    {
+      "name": "clip-vit-l14-textual.onnx",
+      "url": "https://huggingface.co/immich-app/ViT-L-14__openai/resolve/9b27c6b49d2ff4957fa0b5a25521eee12f109543/textual/model.onnx",
+      "sha256": "9fbe72ea8d36c2effaccedcf7249e3729ad0d9b4af6604b433ecdd0105663c9c",
+      "bytes": 495082255,
+      "license": "MIT (OpenAI CLIP weights, ONNX export by immich-app)",
+      "license_url": "https://github.com/openai/CLIP/blob/main/LICENSE"
+    },
+    {
+      "name": "tokenizer.json",
+      "url": "https://huggingface.co/immich-app/ViT-L-14__openai/resolve/9b27c6b49d2ff4957fa0b5a25521eee12f109543/textual/tokenizer.json",
+      "sha256": "6d9109cc838977f3ca94a379eec36aecc7c807e1785cd729660ca2fc0171fb35",
+      "bytes": 3642073,
+      "license": "MIT (OpenAI CLIP tokenizer, export by immich-app)",
+      "license_url": "https://github.com/openai/CLIP/blob/main/LICENSE"
+    },
+    {
+      "name": "aesthetic-l14.pth",
+      "url": "https://github.com/christophschuhmann/improved-aesthetic-predictor/raw/6934dd81792f086e613a121dbce43082cb8be85e/sac%2Blogos%2Bava1-l14-linearMSE.pth",
+      "sha256": "21dd590f3ccdc646f0d53120778b296013b096a035a2718c9cb0d511bff0f1e0",
+      "bytes": 3714759,
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/christophschuhmann/improved-aesthetic-predictor/blob/6934dd81792f086e613a121dbce43082cb8be85e/LICENSE"
+    },
+    {
+      "name": "aesthetic-head-source.py",
+      "url": "https://raw.githubusercontent.com/christophschuhmann/improved-aesthetic-predictor/6934dd81792f086e613a121dbce43082cb8be85e/simple_inference.py",
+      "sha256": "1c2fff12affb0b66b089cea4f41614cbf07fde4a33acc05a96d435931f09ce67",
+      "bytes": 2986,
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/christophschuhmann/improved-aesthetic-predictor/blob/6934dd81792f086e613a121dbce43082cb8be85e/LICENSE"
+    }
+  ]
+}

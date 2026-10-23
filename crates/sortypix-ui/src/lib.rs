@@ -1,3 +1,5 @@
+#[cfg(feature = "ai")]
+mod ai;
 mod benchmark;
 pub mod commands;
 mod controls;
@@ -7,6 +9,7 @@ pub mod gallery;
 mod grid;
 mod help;
 mod icons;
+pub mod launch;
 mod layout;
 mod mouse;
 mod preview_queue;

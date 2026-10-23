@@ -24,6 +24,10 @@ impl Gallery {
         if self.busy || self.shortcut_editor.open {
             return;
         }
+        #[cfg(feature = "ai")]
+        if self.ai_typing(ctx) {
+            return;
+        }
         let action = ctx.input(|i| {
             i.events.iter().find_map(|event| {
                 if let egui::Event::Key {
@@ -79,6 +83,10 @@ impl Gallery {
                 }
             }
             Action::Collapse => {
+                #[cfg(feature = "ai")]
+                {
+                    self.ai.card = None;
+                }
                 self.viewer = false;
                 self.grid_scroll_to_focus = true;
                 ctx.send_viewport_cmd(egui::ViewportCommand::Fullscreen(false));
@@ -106,6 +114,8 @@ impl Gallery {
                 self.pan = egui::Vec2::ZERO;
                 self.grid_scroll_to_focus = true;
             }
+            #[cfg(feature = "ai")]
+            Action::PhotoCard => self.ai_card_shortcut(),
             _ => {}
         }
     }

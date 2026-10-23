@@ -51,18 +51,22 @@ impl Engine {
     pub fn apply_metadata(&mut self, metadata: Vec<PhotoMetadata>) {
         let metadata: BTreeMap<_, _> = metadata
             .into_iter()
-            .map(|value| (value.key, (value.timestamp, value.aspect_ratio)))
+            .map(|value| {
+                let fields = (value.timestamp, value.aspect_ratio, value.capture_time);
+                (value.key, fields)
+            })
             .collect();
         for photo in &mut self.catalog {
-            if let Some((_, aspect_ratio)) = metadata.get(&photo.members[0]) {
+            if let Some((_, aspect_ratio, capture_time)) = metadata.get(&photo.members[0]) {
                 photo.aspect_ratio = *aspect_ratio;
+                photo.capture_time = *capture_time;
             }
         }
         self.catalog.sort_by_cached_key(|photo| {
             (
                 metadata
                     .get(&photo.members[0])
-                    .map_or(0, |(timestamp, _)| *timestamp),
+                    .map_or(0, |(timestamp, _, _)| *timestamp),
                 photo.members[0].clone(),
             )
         });

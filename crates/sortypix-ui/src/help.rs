@@ -97,6 +97,8 @@ impl Gallery {
                     ui.weak("Middle / Ctrl+click: reject through this photo");
                     ui.weak("Drag at 100%: pan · Wheel over size: resize thumbnails");
                     ui.checkbox(&mut self.settings.swapped, "Swap left and right clicks");
+                    #[cfg(feature = "ai")]
+                    self.ai_legend(ui);
                 });
             ui.separator();
             if ui.button("Restore default shortcuts").clicked() {

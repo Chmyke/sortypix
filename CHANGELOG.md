@@ -2,6 +2,13 @@
 
 What changed in Sortypix, as you would notice it. Newest first.
 
+## 0.3.0 · 2026-10-23
+
+- **New** · Meet Sortypix AI (beta), a separate app that installs next to Sortypix: a model running on your own computer suggests which photos to reject, and one click sends them away. One Ctrl+Z brings them all back.
+- **New** · Sortypix AI also finds photos by word ("dog", "sunset"), sorts them by score or by variety, and tells you why a photo looks weak. Your photos never leave the machine, not even for a coffee break.
+- Camera photos show up two to three times faster in the grid. Sortypix itself stays exactly as light as before.
+- **Fixed** · Full screen no longer keeps your processor busy while you are simply looking at a photo.
+
 ## 0.2.1 · 2026-10-22
 
 - **New** · Up arrow keeps, down arrow rejects, left and right flip through photos, in the grid and full screen. One hand on the arrows, the other on your coffee.

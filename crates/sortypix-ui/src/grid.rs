@@ -14,6 +14,8 @@ fn should_record_resume(busy: bool, restore_position: bool, catalog_final: bool)
 impl Gallery {
     pub(crate) fn grid(&mut self, ui: &mut egui::Ui) {
         self.grid_rect = ui.available_rect_before_wrap();
+        #[cfg(feature = "ai")]
+        self.ai.grid_started();
         let width = geometry(ui);
         self.layout.update(
             width,
@@ -139,6 +141,9 @@ impl Gallery {
                                 egui::StrokeKind::Inside,
                             );
                         }
+                        #[cfg(feature = "ai")]
+                        let response =
+                            self.ai_mark(ui, response, rect, photo.id, index == self.selected);
                         let inspect =
                             inspect_overlay(ui, &response, rect, photo.id.0).is_some_and(|r| {
                                 r.on_hover_text(self.shortcut_tip(crate::shortcuts::Action::Expand))
@@ -493,6 +498,7 @@ mod tests {
             id: PhotoId(id),
             members: vec![root.join(name)],
             aspect_ratio: ratio,
+            capture_time: None,
         };
         let photos = vec![
             photo(2, "c.jpg", 0.75),

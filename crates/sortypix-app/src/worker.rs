@@ -317,6 +317,7 @@ mod tests {
                         key: photo.members[0].clone(),
                         timestamp: 1,
                         aspect_ratio: 1.5,
+                        capture_time: None,
                     })
                     .collect()
             },
@@ -361,6 +362,7 @@ mod tests {
             revision: 7,
             photos: vec![PhysicalPhoto {
                 aspect_ratio: 1.5,
+                capture_time: None,
                 id: PhotoId(1),
                 members: vec![path.clone()],
             }],
@@ -385,6 +387,7 @@ mod tests {
                 .enumerate()
                 .map(|(i, path)| PhysicalPhoto {
                     aspect_ratio: 1.5,
+                    capture_time: None,
                     id: PhotoId(i as u64),
                     members: vec![path.clone()],
                 })

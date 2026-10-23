@@ -9,12 +9,15 @@ pub struct PhysicalPhoto {
     pub id: PhotoId,
     pub members: Vec<PathBuf>,
     pub aspect_ratio: f32,
+    /// EXIF capture time in seconds, once metadata is read; `None` without one.
+    pub capture_time: Option<i64>,
 }
 #[derive(Clone, Debug)]
 pub struct PhotoMetadata {
     pub key: PathBuf,
     pub timestamp: i64,
     pub aspect_ratio: f32,
+    pub capture_time: Option<i64>,
 }
 impl PhysicalPhoto {
     pub fn display_source(&self, native: bool) -> &Path {
@@ -110,6 +113,7 @@ pub fn scan_names(root: &Path) -> Result<Vec<PhysicalPhoto>, String> {
             id: PhotoId(i as u64),
             members,
             aspect_ratio: 1.5,
+            capture_time: None,
         })
         .collect())
 }
@@ -118,11 +122,14 @@ pub fn read_metadata(photos: &[PhysicalPhoto]) -> Vec<PhotoMetadata> {
     photos
         .iter()
         .filter_map(|photo| {
+            let key = photo.members.first()?;
+            let capture_time = crate::metadata::capture_time(key);
             Some(PhotoMetadata {
-                key: photo.members.first()?.clone(),
-                timestamp: crate::metadata::timestamp(&photo.members[0]),
+                key: key.clone(),
+                timestamp: crate::metadata::timestamp_from(key, capture_time),
                 aspect_ratio: crate::decode::aspect_ratio(photo.display_source(false))
                     .unwrap_or(1.5),
+                capture_time,
             })
         })
         .collect()
@@ -132,18 +139,19 @@ pub fn scan(root: &Path) -> Result<Vec<PhysicalPhoto>, String> {
     let mut photos = scan_names(root)?;
     let metadata: BTreeMap<_, _> = read_metadata(&photos)
         .into_iter()
-        .map(|metadata| (metadata.key, (metadata.timestamp, metadata.aspect_ratio)))
+        .map(|m| (m.key, (m.timestamp, m.aspect_ratio, m.capture_time)))
         .collect();
     for photo in &mut photos {
-        if let Some((_, aspect_ratio)) = metadata.get(&photo.members[0]) {
+        if let Some((_, aspect_ratio, capture_time)) = metadata.get(&photo.members[0]) {
             photo.aspect_ratio = *aspect_ratio;
+            photo.capture_time = *capture_time;
         }
     }
     photos.sort_by_cached_key(|photo| {
         (
             metadata
                 .get(&photo.members[0])
-                .map_or(0, |(timestamp, _)| *timestamp),
+                .map_or(0, |(timestamp, _, _)| *timestamp),
             photo.members[0].clone(),
         )
     });

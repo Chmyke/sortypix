@@ -13,23 +13,40 @@ impl Gallery {
         };
         let turns = self.turns[self.selected];
         let (rect, response) = ui.allocate_exact_size(ui.available_size(), Sense::click_and_drag());
-        let native_source = photo.display_source(self.zoom);
+        let pixels_per_point = ui.ctx().pixels_per_point();
+        let fit_source = photo.display_source(false);
+        let fit_edge = view_edge(&photo, turns, rect.size(), pixels_per_point);
+        let native_source = photo.display_source(true);
         let preview_only = self.zoom
             && self.textures.error(native_source, 0).is_some()
-            && photo.display_source(false) != native_source;
-        let source = if preview_only {
-            photo.display_source(false)
-        } else {
+            && fit_source != native_source;
+        let source = if self.zoom && !preview_only {
             native_source
+        } else {
+            fit_source
         };
-        if let Some(texture) = self.textures.immediate(source, 0) {
+        // Native pixels only for 100% zoom; the fitted view keeps showing meanwhile.
+        let (picture, is_native) = if self.zoom {
+            let requested = self.textures.immediate(source, 0);
+            if self.textures.cached(source, 0).is_some() {
+                (requested, true)
+            } else {
+                (
+                    self.textures.cached(fit_source, fit_edge).or(requested),
+                    false,
+                )
+            }
+        } else {
+            (self.textures.immediate(fit_source, fit_edge), false)
+        };
+        if let Some(texture) = picture {
             let native = if turns % 2 == 1 {
                 egui::vec2(texture.size_vec2().y, texture.size_vec2().x)
             } else {
                 texture.size_vec2()
             };
-            let size = if self.zoom {
-                native / ui.ctx().pixels_per_point()
+            let size = if is_native {
+                native / pixels_per_point
             } else {
                 textures::fit(texture.size_vec2(), rect.size(), turns)
             };
@@ -47,7 +64,7 @@ impl Gallery {
         } else {
             let text = self
                 .textures
-                .error(source, 0)
+                .error(source, if self.zoom { 0 } else { fit_edge })
                 .unwrap_or("Loading full resolution…");
             ui.painter().text(
                 rect.center(),
@@ -123,11 +140,22 @@ impl Gallery {
         }
         for index in [self.selected.saturating_sub(1), self.selected + 1] {
             if let Some(next) = self.photos.get(index) {
-                let source = next.display_source(self.zoom);
-                self.textures.immediate(source, 0);
+                let edge = view_edge(next, self.turns[index], rect.size(), pixels_per_point);
+                self.textures.immediate(next.display_source(false), edge);
             }
         }
     }
+}
+
+/// Bucket for `photo` fitted to `bounds`, from its catalog proportions.
+fn view_edge(
+    photo: &sortypix_app::catalog::PhysicalPhoto,
+    turns: u8,
+    bounds: egui::Vec2,
+    pixels_per_point: f32,
+) -> u32 {
+    let fitted = textures::fit(egui::vec2(photo.aspect_ratio, 1.), bounds, turns);
+    textures::view_edge(photo.display_source(false), fitted, pixels_per_point)
 }
 
 /// Permanent corner control of the full-screen view; never sorts the photo.

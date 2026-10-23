@@ -6,7 +6,7 @@ use std::{
 pub struct Diagnostic {
     pub folder: PathBuf,
     start: Instant,
-    stage: usize,
+    pub(crate) stage: usize,
     last: Instant,
     pub keys: Vec<(egui::Key, bool)>,
     pub click_target: Option<egui::Pos2>,
@@ -21,10 +21,25 @@ pub struct Diagnostic {
     click_pending: bool,
     wheel: Option<egui::Pos2>,
     count: usize,
-    pointer: Option<(egui::Pos2, bool)>,
+    pub(crate) pointer: Option<(egui::Pos2, bool)>,
     held_at: Option<egui::Pos2>,
     held_id: Option<sortypix_core::PhotoId>,
+    /// Sortypix AI: text typed into the focused field, a pointer move, the AI stages.
+    #[cfg(feature = "ai")]
+    pub(crate) text: Option<String>,
+    #[cfg(feature = "ai")]
+    pub(crate) hover: Option<egui::Pos2>,
+    /// Sortypix AI: a plain wheel turn down at this point (scrolls the shortcuts dialog).
+    #[cfg(feature = "ai")]
+    pub(crate) scroll: Option<egui::Pos2>,
+    #[cfg(feature = "ai")]
+    pub(crate) ai: Option<crate::ai::diagnostic::Run>,
 }
+/// Sortypix AI also waits for its model and the analysis of the folder.
+#[cfg(not(feature = "ai"))]
+const LIMIT: Duration = Duration::from_secs(45);
+#[cfg(feature = "ai")]
+const LIMIT: Duration = Duration::from_secs(150);
 impl Diagnostic {
     pub fn record_incomplete(&self, photos: usize, undo: usize, viewer: bool) {
         if !self.folder.join("PASS.txt").exists() && !self.folder.join("FAIL.txt").exists() {
@@ -59,6 +74,14 @@ impl Diagnostic {
             pointer: None,
             held_at: None,
             held_id: None,
+            #[cfg(feature = "ai")]
+            text: None,
+            #[cfg(feature = "ai")]
+            hover: None,
+            #[cfg(feature = "ai")]
+            scroll: None,
+            #[cfg(feature = "ai")]
+            ai: None,
         }
     }
     pub fn inject(&mut self, input: &mut egui::RawInput) {
@@ -80,9 +103,27 @@ impl Diagnostic {
                 modifiers: egui::Modifiers::default(),
             });
         }
+        #[cfg(feature = "ai")]
+        if let Some(pos) = self.hover.take() {
+            input.events.push(egui::Event::PointerMoved(pos));
+        }
+        #[cfg(feature = "ai")]
+        if let Some(pos) = self.scroll.take() {
+            input.events.push(egui::Event::PointerMoved(pos));
+            input.events.push(egui::Event::MouseWheel {
+                unit: egui::MouseWheelUnit::Line,
+                delta: egui::vec2(0., -40.),
+                phase: egui::TouchPhase::Move,
+                modifiers: egui::Modifiers::NONE,
+            });
+        }
         input
             .events
             .push(egui::Event::ModifiersChanged(egui::Modifiers::default()));
+        #[cfg(feature = "ai")]
+        if let Some(text) = self.text.take() {
+            input.events.push(egui::Event::Text(text));
+        }
         for (key, ctrl) in self.keys.drain(..) {
             input
                 .events
@@ -142,9 +183,14 @@ impl crate::gallery::Gallery {
                 );
             }
         }
-        if d.start.elapsed() > Duration::from_secs(45) {
+        if d.start.elapsed() > LIMIT {
             d.record_incomplete(self.photos.len(), self.undo_count, self.viewer);
             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+            return;
+        }
+        #[cfg(feature = "ai")]
+        if d.ai.is_some() {
+            self.ai_diagnostic(ctx);
             return;
         }
         if self.busy
@@ -419,7 +465,14 @@ impl crate::gallery::Gallery {
             }
             54 => d.pointer = d.mouse_target.map(|p| (p, false)),
             _ => {
-                if self.photos.len() == d.count && self.undo_count == 0 && !self.viewer {
+                let passed = self.photos.len() == d.count && self.undo_count == 0 && !self.viewer;
+                // Sortypix AI goes on with its own stages, which write the verdict.
+                #[cfg(feature = "ai")]
+                if passed {
+                    d.ai = Some(Default::default());
+                    return;
+                }
+                if passed {
                     let _ = std::fs::write(
                         d.folder.join("PASS.txt"),
                         "Keyboard, batch click, undo, full screen, zoom, rotation, resize/UI scale, collapse, shortcut editing/conflicts/persistence/dispatch keep/reject-all icons very large thumbnails, Ctrl+wheel, rotate on photo, decision glow and mouse swap notice verified",

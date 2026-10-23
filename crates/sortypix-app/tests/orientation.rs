@@ -79,6 +79,20 @@ fn all_eight_exif_orientations_match_known_corners_in_both_decoders() {
                 );
             }
         }
+        // Reduced previews take the fast JPEG path on Windows; same orientation, same corner.
+        let preview = decode::decode(&path, Some(40)).expect("decode preview");
+        assert_eq!(
+            (preview.width, preview.height),
+            if orientation <= 4 { (40, 20) } else { (20, 40) },
+            "preview orientation {orientation}"
+        );
+        let pixel = &preview.rgba[(2 * preview.width as usize + 2) * 4..][..3];
+        for (actual, want) in pixel.iter().zip(colors[orientation - 1]) {
+            assert!(
+                actual.abs_diff(want) < 16,
+                "preview orientation {orientation}: {pixel:?}"
+            );
+        }
     }
 }
 #[test]
