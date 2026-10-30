@@ -38,8 +38,8 @@
       },
       {
         "tag": "fix",
-        "en": "A photo deleted by another program while you sort simply leaves the grid, and a move only counts once the file has really arrived.",
-        "fr": "Une photo supprimée par un autre programme pendant le tri quitte simplement la grille, et un déplacement ne compte qu'une fois le fichier vraiment arrivé."
+        "en": "A photo another program takes away while you sort simply leaves the grid, and a move only counts once the file has really arrived.",
+        "fr": "Une photo retirée par un autre programme pendant le tri quitte simplement la grille, et un déplacement ne compte qu'une fois le fichier vraiment arrivé."
       }
     ]
   },

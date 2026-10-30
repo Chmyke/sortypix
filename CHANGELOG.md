@@ -11,7 +11,7 @@ What changed in Sortypix, as you would notice it. Newest first.
 - **New** · JPEG XL photos are welcome, along with .jfif, .jpe and a few more RAW flavours.
 - **New** · Sortypix AI keeps bursts together in the grid, and a Bursts order shows only them, one burst after the other.
 - **Fixed** · A locked SD card or a read-only drive is now said at opening, instead of a puzzling error at the first click.
-- **Fixed** · A photo deleted by another program while you sort simply leaves the grid, and a move only counts once the file has really arrived.
+- **Fixed** · A photo another program takes away while you sort simply leaves the grid, and a move only counts once the file has really arrived.
 
 ## 0.3.0 · 2026-10-23
 
