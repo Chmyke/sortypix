@@ -85,6 +85,7 @@ impl crate::gallery::Gallery {
             b.started.elapsed().as_secs_f64() * 1000.,
         );
         if self.busy
+            || !self.in_flight.is_empty()
             || self.scanning
             || b.opening.viewport_ms.is_none()
             || b.opening.metadata_ms.is_none()

@@ -1,6 +1,7 @@
 //! ROLE: Serializes reversible filesystem gestures without replacement.
 //! OWNER: One application worker for all folders in a session.
-//! INVARIANTS: Every successful move is journaled; failed undo remains retryable.
+//! INVARIANTS: Every successful move is journaled; failed undo remains retryable. A move counts
+//! only once the file is found at its destination with its size, and gone from its source.
 use crate::catalog::PhysicalPhoto;
 use sortypix_core::{Decision, PhotoId};
 use std::{
@@ -140,27 +141,42 @@ impl<F: FileOps> Storage<F> {
         let targets = targets(photo, &destination)?;
         let start = tx.moves.len();
         for (from, to) in photo.members.iter().zip(targets) {
+            let bytes = fs::symlink_metadata(from).map(|m| m.len());
             if let Err(error) = self.files.move_no_replace(from, &to) {
-                let mut message = format!("Could not move {}: {error}", from.display());
-                while tx.moves.len() > start {
-                    let moved = &tx.moves[tx.moves.len() - 1];
-                    if let Err(error) = self.files.move_no_replace(&moved.to, &moved.from) {
-                        message.push_str(&format!(
-                            ". Recovery pending for {}: {error}. Use Undo to retry.",
-                            moved.to.display()
-                        ));
-                        break;
-                    }
-                    tx.moves.pop();
-                }
-                return Err(message);
+                let message = format!("Could not move {}: {error}", from.display());
+                return Err(self.roll_back(tx, start, message));
             }
-            tx.moves.push(Movement {
-                from: from.clone(),
-                to,
-            });
+            let arrived = arrived(&to, from, bytes.as_ref().ok().copied());
+            // Journaled when the file did move, even damaged, so it can be taken back; a copy
+            // left beside an intact source is not, and nothing is deleted.
+            if fs::symlink_metadata(&to).is_ok() && fs::symlink_metadata(from).is_err() {
+                tx.moves.push(Movement {
+                    from: from.clone(),
+                    to,
+                });
+            }
+            if let Err(problem) = arrived {
+                let message = format!("Could not move {}: {problem}", from.display());
+                return Err(self.roll_back(tx, start, message));
+            }
         }
         Ok(())
+    }
+    /// Takes back the moves of the current group (from `start`); what cannot be taken back
+    /// stays journaled for Undo.
+    fn roll_back(&mut self, tx: &mut Transaction, start: usize, mut message: String) -> String {
+        while tx.moves.len() > start {
+            let moved = &tx.moves[tx.moves.len() - 1];
+            if let Err(error) = self.files.move_no_replace(&moved.to, &moved.from) {
+                message.push_str(&format!(
+                    ". Recovery pending for {}: {error}. Use Undo to retry.",
+                    moved.to.display()
+                ));
+                break;
+            }
+            tx.moves.pop();
+        }
+        message
     }
     pub fn undo(&mut self) -> BatchReport {
         let mut report = BatchReport::default();
@@ -186,6 +202,24 @@ impl<F: FileOps> Storage<F> {
     pub fn undo_count(&self) -> usize {
         self.journal.len()
     }
+}
+/// The file left `from` and reached `to` whole: a driver that reports success without moving
+/// (some network or USB devices) must not make a photo disappear from the session.
+fn arrived(to: &Path, from: &Path, bytes: Option<u64>) -> Result<(), String> {
+    let found =
+        fs::symlink_metadata(to).map_err(|_| "it did not reach the sorting folder".to_owned())?;
+    if bytes.is_some_and(|bytes| bytes != found.len()) {
+        return Err(format!(
+            "{} has {} bytes instead of {}",
+            to.display(),
+            found.len(),
+            bytes.unwrap_or_default()
+        ));
+    }
+    if fs::symlink_metadata(from).is_ok() {
+        return Err("it is still in the folder after the move".into());
+    }
+    Ok(())
 }
 fn targets(photo: &PhysicalPhoto, destination: &Path) -> Result<Vec<PathBuf>, String> {
     for suffix in 0..u32::MAX {
@@ -213,6 +247,52 @@ fn targets(photo: &PhysicalPhoto, destination: &Path) -> Result<Vec<PathBuf>, St
         }
     }
     Err("No available destination name".into())
+}
+/// The folder's volume refuses every write. Only what the system reports for sure counts: a
+/// permission denied on one folder still shows at the first gesture, with its own message.
+#[cfg(windows)]
+pub fn read_only(folder: &Path) -> bool {
+    use std::os::windows::ffi::OsStrExt;
+    use windows::{
+        Win32::Storage::FileSystem::{GetVolumeInformationW, GetVolumePathNameW},
+        core::PCWSTR,
+    };
+    /// FILE_READ_ONLY_VOLUME (winnt.h).
+    const READ_ONLY_VOLUME: u32 = 0x0008_0000;
+    let wide: Vec<u16> = folder.as_os_str().encode_wide().chain(Some(0)).collect();
+    let mut volume = [0u16; 1024];
+    let mut flags = 0u32;
+    // SAFETY: both buffers outlive the calls; the system NUL-terminates the volume path.
+    unsafe {
+        GetVolumePathNameW(PCWSTR(wide.as_ptr()), &mut volume).is_ok()
+            && GetVolumeInformationW(
+                PCWSTR(volume.as_ptr()),
+                None,
+                None,
+                None,
+                Some(&mut flags),
+                None,
+            )
+            .is_ok()
+            && flags & READ_ONLY_VOLUME != 0
+    }
+}
+/// The folder cannot receive `keep/` and `rejected/` for this user (read-only mount or rights).
+#[cfg(not(windows))]
+pub fn read_only(folder: &Path) -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        use std::{ffi::CString, os::unix::ffi::OsStrExt};
+        let Ok(path) = CString::new(folder.as_os_str().as_bytes()) else {
+            return false;
+        };
+        // SAFETY: a NUL-terminated path that outlives the call.
+        unsafe { libc::access(path.as_ptr(), libc::W_OK) != 0 }
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        fs::metadata(folder).is_ok_and(|m| m.permissions().readonly())
+    }
 }
 fn cleanup_dirs(dirs: &[PathBuf]) {
     for dir in dirs.iter().rev() {

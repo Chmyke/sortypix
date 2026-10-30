@@ -7,6 +7,11 @@ pub fn aspect_ratio(path: &Path) -> Option<f32> {
         None => {}
     }
     use image::ImageDecoder;
+    if is_jxl(path) {
+        // The decoder reports the oriented size.
+        let (width, height) = jxl_decoder(path).ok()?.dimensions();
+        return (width > 0 && height > 0).then_some(width as f32 / height as f32);
+    }
     let mut decoder = image::ImageReader::open(path)
         .ok()?
         .with_guessed_format()
@@ -40,30 +45,54 @@ pub fn decode(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String
     // decode then a resize on 12 and 24 MP photos (docs/recherche, 2026-10-22).
     #[cfg(windows)]
     if let Some(edge) = max_edge
-        && matches!(crate::catalog::extension(path).as_str(), "jpg" | "jpeg")
+        && crate::catalog::is_jpeg(path)
         && let Ok(image) = crate::wic::decode(path, Some(edge))
     {
         return Ok(image);
     }
     use image::ImageDecoder;
+    if is_jxl(path) {
+        let mut decoder = jxl_decoder(path)?;
+        decoder.set_limits(limits()).map_err(|e| e.to_string())?;
+        let image = image::DynamicImage::from_decoder(decoder).map_err(|e| e.to_string())?;
+        return Ok(finish(image, max_edge));
+    }
     let mut reader = image::ImageReader::open(path)
         .map_err(|e| e.to_string())?
         .with_guessed_format()
         .map_err(|e| e.to_string())?;
-    let mut limits = image::Limits::default();
-    limits.max_alloc = Some(512 * 1024 * 1024);
-    reader.limits(limits);
+    reader.limits(limits());
     let mut decoder = reader.into_decoder().map_err(|e| e.to_string())?;
     let orientation = decoder.orientation().map_err(|e| e.to_string())?;
     let mut image = image::DynamicImage::from_decoder(decoder).map_err(|e| e.to_string())?;
     image.apply_orientation(orientation);
+    Ok(finish(image, max_edge))
+}
+fn limits() -> image::Limits {
+    let mut limits = image::Limits::default();
+    limits.max_alloc = Some(512 * 1024 * 1024);
+    limits
+}
+/// JPEG XL, read by jxl-oxide (pure Rust, MIT or Apache-2.0), oriented as the file says.
+fn is_jxl(path: &Path) -> bool {
+    crate::catalog::extension(path) == "jxl"
+}
+fn jxl_decoder(
+    path: &Path,
+) -> Result<jxl_oxide::integration::JxlDecoder<std::io::BufReader<std::fs::File>>, String> {
+    let file = std::fs::File::open(path).map_err(|e| e.to_string())?;
+    jxl_oxide::integration::JxlDecoder::new(std::io::BufReader::new(file))
+        .map_err(|e| format!("{}: {e}", path.display()))
+}
+/// Scales `image` down to `max_edge`, never up.
+fn finish(mut image: image::DynamicImage, max_edge: Option<u32>) -> DecodedImage {
     let native = (image.width(), image.height());
     // Never enlarge: a bigger bucket than the photo would only cost memory and time.
     if let Some(edge) = max_edge.filter(|&edge| image.width().max(image.height()) > edge) {
         image = image.thumbnail(edge.max(1), edge.max(1));
     }
     let (width, height) = (image.width(), image.height());
-    Ok(DecodedImage {
+    DecodedImage {
         rgba: image.into_rgba8().into_raw(),
         width,
         height,
@@ -72,7 +101,7 @@ pub fn decode(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String
         } else {
             Resolution::Preview
         },
-    })
+    }
 }
 
 /// Formats the image crate does not read: RAW, and HEIF/AVIF.
@@ -92,12 +121,27 @@ fn system_format(path: &Path) -> Option<SystemFormat> {
         None
     }
 }
-/// Windows decodes the sensor data when a RAW codec is installed; otherwise, and on other
-/// systems, the preview the camera embedded stands in.
+/// A reduced size comes from the preview the camera embedded when it is large enough: three to
+/// six times faster than the sensor (canon-350d.CR2, 2026-10-30). Windows decodes the sensor for
+/// the native size (100 % zoom), and for a reduced size the previews are too small for;
+/// without a RAW codec, and on other systems, the previews stand in.
 #[cfg(windows)]
 fn decode_raw(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String> {
-    crate::wic::decode(path, max_edge)
-        .or_else(|error| crate::embedded::decode(path, max_edge).map_err(|_| error))
+    let preview = max_edge.and_then(|edge| {
+        crate::embedded::decode(path, Some(edge))
+            .ok()
+            .filter(|image| large_enough(image, edge))
+    });
+    match preview {
+        Some(image) => Ok(image),
+        None => crate::wic::decode(path, max_edge)
+            .or_else(|error| crate::embedded::decode(path, max_edge).map_err(|_| error)),
+    }
+}
+/// Within a few pixels of `edge` (previews and sensor differ by their margins).
+#[cfg(windows)]
+fn large_enough(image: &DecodedImage, edge: u32) -> bool {
+    image.width.max(image.height) + 32 >= edge
 }
 #[cfg(not(windows))]
 fn decode_raw(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String> {

@@ -3,7 +3,7 @@
 Sort thousands of photos fast: keep the good ones, set the rest aside.
 Desktop app for Windows and Linux, written in Rust. Download and demos: https://mickaelmancini.com/sortypix/
 
-Version 0.3.0 for Windows, and for Linux (x86_64 and ARM64); Sortypix AI 0.3.0 beta for Windows. English interface, offline, free and open source (MIT).
+Version 0.4.0 for Windows, and for Linux (x86_64 and ARM64); Sortypix AI 0.4.0 beta for Windows. English interface, offline, free and open source (MIT).
 
 > **Two separate apps, pick one.** **Sortypix** is the light sorter (about 5 MB, Windows and
 > Linux): you decide everything yourself. **Sortypix AI** (beta) is a separate, heavier app (about

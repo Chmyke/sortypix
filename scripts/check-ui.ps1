@@ -122,3 +122,4 @@ $reports = Join-Path $root 'target/reports'
 [IO.File]::WriteAllText((Join-Path $reports 'latest-ui.txt'), $run, (New-Object Text.UTF8Encoding($false)))
 Copy-Item -LiteralPath (Join-Path $benchmark 'performance.txt') -Destination (Join-Path $reports 'ui-performance.txt')
 Write-Output "UI and byte restoration: PASS ($run)"
+& (Join-Path $PSScriptRoot 'check-fullscreen.ps1')

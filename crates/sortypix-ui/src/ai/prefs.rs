@@ -1,8 +1,8 @@
 //! ROLE: Sortypix AI only. Its choices in the settings file shared with Sortypix.
 //! OWNER: Gallery.settings; these fields live in `Settings.extra`, which normal Sortypix reads
 //! and writes back unchanged.
-//! INVARIANTS: A missing or malformed value reads as the default; the capture order stays in
-//! the shared `newest_first`, so both editions agree on oldest or newest first.
+//! INVARIANTS: A missing or malformed value reads as the default; the file orders (date, name,
+//! size) stay in the shared `Settings.order`, so both editions agree on them.
 use super::filters::{Kind, Kinds};
 use super::suggest::{PERCENT_DEFAULT, clamp_percent};
 use super::view::Order;
@@ -35,20 +35,23 @@ pub(crate) fn order(settings: &Settings) -> Order {
         Some("score") => Order::LowestScore,
         Some("score-high") => Order::HighestScore,
         Some("varied") => Order::MostVaried,
-        _ if settings.newest_first => Order::Newest,
-        _ => Order::Oldest,
+        Some("bursts") => Order::Bursts,
+        _ => Order::from_file(settings.order),
     }
 }
 
 pub(crate) fn set_order(settings: &mut Settings, order: Order) {
-    let value = match order {
-        Order::Oldest | Order::Newest => {
-            settings.newest_first = order == Order::Newest;
+    let value = match order.file() {
+        Some(file) => {
+            settings.set_order(file);
             "capture"
         }
-        Order::LowestScore => "score",
-        Order::HighestScore => "score-high",
-        Order::MostVaried => "varied",
+        None => match order {
+            Order::LowestScore => "score",
+            Order::HighestScore => "score-high",
+            Order::MostVaried => "varied",
+            _ => "bursts",
+        },
     };
     settings.extra.insert(ORDER_KEY.into(), value.into());
 }
@@ -139,7 +142,7 @@ mod tests {
         settings.save(&path).unwrap();
         // Normal Sortypix knows none of these fields: it loads, flips its own order, saves.
         let mut normal = Settings::load(&path);
-        normal.newest_first = true;
+        normal.set_order(sortypix_app::order::FileOrder::Newest);
         normal.save(&path).unwrap();
         let back = Settings::load(&path);
         assert_eq!(suggest_percent(&back), 35);
@@ -155,7 +158,17 @@ mod tests {
         assert_eq!(order(&back), Order::Newest);
         set_order(&mut back, Order::HighestScore);
         assert_eq!(order(&back), Order::HighestScore);
+        set_order(&mut back, Order::Bursts);
+        assert_eq!(order(&back), Order::Bursts);
         assert!(back.newest_first, "the capture order stays as it was");
+        // A size order chosen in either edition is the other's too.
+        set_order(&mut back, Order::Largest);
+        assert_eq!(back.order, sortypix_app::order::FileOrder::Largest);
+        assert_eq!(order(&back), Order::Largest);
+        back.set_order(sortypix_app::order::FileOrder::Name);
+        set_order(&mut back, Order::Bursts);
+        set_order(&mut back, Order::Name);
+        assert_eq!(order(&back), Order::Name);
         set_show(&mut back, None);
         set_hidden(&mut back, Kinds::default());
         assert_eq!(show(&back), None);

@@ -48,7 +48,7 @@ impl crate::gallery::Gallery {
             return;
         }
         if !session_probe_ready(
-            self.busy,
+            self.busy || !self.in_flight.is_empty(),
             self.scanning,
             self.photos.is_empty(),
             self.catalog_final,

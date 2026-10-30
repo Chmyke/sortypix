@@ -20,7 +20,10 @@ pub struct Settings {
     pub window: Option<Window>,
     pub thumbnail_size: f32,
     pub swapped: bool,
+    /// Mirror of `order == Newest`, for the versions before `order` (both editions read it).
     pub newest_first: bool,
+    #[serde(deserialize_with = "lenient_order")]
+    pub order: crate::order::FileOrder,
     pub shortcuts: BTreeMap<String, Shortcut>,
     /// Fields this build does not know (those of Sortypix AI, of a later version), written
     /// back unchanged so both editions can share one settings file.
@@ -95,10 +98,17 @@ fn xdg_home(variable: &str, fallback: &str) -> PathBuf {
 }
 impl Settings {
     pub fn load(path: &Path) -> Self {
-        let mut settings: Self = std::fs::read(path)
+        let raw: Option<serde_json::Value> = std::fs::read(path)
             .ok()
-            .and_then(|s| serde_json::from_slice(&s).ok())
+            .and_then(|s| serde_json::from_slice(&s).ok());
+        let has_order = raw.as_ref().is_some_and(|v| v.get("order").is_some());
+        let mut settings: Self = raw
+            .and_then(|v| serde_json::from_value(v).ok())
             .unwrap_or_default();
+        // A file from before `order` keeps its oldest or newest first.
+        if !has_order && settings.newest_first {
+            settings.order = crate::order::FileOrder::Newest;
+        }
         if !settings.thumbnail_size.is_finite() {
             settings.thumbnail_size = 190.0;
         }
@@ -106,6 +116,10 @@ impl Settings {
             .thumbnail_size
             .clamp(MIN_THUMBNAIL_SIZE, MAX_THUMBNAIL_SIZE);
         settings
+    }
+    pub fn set_order(&mut self, order: crate::order::FileOrder) {
+        self.order = order;
+        self.newest_first = order == crate::order::FileOrder::Newest;
     }
     pub fn save(&self, path: &Path) -> Result<(), String> {
         if let Some(parent) = path.parent() {
@@ -124,6 +138,14 @@ impl Settings {
         }
         result
     }
+}
+/// An order this build does not know (a later version) reads as the default instead of
+/// discarding every other setting.
+fn lenient_order<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<crate::order::FileOrder, D::Error> {
+    let value = <serde_json::Value as serde::Deserialize>::deserialize(deserializer)?;
+    Ok(crate::order::FileOrder::from_value(&value).unwrap_or_default())
 }
 #[cfg(windows)]
 fn replace(from: &Path, to: &Path) -> Result<(), String> {
@@ -163,6 +185,7 @@ impl Default for Settings {
             thumbnail_size: 190.0,
             swapped: false,
             newest_first: false,
+            order: crate::order::FileOrder::Oldest,
             shortcuts: BTreeMap::new(),
             extra: serde_json::Map::new(),
         }

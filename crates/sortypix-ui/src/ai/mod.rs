@@ -109,6 +109,9 @@ pub struct Ai {
     /// The worker's last snapshot, capture order, with each photo's quarter turns.
     base: Vec<PhysicalPhoto>,
     base_turns: Vec<u8>,
+    /// Place of each photo of `base` in the name or size order last shown, computed once per
+    /// snapshot and order.
+    rank: Option<(sortypix_app::order::FileOrder, Vec<usize>)>,
     /// What the analysis knows of each photo of `base`.
     facts: Vec<Facts>,
     /// Indices of `base` the grid shows, in display order.
@@ -200,6 +203,7 @@ impl Ai {
             opened: false,
             base: Vec::new(),
             base_turns: Vec::new(),
+            rank: None,
             facts: Vec::new(),
             view: Vec::new(),
             arranged_view: Vec::new(),
@@ -275,6 +279,7 @@ impl Ai {
             .collect();
         self.base = photos;
         self.base_turns = turns;
+        self.rank = None;
         self.stamp = None;
     }
 
@@ -378,11 +383,32 @@ impl Ai {
         percent: u32,
         show: Option<Kind>,
     ) -> (Vec<PhysicalPhoto>, Vec<u8>) {
-        self.arranged_view = view::arrange(&self.facts, how);
+        let file = how.order.file().filter(|_| how.order.ranked());
+        if let Some(file) = file
+            && self.rank.as_ref().is_none_or(|(of, _)| *of != file)
+        {
+            let mut rank = vec![0; self.base.len()];
+            for (place, i) in sortypix_app::order::arrange(&self.base, file)
+                .into_iter()
+                .enumerate()
+            {
+                rank[i] = place;
+            }
+            self.rank = Some((file, rank));
+        }
+        let rank = self.rank.as_ref().map_or(&[][..], |(_, rank)| rank);
+        self.arranged_view = view::arrange_ranked(&self.facts, how, rank);
         self.arranged = self.revision;
         self.remark(percent);
         let base = &self.base;
-        self.view = filters::apply(&self.arranged_view, |i| base[i].id.0, &self.marks, show);
+        let facts = &self.facts;
+        self.view = filters::apply(
+            &self.arranged_view,
+            |i| base[i].id.0,
+            |i| facts[i].burst.map(|b| b.group),
+            &self.marks,
+            show,
+        );
         let mut shown = vec![false; self.base.len()];
         for &i in &self.view {
             shown[i] = true;
@@ -547,11 +573,7 @@ impl Gallery {
     fn ai_arrangement(&self) -> Arrangement {
         let mut order = prefs::order(&self.settings);
         if order.needs_model() && matches!(self.ai.state(), State::Off(_)) {
-            order = if self.settings.newest_first {
-                Order::Newest
-            } else {
-                Order::Oldest
-            };
+            order = Order::from_file(self.settings.order);
         }
         let searching = self.ai.search.query().is_some();
         Arrangement {
@@ -576,6 +598,7 @@ impl Gallery {
         self.photos = photos;
         self.turns = turns;
         self.layout.invalidate();
+        self.hide_in_flight();
         self.selected = previous
             .and_then(|id| self.photos.iter().position(|p| p.id == id))
             .unwrap_or(self.selected)

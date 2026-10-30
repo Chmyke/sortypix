@@ -1,7 +1,7 @@
 ; Sortypix AI: a separate application installed beside Sortypix (own AppId, folder, menu entry).
 ; Built by build-installer-ai.ps1, which verifies the model files and passes their folder as
 ; /DModels and the generated notices as /DNotices. Never touches the Sortypix installation.
-#define AppVersion "0.3.0"
+#define AppVersion "0.4.0"
 #ifndef Models
   #error Build with build-installer-ai.ps1 (it verifies the models and defines Models).
 #endif

@@ -138,9 +138,18 @@ impl Gallery {
                 None => {}
             }
         }
-        for index in [self.selected.saturating_sub(1), self.selected + 1] {
+        // A decision shows the next photo: the one after it comes second, the previous last.
+        let ahead = [
+            self.selected + 1,
+            self.selected + 2,
+            self.selected.saturating_sub(1),
+        ];
+        for (n, index) in ahead.into_iter().enumerate() {
             if let Some(next) = self.photos.get(index) {
                 let edge = view_edge(next, self.turns[index], rect.size(), pixels_per_point);
+                if n == 1 && !textures::preload_second_ahead(edge) {
+                    continue;
+                }
                 self.textures.immediate(next.display_source(false), edge);
             }
         }

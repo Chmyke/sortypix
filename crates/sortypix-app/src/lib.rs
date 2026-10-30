@@ -7,6 +7,7 @@ pub mod duplicates;
 pub mod embedded;
 pub mod engine;
 pub mod metadata;
+pub mod order;
 pub mod settings;
 #[cfg(windows)]
 pub mod shell_thumbnail;

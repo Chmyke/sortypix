@@ -219,7 +219,8 @@ impl Gallery {
         } else {
             how.order.label()
         };
-        let icon = if how.order == Order::Newest && !(how.searching && how.best_match) {
+        let descending = matches!(how.order, Order::Newest | Order::Largest);
+        let icon = if descending && !(how.searching && how.best_match) {
             Icon::Descending
         } else {
             Icon::Ascending
@@ -247,27 +248,7 @@ impl Gallery {
         egui::Popup::menu(&response).show(|ui| {
             ui.spacing_mut().button_padding = egui::vec2(10., 4.);
             ui.spacing_mut().item_spacing.y = 2.;
-            let entry = |ui: &mut egui::Ui, label: &str, checked: bool, enabled: bool| {
-                // The default fonts have no check mark glyph: it is drawn in the left padding.
-                let text = RichText::new(format!("     {label}"));
-                let text = if checked {
-                    text.color(theme::BLUE)
-                } else {
-                    text
-                };
-                let response = ui.add_enabled(enabled, egui::Button::new(text).frame(false));
-                if checked {
-                    let c = response.rect.left_center() + egui::vec2(9., 0.);
-                    let stroke = Stroke::new(1.6, theme::BLUE);
-                    let points = vec![
-                        c + egui::vec2(-4., 0.),
-                        c + egui::vec2(-1.5, 3.),
-                        c + egui::vec2(4., -3.5),
-                    ];
-                    ui.painter().add(egui::Shape::line(points, stroke));
-                }
-                (response.clicked(), response.rect.center())
-            };
+            let entry = crate::toolbar::menu_entry;
             let (clicked, at) = entry(
                 ui,
                 "Best match (while searching)",

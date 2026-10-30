@@ -1,5 +1,49 @@
 [
   {
+    "version": "0.4.0",
+    "date": "2026-10-30",
+    "items": [
+      {
+        "tag": "new",
+        "en": "A new order menu: oldest, newest, by name (IMG_2 comes before IMG_10, as it should), largest or smallest files first. Tiny files are often the misfires.",
+        "fr": "Un nouveau menu d'ordre : plus anciennes, plus récentes, par nom (IMG_2 avant IMG_10, comme il se doit), plus gros ou plus petits fichiers d'abord. Les tout petits fichiers sont souvent les ratés."
+      },
+      {
+        "tag": "new",
+        "en": "Keep and reject as fast as your fingers go: the photo leaves at once while the file moves behind the scenes, even on a slow USB stick.",
+        "fr": "Gardez et rejetez aussi vite que vos doigts : la photo part tout de suite pendant que le fichier se déplace en coulisses, même sur une clé USB poussive."
+      },
+      {
+        "en": "Huge folders show their first photos almost instantly, and a folder of 100,000 files opens more than twice as fast.",
+        "fr": "Les très gros dossiers montrent leurs premières photos presque aussitôt, et un dossier de 100 000 fichiers s'ouvre plus de deux fois plus vite."
+      },
+      {
+        "en": "RAW photos appear about three times faster in the grid and full screen. The full sensor still answers at 100% zoom.",
+        "fr": "Les photos RAW apparaissent environ trois fois plus vite dans la grille et en plein écran. Le capteur complet répond toujours au zoom 100 %."
+      },
+      {
+        "tag": "new",
+        "en": "JPEG XL photos are welcome, along with .jfif, .jpe and a few more RAW flavours.",
+        "fr": "Les photos JPEG XL sont les bienvenues, avec les .jfif, .jpe et quelques RAW de plus."
+      },
+      {
+        "tag": "new",
+        "en": "Sortypix AI keeps bursts together in the grid, and a Bursts order shows only them, one burst after the other.",
+        "fr": "Sortypix AI garde les rafales ensemble dans la grille, et un ordre Bursts n'affiche qu'elles, une rafale après l'autre."
+      },
+      {
+        "tag": "fix",
+        "en": "A locked SD card or a read-only drive is now said at opening, instead of a puzzling error at the first click.",
+        "fr": "Une carte SD verrouillée ou un disque en lecture seule est annoncé dès l'ouverture, au lieu d'une erreur déroutante au premier clic."
+      },
+      {
+        "tag": "fix",
+        "en": "A photo deleted by another program while you sort simply leaves the grid, and a move only counts once the file has really arrived.",
+        "fr": "Une photo supprimée par un autre programme pendant le tri quitte simplement la grille, et un déplacement ne compte qu'une fois le fichier vraiment arrivé."
+      }
+    ]
+  },
+  {
     "version": "0.3.0",
     "date": "2026-10-23",
     "items": [

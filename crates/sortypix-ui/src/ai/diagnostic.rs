@@ -2,7 +2,8 @@
 //! 4.5): wait for the analysis of the fixture folder, check the marks, "Reject suggested" then
 //! Ctrl+Z with the original bytes back, a search and its clearing, every entry of the order menu;
 //! then (task 4.6) the photo card by its shortcut and by a badge, the legend, each "show only"
-//! filter and a hidden badge kind, and the taskbar progress cleared at the end.
+//! filter and a hidden badge kind, and the taskbar progress cleared at the end. Bursts stay whole
+//! and together in the grid (search, filters, score orders).
 //! OWNER: `Gallery::run_diagnostic` hands over here once Sortypix's stages passed.
 //! INVARIANTS: Acts only through injected input (pointer, text, keys), like a person; checks
 //! the grid against the analysis results; writes PASS.txt or FAIL.txt in the probe folder.
@@ -121,9 +122,13 @@ fn script() -> Vec<Step> {
     steps.push(Check(None, Order::Oldest));
     for order in [
         Order::Newest,
+        Order::Name,
+        Order::Largest,
+        Order::Smallest,
         Order::LowestScore,
         Order::HighestScore,
         Order::MostVaried,
+        Order::Bursts,
         Order::Oldest,
     ] {
         steps.extend(click(Target::Order));
@@ -271,53 +276,98 @@ impl Gallery {
         if self.photos.len() != self.turns.len() {
             return Err("photos and turns differ in length".into());
         }
-        let facts: Vec<_> = ai.view.iter().map(|&i| ai.facts[i]).collect();
+        let group = |i: usize| ai.facts[i].burst.map(|b| b.group);
+        // "Bursts" keeps only the photos of a burst (the best match order ignores it).
+        let bursts_only = how.order == Order::Bursts && !(how.searching && how.best_match);
+        if bursts_only && ai.view.iter().any(|&i| group(i).is_none()) {
+            return Err("a photo outside any burst is shown in Bursts".into());
+        }
         if how.searching {
-            let matching = ai
-                .facts
-                .iter()
-                .filter(|f| f.similarity.is_some_and(|s| s >= SEARCH_MIN))
+            let matches = |i: usize| ai.facts[i].similarity.is_some_and(|s| s >= SEARCH_MIN);
+            // A matching photo brings its whole burst.
+            let expected = (0..ai.facts.len())
+                .filter(|&i| {
+                    matches(i)
+                        || group(i).is_some_and(|g| {
+                            (0..ai.facts.len()).any(|j| matches(j) && group(j) == Some(g))
+                        })
+                })
+                .filter(|&i| !bursts_only || group(i).is_some())
                 .count();
-            if matching != ai.view.len() {
+            if expected != ai.view.len() {
                 return Err(format!(
-                    "search shows {} photos, {matching} match",
+                    "search shows {} photos, {expected} match or share a burst with a match",
+                    ai.view.len()
+                ));
+            }
+        } else if bursts_only {
+            let expected = (0..ai.facts.len()).filter(|&i| group(i).is_some()).count();
+            if expected == 0 || ai.view.len() != expected {
+                return Err(format!(
+                    "Bursts shows {} photos, {expected} are in a burst",
                     ai.view.len()
                 ));
             }
         } else if ai.view.len() != ai.base.len() {
             return Err("photos hidden without a search".into());
         }
-        let pairs = ai.view.windows(2).zip(facts.windows(2));
-        let ordered =
-            |ok: &dyn Fn(usize, usize, &super::view::Facts, &super::view::Facts) -> bool| {
-                pairs.clone().all(|(i, f)| ok(i[0], i[1], &f[0], &f[1]))
+        if matches!(how.order, Order::Oldest | Order::Newest) && !how.best_match {
+            let fine = ai.view.windows(2).all(|w| match how.order {
+                Order::Oldest => w[0] < w[1],
+                _ => w[0] > w[1],
+            });
+            return if fine {
+                Ok(())
+            } else {
+                Err(format!("grid not in the expected order for {how:?}"))
             };
-        let fine = if how.searching && how.best_match {
-            ordered(&|_, _, a, b| a.similarity >= b.similarity)
-        } else {
-            match how.order {
-                Order::Oldest => ordered(&|a, b, _, _| a < b),
-                Order::Newest => ordered(&|a, b, _, _| a > b),
-                Order::LowestScore => ordered(&|a, b, fa, fb| match (fa.score, fb.score) {
-                    (Some(x), Some(y)) => x <= y,
-                    (Some(_), None) => true,
-                    (None, Some(_)) => false,
-                    (None, None) => a < b,
-                }),
-                Order::HighestScore => ordered(&|a, b, fa, fb| match (fa.score, fb.score) {
-                    (Some(x), Some(y)) => x >= y,
-                    (Some(_), None) => true,
-                    (None, Some(_)) => false,
-                    (None, None) => a < b,
-                }),
-                Order::MostVaried => ordered(&|a, b, fa, fb| match (fa.coverage, fb.coverage) {
-                    (Some(x), Some(y)) => x < y,
-                    (Some(_), None) => true,
-                    (None, Some(_)) => false,
-                    (None, None) => a < b,
-                }),
+        }
+        // Score, coverage, match, name, size and burst orders: each burst is one block, in capture order, placed by
+        // its best placed photo; blocks follow each other in the order's direction.
+        let mut blocks: Vec<Vec<usize>> = Vec::new();
+        for &i in &ai.view {
+            match blocks.last_mut() {
+                Some(last) if group(i).is_some() && group(last[0]) == group(i) => last.push(i),
+                _ => blocks.push(vec![i]),
             }
+        }
+        let mut seen = std::collections::HashSet::new();
+        for block in &blocks {
+            if !block.windows(2).all(|w| w[0] < w[1]) {
+                return Err(format!("a burst is not in capture order for {how:?}"));
+            }
+            if group(block[0]).is_some_and(|g| !seen.insert(g)) {
+                return Err(format!("a burst is split for {how:?}"));
+            }
+        }
+        // The key of a block (lower comes first), `None` for photos not analysed (they follow).
+        let key = |block: &Vec<usize>| -> Option<f32> {
+            let f = |i: usize| &ai.facts[i];
+            let keys = block.iter().filter_map(|&i| {
+                if how.searching && how.best_match {
+                    f(i).similarity.map(|s| -s)
+                } else {
+                    match how.order {
+                        Order::LowestScore => f(i).score,
+                        Order::HighestScore => f(i).score.map(|s| -s),
+                        Order::Bursts => Some(i as f32),
+                        Order::Name | Order::Largest | Order::Smallest => ai
+                            .rank
+                            .as_ref()
+                            .and_then(|(_, rank)| rank.get(i))
+                            .map(|&r| r as f32),
+                        _ => f(i).coverage.map(|c| c as f32),
+                    }
+                }
+            });
+            keys.reduce(f32::min)
         };
+        let fine = blocks.windows(2).all(|w| match (key(&w[0]), key(&w[1])) {
+            (Some(x), Some(y)) => x <= y,
+            (Some(_), None) => true,
+            (None, Some(_)) => false,
+            (None, None) => w[0][0] < w[1][0],
+        });
         if !fine {
             return Err(format!("grid not in the expected order for {how:?}"));
         }
@@ -348,7 +398,7 @@ impl Gallery {
             let _ = std::fs::write(folder.join("FAIL.txt"), format!("AI: {message}"));
             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
         };
-        if run.failed || self.busy || run.last.elapsed() < PACE {
+        if run.failed || self.busy || !self.in_flight.is_empty() || run.last.elapsed() < PACE {
             return;
         }
         let Some(&step) = run.steps.get(run.step) else {
@@ -599,22 +649,25 @@ impl Gallery {
                         self.ai.facts.iter().filter_map(|f| f.similarity).collect();
                     let best = sims.iter().copied().fold(f32::MIN, f32::max);
                     let worst = sims.iter().copied().fold(f32::MAX, f32::min);
-                    if self.photos.is_empty() || self.photos.len() == run.count {
+                    // The fixture folder is one burst: the grid shows it whole as soon as one
+                    // photo matches, so the search itself must still pick some photos, not all.
+                    let matching = sims.iter().filter(|&&s| s >= SEARCH_MIN).count();
+                    if self.photos.is_empty() || matching == 0 || matching == run.count {
                         return {
                             run.failed = true;
                             fail(
                                 ctx,
                                 format!(
-                                    "search '{WORDS}' kept {} of {} (cosine {worst:.3} to {best:.3}, threshold {SEARCH_MIN})",
-                                    self.photos.len(),
-                                    run.count
+                                    "search '{WORDS}' matched {matching} of {}, grid {} (cosine {worst:.3} to {best:.3}, threshold {SEARCH_MIN})",
+                                    run.count,
+                                    self.photos.len()
                                 ),
                             )
                         };
                     }
                     let label = self.ai_count_label().unwrap_or_default();
                     run.notes.push(format!(
-                        "search '{WORDS}' shows {label} (cosine {worst:.3} to {best:.3}, threshold {SEARCH_MIN})"
+                        "search '{WORDS}' matches {matching}, shows {label} with their bursts (cosine {worst:.3} to {best:.3}, threshold {SEARCH_MIN})"
                     ));
                 }
             }
@@ -757,19 +810,28 @@ impl Gallery {
                 }
                 run.step_waits = 0;
                 let ids: Vec<PhotoId> = self.photos.iter().map(|p| p.id).collect();
-                let expected: Vec<PhotoId> = self
-                    .ai
-                    .arranged_ids()
-                    .into_iter()
-                    .filter(|id| {
-                        show.is_none_or(|k| {
-                            self.ai
-                                .marks
-                                .by_id
-                                .get(&id.0)
-                                .is_some_and(|m| m.kinds.has(k))
-                        })
+                let has = |id: &PhotoId| {
+                    show.is_none_or(|k| {
+                        self.ai
+                            .marks
+                            .by_id
+                            .get(&id.0)
+                            .is_some_and(|m| m.kinds.has(k))
                     })
+                };
+                let burst =
+                    |id: &PhotoId| self.ai.facts_of(*id).and_then(|f| f.burst).map(|b| b.group);
+                let arranged = self.ai.arranged_ids();
+                // A photo of that kind brings its whole burst.
+                let bursts: Vec<usize> = arranged
+                    .iter()
+                    .filter(|id| has(id))
+                    .filter_map(burst)
+                    .collect();
+                let expected: Vec<PhotoId> = arranged
+                    .iter()
+                    .copied()
+                    .filter(|id| has(id) || burst(id).is_some_and(|g| bursts.contains(&g)))
                     .collect();
                 if self.ai_show() != show || ids != expected {
                     return {

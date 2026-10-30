@@ -3,9 +3,11 @@
 //! OWNER: `Ai::arrange` filters the arranged view with [`apply`]; `marks::paint` asks a mark
 //! for its first badge not hidden.
 //! INVARIANTS: Filtering never changes the marks: they are computed on the whole arranged view
-//! first, so "Low score only" shows the same photos the grid marks as low. A hidden badge hides
+//! first, so "Low score only" shows the photos the grid marks as low, plus their burst sisters. A hidden badge hides
 //! the badge only; the red outline of a suggested photo stays (it is what "Reject suggested"
 //! would move).
+use std::collections::HashSet;
+
 use super::suggest::Marks;
 
 /// The three kinds of marks of the design board.
@@ -81,20 +83,28 @@ pub(crate) fn show_label(show: Option<Kind>) -> &'static str {
     }
 }
 
-/// The photos of `view` (indices, display order) that `show` keeps; `id` gives a photo's key
-/// in `marks`. Order is kept.
+/// The photos of `view` (indices, display order) that `show` keeps, each with the whole burst
+/// it belongs to (`burst` gives a photo's burst), so its sisters stay at hand to compare; `id`
+/// gives a photo's key in `marks`. Order is kept.
 pub(crate) fn apply(
     view: &[usize],
     id: impl Fn(usize) -> u64,
+    burst: impl Fn(usize) -> Option<usize>,
     marks: &Marks,
     show: Option<Kind>,
 ) -> Vec<usize> {
     let Some(kind) = show else {
         return view.to_vec();
     };
+    let kept = |i: usize| marks.by_id.get(&id(i)).is_some_and(|m| m.kinds.has(kind));
+    let bursts: HashSet<usize> = view
+        .iter()
+        .filter(|&&i| kept(i))
+        .filter_map(|&i| burst(i))
+        .collect();
     view.iter()
         .copied()
-        .filter(|&i| marks.by_id.get(&id(i)).is_some_and(|m| m.kinds.has(kind)))
+        .filter(|&i| kept(i) || burst(i).is_some_and(|b| bursts.contains(&b)))
         .collect()
 }
 
@@ -102,6 +112,10 @@ pub(crate) fn apply(
 mod tests {
     use super::*;
     use crate::ai::suggest::{Badge, Mark};
+
+    fn no_burst(_: usize) -> Option<usize> {
+        None
+    }
 
     fn mark(kinds: Kinds) -> Mark {
         Mark {
@@ -140,12 +154,46 @@ mod tests {
         // View indices 0..4 hold ids 13, 12, 11, 10 (13 has no mark).
         let view = [0, 1, 2, 3];
         let id = |i: usize| 13 - i as u64;
-        assert_eq!(apply(&view, id, &marks, None), view);
-        assert_eq!(apply(&view, id, &marks, Some(Kind::Low)), [3]);
-        assert_eq!(apply(&view, id, &marks, Some(Kind::OffTopic)), [2]);
-        assert_eq!(apply(&view, id, &marks, Some(Kind::Burst)), [1, 3]);
-        assert!(apply(&[], id, &marks, Some(Kind::Burst)).is_empty());
-        assert!(apply(&view, id, &Marks::default(), Some(Kind::Low)).is_empty());
+        assert_eq!(apply(&view, id, no_burst, &marks, None), view);
+        assert_eq!(apply(&view, id, no_burst, &marks, Some(Kind::Low)), [3]);
+        assert_eq!(
+            apply(&view, id, no_burst, &marks, Some(Kind::OffTopic)),
+            [2]
+        );
+        assert_eq!(
+            apply(&view, id, no_burst, &marks, Some(Kind::Burst)),
+            [1, 3]
+        );
+        assert!(apply(&[], id, no_burst, &marks, Some(Kind::Burst)).is_empty());
+        assert!(apply(&view, id, no_burst, &Marks::default(), Some(Kind::Low)).is_empty());
+    }
+
+    #[test]
+    fn show_only_brings_the_whole_burst_of_a_kept_photo() {
+        let mut marks = Marks::default();
+        marks.by_id.insert(
+            11,
+            mark(Kinds {
+                low: true,
+                burst: true,
+                ..Kinds::default()
+            }),
+        );
+        for id in [12, 14] {
+            marks.by_id.insert(
+                id,
+                mark(Kinds {
+                    burst: true,
+                    ..Kinds::default()
+                }),
+            );
+        }
+        // View indices 0..5 hold ids 10..15; 1, 2 and 4 form burst 7 (3 has no mark).
+        let view = [0, 1, 2, 3, 4];
+        let id = |i: usize| 10 + i as u64;
+        let group = |i: usize| [1, 2, 4].contains(&i).then_some(7);
+        assert_eq!(apply(&view, id, group, &marks, Some(Kind::Low)), [1, 2, 4]);
+        assert!(apply(&view, id, group, &marks, Some(Kind::OffTopic)).is_empty());
     }
 
     #[test]

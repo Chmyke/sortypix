@@ -4,7 +4,7 @@ use crate::{
     shortcuts::Action,
     theme,
 };
-use eframe::egui::{self, Sense};
+use eframe::egui::{self, RichText, Sense, Stroke};
 use sortypix_app::worker::Command;
 use sortypix_core::Decision;
 use std::time::Instant;
@@ -126,30 +126,7 @@ impl Gallery {
                     #[cfg(feature = "ai")]
                     self.ai_order_menu(ui);
                     #[cfg(not(feature = "ai"))]
-                    let icon = if self.settings.newest_first {
-                        Icon::Descending
-                    } else {
-                        Icon::Ascending
-                    };
-                    #[cfg(not(feature = "ai"))]
-                    if icons::button(
-                        ui,
-                        icon,
-                        if self.settings.newest_first {
-                            "Newest first · Switch to oldest first"
-                        } else {
-                            "Oldest first · Switch to newest first"
-                        },
-                        true,
-                    )
-                    .clicked()
-                    {
-                        self.settings.newest_first = !self.settings.newest_first;
-                        self.photos.reverse();
-                        self.layout.invalidate();
-                        self.turns.reverse();
-                        self.selected = 0;
-                    }
+                    self.order_menu(ui);
                 }
                 ui.separator();
                 let undo = icons::button(
@@ -257,6 +234,76 @@ fn size_slider(ui: &mut egui::Ui, size: &mut f32) -> egui::Response {
 }
 fn photo_count_label(count: usize) -> String {
     format!("{count} {}", if count == 1 { "pic" } else { "pics" })
+}
+/// A menu entry with a check mark when chosen; returns (clicked, centre) for the diagnostics.
+pub(crate) fn menu_entry(
+    ui: &mut egui::Ui,
+    label: &str,
+    checked: bool,
+    enabled: bool,
+) -> (bool, egui::Pos2) {
+    // The default fonts have no check mark glyph: it is drawn in the left padding.
+    let text = RichText::new(format!("     {label}"));
+    let text = if checked {
+        text.color(theme::BLUE)
+    } else {
+        text
+    };
+    let response = ui.add_enabled(enabled, egui::Button::new(text).frame(false));
+    if checked {
+        let c = response.rect.left_center() + egui::vec2(9., 0.);
+        let stroke = Stroke::new(1.6, theme::BLUE);
+        let points = vec![
+            c + egui::vec2(-4., 0.),
+            c + egui::vec2(-1.5, 3.),
+            c + egui::vec2(4., -3.5),
+        ];
+        ui.painter().add(egui::Shape::line(points, stroke));
+    }
+    (response.clicked(), response.rect.center())
+}
+#[cfg(not(feature = "ai"))]
+impl Gallery {
+    /// Date, name or size order (Sortypix AI has its own menu with its orders).
+    fn order_menu(&mut self, ui: &mut egui::Ui) {
+        use sortypix_app::order::FileOrder;
+        let current = self.settings.order;
+        let icon = if matches!(current, FileOrder::Newest | FileOrder::Largest) {
+            Icon::Descending
+        } else {
+            Icon::Ascending
+        };
+        let tip = format!("{} · Change the order", current.label());
+        let response = icons::button(ui, icon, &tip, true);
+        self.order_targets.button = Some(response.rect.center());
+        let mut entries = Vec::new();
+        let mut chosen = None;
+        egui::Popup::menu(&response).show(|ui| {
+            ui.spacing_mut().button_padding = egui::vec2(10., 4.);
+            ui.spacing_mut().item_spacing.y = 2.;
+            for order in FileOrder::ALL {
+                let (clicked, at) = menu_entry(ui, order.label(), order == current, true);
+                entries.push((order, at));
+                if clicked {
+                    chosen = Some(order);
+                }
+            }
+        });
+        self.order_targets.entries = entries;
+        if let Some(order) = chosen {
+            self.settings.set_order(order);
+            self.arrange_files();
+            self.selected = 0;
+            self.grid_scroll_to_focus = true;
+        }
+    }
+}
+#[cfg(not(feature = "ai"))]
+/// Where the order menu was drawn last frame, for the native diagnostic.
+#[derive(Default)]
+pub(crate) struct OrderTargets {
+    pub button: Option<egui::Pos2>,
+    pub entries: Vec<(sortypix_app::order::FileOrder, egui::Pos2)>,
 }
 #[cfg(test)]
 mod tests {

@@ -37,7 +37,8 @@ pub struct Diagnostic {
 }
 /// Sortypix AI also waits for its model and the analysis of the folder.
 #[cfg(not(feature = "ai"))]
-const LIMIT: Duration = Duration::from_secs(45);
+// Under check-ui.ps1's 55 s timeout.
+const LIMIT: Duration = Duration::from_secs(50);
 #[cfg(feature = "ai")]
 const LIMIT: Duration = Duration::from_secs(150);
 impl Diagnostic {
@@ -194,6 +195,7 @@ impl crate::gallery::Gallery {
             return;
         }
         if self.busy
+            || !self.in_flight.is_empty()
             || self.scanning
             || self.textures.loaded < self.photos.len().min(12)
             || d.last.elapsed() < Duration::from_millis(700)
@@ -464,6 +466,45 @@ impl crate::gallery::Gallery {
                 }
             }
             54 => d.pointer = d.mouse_target.map(|p| (p, false)),
+            // The order menu (Sortypix AI checks its own): largest first.
+            #[cfg(not(feature = "ai"))]
+            56 => d.pointer = self.order_targets.button.map(|p| (p, true)),
+            #[cfg(not(feature = "ai"))]
+            57 => d.pointer = self.order_targets.button.map(|p| (p, false)),
+            #[cfg(not(feature = "ai"))]
+            58 => {
+                d.held_at = self
+                    .order_targets
+                    .entries
+                    .iter()
+                    .find(|(order, _)| *order == sortypix_app::order::FileOrder::Largest)
+                    .map(|&(_, at)| at);
+                d.pointer = d.held_at.map(|p| (p, true));
+            }
+            #[cfg(not(feature = "ai"))]
+            59 => d.pointer = d.held_at.map(|p| (p, false)),
+            #[cfg(not(feature = "ai"))]
+            60 => {
+                let sorted = self.photos.windows(2).all(|w| w[0].bytes >= w[1].bytes);
+                if self.settings.order != sortypix_app::order::FileOrder::Largest
+                    || !sorted
+                    || self.photos.len() != d.count
+                    || self.photos.windows(2).all(|w| w[0].bytes == w[1].bytes)
+                {
+                    let _ = std::fs::write(
+                        d.folder.join("FAIL.txt"),
+                        format!(
+                            "Order menu failed: order {:?}, sorted {sorted}, photos {}/{}",
+                            self.settings.order,
+                            self.photos.len(),
+                            d.count
+                        ),
+                    );
+                    ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                    return;
+                }
+                ctx.send_viewport_cmd(egui::ViewportCommand::Screenshot(egui::UserData::default()));
+            }
             _ => {
                 let passed = self.photos.len() == d.count && self.undo_count == 0 && !self.viewer;
                 // Sortypix AI goes on with its own stages, which write the verdict.
@@ -475,7 +516,7 @@ impl crate::gallery::Gallery {
                 if passed {
                     let _ = std::fs::write(
                         d.folder.join("PASS.txt"),
-                        "Keyboard, batch click, undo, full screen, zoom, rotation, resize/UI scale, collapse, shortcut editing/conflicts/persistence/dispatch keep/reject-all icons very large thumbnails, Ctrl+wheel, rotate on photo, decision glow and mouse swap notice verified",
+                        "Keyboard, batch click, undo, full screen, zoom, rotation, resize/UI scale, collapse, shortcut editing/conflicts/persistence/dispatch keep/reject-all icons very large thumbnails, Ctrl+wheel, rotate on photo, decision glow, mouse swap notice and order menu verified",
                     );
                 } else {
                     d.record_incomplete(self.photos.len(), self.undo_count, self.viewer);

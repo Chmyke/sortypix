@@ -499,6 +499,7 @@ mod tests {
             members: vec![root.join(name)],
             aspect_ratio: ratio,
             capture_time: None,
+            bytes: 0,
         };
         let photos = vec![
             photo(2, "c.jpg", 0.75),

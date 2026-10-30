@@ -28,6 +28,11 @@ pub struct Snapshot {
     pub error: Option<String>,
     pub duplicates_scanning: bool,
     pub catalog_final: bool,
+    /// The folder is still being listed: `photos` is what is listed so far, and gestures wait.
+    pub listing: bool,
+    /// Commands handled so far, every kind counted: the interface knows which of its
+    /// gestures this snapshot already shows.
+    pub handled: u64,
 }
 struct MetadataJob {
     generation: u64,
@@ -162,7 +167,21 @@ impl Worker {
                         revision += 1;
                         let result = match command {
                             Command::Open(root) => {
-                                let result = engine.open_provisional(&root);
+                                let handled = revision;
+                                let mut result = engine.open_provisional_with(&root, |partial| {
+                                    let _ = events.send(Snapshot {
+                                        photos: partial.photos,
+                                        turns: partial.turns,
+                                        root: Some(partial.root),
+                                        undo_count: partial.undo_count,
+                                        error: None,
+                                        duplicates_scanning: false,
+                                        catalog_final: false,
+                                        listing: true,
+                                        handled,
+                                    });
+                                    wake();
+                                });
                                 if result.is_ok() {
                                     folder_generation += 1;
                                     catalog_final = false;
@@ -173,6 +192,11 @@ impl Worker {
                                         generation: folder_generation,
                                         photos: engine.photos(),
                                     });
+                                    // Said once at opening; copies cannot be ejected there.
+                                    if engine.read_only() {
+                                        automatic = false;
+                                        result = Err(crate::engine::READ_ONLY.into());
+                                    }
                                 }
                                 result
                             }
@@ -197,6 +221,7 @@ impl Worker {
                                 result.err(),
                                 scanning || needs_job,
                                 catalog_final,
+                                revision,
                             ))
                             .is_err()
                         {
@@ -221,6 +246,7 @@ impl Worker {
                             None,
                             scanning || needs_job,
                             catalog_final,
+                            revision,
                         ))
                         .is_err()
                     {
@@ -241,7 +267,7 @@ impl Worker {
                             None
                         };
                         if events
-                            .send(snapshot(&engine, error, false, catalog_final))
+                            .send(snapshot(&engine, error, false, catalog_final, revision))
                             .is_err()
                         {
                             break;
@@ -277,6 +303,7 @@ fn snapshot(
     error: Option<String>,
     duplicates_scanning: bool,
     catalog_final: bool,
+    handled: u64,
 ) -> Snapshot {
     let photos = engine.photos();
     let turns = photos.iter().map(|p| engine.turns(p.id)).collect();
@@ -288,6 +315,8 @@ fn snapshot(
         error,
         duplicates_scanning,
         catalog_final,
+        listing: false,
+        handled,
     }
 }
 
@@ -363,6 +392,7 @@ mod tests {
             photos: vec![PhysicalPhoto {
                 aspect_ratio: 1.5,
                 capture_time: None,
+                bytes: 0,
                 id: PhotoId(1),
                 members: vec![path.clone()],
             }],
@@ -388,6 +418,7 @@ mod tests {
                 .map(|(i, path)| PhysicalPhoto {
                     aspect_ratio: 1.5,
                     capture_time: None,
+                    bytes: 0,
                     id: PhotoId(i as u64),
                     members: vec![path.clone()],
                 })
@@ -443,5 +474,45 @@ mod tests {
             assert!(state.error.is_none());
         }
         assert!(!dir.path().join("rejected").exists());
+    }
+
+    #[test]
+    fn decisions_sent_back_to_back_are_all_handled_in_order_and_counted() {
+        let dir = tempfile::tempdir().unwrap();
+        for name in ["a.jpg", "b.jpg", "c.jpg"] {
+            std::fs::write(dir.path().join(name), name).unwrap();
+        }
+        let worker = Worker::start(Arc::new(|| {}));
+        let next = || worker.events.recv_timeout(Duration::from_secs(2)).unwrap();
+        worker
+            .commands
+            .send(Command::Open(dir.path().to_owned()))
+            .unwrap();
+        let mut opened = next();
+        while !opened.catalog_final {
+            opened = next();
+        }
+        assert_eq!(opened.handled, 1);
+        let ids: Vec<_> = opened.photos.iter().map(|p| p.id).collect();
+        // Three gestures without waiting, the last one failing (already sorted).
+        for (id, decision) in [
+            (ids[0], Decision::Keep),
+            (ids[1], Decision::Reject),
+            (ids[0], Decision::Reject),
+        ] {
+            worker
+                .commands
+                .send(Command::Decide(vec![id], decision))
+                .unwrap();
+        }
+        let mut state = next();
+        while state.handled < 4 {
+            state = next();
+        }
+        assert_eq!(state.photos.len(), 1);
+        assert_eq!(state.undo_count, 2);
+        assert!(state.error.is_some(), "the failed gesture is reported");
+        assert!(dir.path().join("keep/a.jpg").exists());
+        assert!(dir.path().join("rejected/b.jpg").exists());
     }
 }

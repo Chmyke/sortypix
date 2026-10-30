@@ -418,6 +418,12 @@ pub fn view_edge(path: &std::path::Path, fitted: egui::Vec2, pixels_per_point: f
     }
     thumbnail_edge(fitted, pixels_per_point)
 }
+/// A second photo ahead is preloaded too when four photos of `edge` (square, the worst case)
+/// leave a quarter of `STILL_BUDGET` to the grid: two quick decisions in a row stay instant.
+pub fn preload_second_ahead(edge: u32) -> bool {
+    let photo = edge as usize * edge as usize * 4;
+    4 * photo <= STILL_BUDGET / 4 * 3
+}
 fn request_edges(refined_edge: u32) -> [u32; 2] {
     [QUICK_EDGE, refined_edge]
 }
@@ -468,6 +474,9 @@ mod tests {
         // The photo and both neighbours, square at the largest bucket, never evict each other.
         let largest = view_edge(jpeg, egui::vec2(1e5, 1e5), 4.) as usize;
         assert!(3 * largest * largest * 4 <= STILL_BUDGET);
+        // A second photo ahead up to a 4K screen, not at the largest bucket.
+        assert!(preload_second_ahead(3200));
+        assert!(!preload_second_ahead(largest as u32));
     }
     #[test]
     fn gifs_play_in_the_full_screen_view_and_the_grid() {

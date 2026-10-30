@@ -104,6 +104,20 @@ fn settings_survive_restart_and_corruption_is_safe() {
     assert_eq!(written["ai"]["order"], "coverage");
     assert_eq!(written["later"], serde_json::json!([1, 2]));
     assert_eq!(Settings::load(&path), other);
+    // Before the order menu, only `newest_first` existed; an unknown order costs nothing else.
+    use sortypix_app::order::FileOrder;
+    fs::write(&path, r#"{"newest_first":true}"#).expect("pre-order settings");
+    assert_eq!(Settings::load(&path).order, FileOrder::Newest);
+    fs::write(&path, r#"{"swapped":true,"order":"rating"}"#).expect("later order");
+    let later = Settings::load(&path);
+    assert!(later.swapped);
+    assert_eq!(later.order, FileOrder::Oldest);
+    let mut sized = Settings::default();
+    sized.set_order(FileOrder::Largest);
+    sized.save(&path).expect("save order");
+    let back = Settings::load(&path);
+    assert_eq!(back.order, FileOrder::Largest);
+    assert!(!back.newest_first);
     fs::write(&path, "broken").expect("corrupt");
     assert!(!Settings::load(&path).swapped);
     assert!(s.save(dir.path()).is_err());

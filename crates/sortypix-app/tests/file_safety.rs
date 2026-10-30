@@ -148,3 +148,85 @@ fn native_move_refuses_destination_created_after_planning() {
 fn inaccessible_folder_returns_error() {
     assert!(scan(Path::new("Z:/sortypix-missing-drive/no-folder")).is_err());
 }
+/// A device that reports success without doing the move, or that truncates the file.
+struct LyingFiles {
+    calls: usize,
+    lie_at: usize,
+    truncate: bool,
+}
+impl FileOps for LyingFiles {
+    fn move_no_replace(&mut self, from: &Path, to: &Path) -> std::io::Result<()> {
+        self.calls += 1;
+        if self.calls != self.lie_at {
+            return NativeFiles.move_no_replace(from, to);
+        }
+        if self.truncate {
+            let bytes = fs::read(from)?;
+            fs::write(to, &bytes[..bytes.len() / 2])?;
+            fs::remove_file(from)?;
+        }
+        Ok(())
+    }
+}
+#[test]
+fn a_move_reported_but_not_done_is_not_counted_and_the_pair_comes_back() {
+    let dir = tempfile::tempdir().expect("dir");
+    fixtures(dir.path());
+    let before = snapshot(dir.path());
+    let photos = scan(dir.path()).expect("scan");
+    let pair = photos.iter().find(|p| p.members.len() == 2).expect("pair");
+    let mut store = Storage::new(LyingFiles {
+        calls: 0,
+        lie_at: 2,
+        truncate: false,
+    });
+    let report = store.apply(std::slice::from_ref(pair), Decision::Keep);
+    assert!(report.completed.is_empty());
+    assert!(
+        report.errors[0].contains("did not reach"),
+        "{:?}",
+        report.errors
+    );
+    assert_eq!(store.undo_count(), 0);
+    assert_eq!(snapshot(dir.path()), before);
+}
+#[test]
+fn a_truncated_move_is_reported_and_taken_back() {
+    let dir = tempfile::tempdir().expect("dir");
+    fs::write(dir.path().join("photo.jpg"), "whole photo").expect("photo");
+    let photos = scan(dir.path()).expect("scan");
+    let mut store = Storage::new(LyingFiles {
+        calls: 0,
+        lie_at: 1,
+        truncate: true,
+    });
+    let report = store.apply(&photos, Decision::Reject);
+    assert!(report.completed.is_empty());
+    assert!(
+        report.errors[0].contains("bytes instead of 11"),
+        "{:?}",
+        report.errors
+    );
+    assert_eq!(store.undo_count(), 0);
+    // The damage is the device's; the file is back where the person left it.
+    assert!(dir.path().join("photo.jpg").exists());
+    assert!(!dir.path().join("rejected").exists());
+}
+#[test]
+fn names_differing_only_by_case_never_replace_each_other() {
+    let dir = tempfile::tempdir().expect("dir");
+    fs::create_dir(dir.path().join("keep")).expect("keep");
+    fs::write(dir.path().join("keep/IMG_1.JPG"), "kept before").expect("kept");
+    fs::write(dir.path().join("img_1.jpg"), "new").expect("new");
+    let photos = scan(dir.path()).expect("scan");
+    let mut store = Storage::default();
+    assert!(store.apply(&photos, Decision::Keep).errors.is_empty());
+    let kept: Vec<Vec<u8>> = snapshot(&dir.path().join("keep")).into_values().collect();
+    assert_eq!(kept.len(), 2);
+    assert!(kept.contains(&b"kept before".to_vec()) && kept.contains(&b"new".to_vec()));
+    assert!(store.undo().errors.is_empty());
+    assert_eq!(
+        fs::read(dir.path().join("img_1.jpg")).expect("back"),
+        b"new"
+    );
+}

@@ -8,3 +8,6 @@
   Licence CC0 vérifiée dans https://raw.pixls.us/json/getrepository.php (entrée 758).
   SHA256 attendu : `8cbb84e04d93b005fe082da9c954122a612b5281af00aa088d767850f343fd38`.
   Exclus de l'installeur ; utilisés pour vérifier le décodage pleine résolution.
+- `two-colors.jxl` : JPEG XL sans perte 96 × 64, moitié gauche (200, 30, 40), moitié droite
+  (20, 60, 220), image synthétique créée le 2026-10-30 avec Pillow puis
+  `ffmpeg -c:v libjxl -distance 0`, licence du projet.

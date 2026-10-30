@@ -23,6 +23,7 @@ fn small_jpeg_pair_inspects_full_raw_sensor() {
     let photo = PhysicalPhoto {
         aspect_ratio: 1.5,
         capture_time: None,
+        bytes: 0,
         id: PhotoId(1),
         members: vec![jpeg.clone(), raw.clone()],
     };
@@ -58,5 +59,36 @@ fn layout_proportions_match_exif_oriented_pixels() {
     assert_eq!(
         sortypix_app::decode::aspect_ratio(&root.join("missing.jpg")),
         None
+    );
+}
+
+#[test]
+fn reduced_raw_comes_from_the_embedded_preview_and_native_from_the_sensor() {
+    let raw = fixtures().join("canon-350d.CR2");
+    let reduced = decode(&raw, Some(1600)).unwrap();
+    // The 3456x2304 preview scaled down; the sensor (3474x2314 on Windows) gives 1600x1066.
+    assert_eq!((reduced.width, reduced.height), (1600, 1067));
+    assert_ne!(reduced.resolution, sortypix_app::decode::Resolution::Native);
+    let native = decode(&raw, None).unwrap();
+    assert_eq!(native.resolution, sortypix_app::decode::Resolution::Native);
+}
+
+#[test]
+fn jpeg_xl_photos_are_listed_and_shown_with_their_colors() {
+    let path = fixtures().join("two-colors.jxl");
+    assert!((sortypix_app::decode::aspect_ratio(&path).unwrap() - 1.5).abs() < 0.001);
+    let image = decode(&path, None).unwrap();
+    assert_eq!((image.width, image.height), (96, 64));
+    let pixel = |x: usize, y: usize| &image.rgba[(y * 96 + x) * 4..][..3];
+    assert_eq!(pixel(10, 10), [200, 30, 40]);
+    assert_eq!(pixel(80, 50), [20, 60, 220]);
+    let small = decode(&path, Some(48)).unwrap();
+    assert_eq!((small.width, small.height), (48, 32));
+    let dir = tempfile::tempdir().unwrap();
+    std::fs::copy(&path, dir.path().join("a.jxl")).unwrap();
+    std::fs::write(dir.path().join("b.jfif"), "jpeg").unwrap();
+    assert_eq!(
+        sortypix_app::catalog::scan_names(dir.path()).unwrap().len(),
+        2
     );
 }

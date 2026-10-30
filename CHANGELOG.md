@@ -2,6 +2,17 @@
 
 What changed in Sortypix, as you would notice it. Newest first.
 
+## 0.4.0 · 2026-10-30
+
+- **New** · A new order menu: oldest, newest, by name (IMG_2 comes before IMG_10, as it should), largest or smallest files first. Tiny files are often the misfires.
+- **New** · Keep and reject as fast as your fingers go: the photo leaves at once while the file moves behind the scenes, even on a slow USB stick.
+- Huge folders show their first photos almost instantly, and a folder of 100,000 files opens more than twice as fast.
+- RAW photos appear about three times faster in the grid and full screen. The full sensor still answers at 100% zoom.
+- **New** · JPEG XL photos are welcome, along with .jfif, .jpe and a few more RAW flavours.
+- **New** · Sortypix AI keeps bursts together in the grid, and a Bursts order shows only them, one burst after the other.
+- **Fixed** · A locked SD card or a read-only drive is now said at opening, instead of a puzzling error at the first click.
+- **Fixed** · A photo deleted by another program while you sort simply leaves the grid, and a move only counts once the file has really arrived.
+
 ## 0.3.0 · 2026-10-23
 
 - **New** · Meet Sortypix AI (beta), a separate app that installs next to Sortypix: a model running on your own computer suggests which photos to reject, and one click sends them away. One Ctrl+Z brings them all back.

@@ -1,7 +1,7 @@
 #[cfg(windows)]
 use sortypix_app::shell_thumbnail;
 use sortypix_app::{
-    catalog::{read_metadata, scan_names},
+    catalog::{read_metadata, scan_names, scan_names_with},
     decode::decode,
 };
 use sortypix_core::{Photo, PhotoId, Session, Status};
@@ -104,17 +104,46 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .thumbnail(1600, 1600),
         );
     });
+    // A camera RAW at a screen size: from its embedded preview, not the sensor.
+    let raw = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/fixtures/canon-350d.CR2");
+    let mut raw_times: Vec<f64> = (0..5)
+        .map(|_| {
+            let start = Instant::now();
+            decode(&raw, Some(1600)).expect("RAW decode");
+            start.elapsed().as_secs_f64() * 1000.
+        })
+        .collect();
+    raw_times.sort_by(f64::total_cmp);
+    let raw_preview = raw_times[2];
     let start = Instant::now();
     let metadata = read_metadata(&photos);
     let final_metadata = start.elapsed();
     assert_eq!(metadata.len(), photos.len());
+    // After the metadata: writing 100,000 files keeps the disk and the antivirus busy.
+    // A very large folder: what the listing costs before the first photo can show.
+    let huge = tempfile::tempdir()?;
+    for n in 0..100_000 {
+        fs::File::create(huge.path().join(format!("IMG_{n:06}.jpg")))?;
+    }
+    let start = Instant::now();
+    let mut huge_first = None;
+    let huge_photos = scan_names_with(huge.path(), |_| {
+        huge_first.get_or_insert_with(|| start.elapsed());
+    })?;
+    let huge_listing = start.elapsed();
+    let huge_first = huge_first.unwrap_or(huge_listing);
+    assert_eq!(huge_photos.len(), 100_000);
     let report = format!(
-        "50000 pure entries: {:.3} ms\n5000 JPEG enumeration: {:.3} ms\nFirst preview: {:.3} ms\nFirst 24 refined previews: {:.3} ms\nFinal metadata: {:.3} ms\nFixture: 1200x800 JPEG, 4 decode workers, newly written local files (thumbnail cache cold)\n12 MP JPEG to 1600 px, median of 8: {:.3} ms (full decode then resize: {:.3} ms)\n",
+        "50000 pure entries: {:.3} ms\n5000 JPEG enumeration: {:.3} ms\nFirst preview: {:.3} ms\nFirst 24 refined previews: {:.3} ms\nFinal metadata: {:.3} ms\n100000-file listing: {:.3} ms, first photos shown after {:.3} ms\nCanon RAW to 1600 px, median of 5: {:.3} ms\nFixture: 1200x800 JPEG, 4 decode workers, newly written local files (thumbnail cache cold)\n12 MP JPEG to 1600 px, median of 8: {:.3} ms (full decode then resize: {:.3} ms)\n",
         list.as_secs_f64() * 1000.,
         enumeration.as_secs_f64() * 1000.,
         first_preview.as_secs_f64() * 1000.,
         viewport.as_secs_f64() * 1000.,
         final_metadata.as_secs_f64() * 1000.,
+        huge_listing.as_secs_f64() * 1000.,
+        huge_first.as_secs_f64() * 1000.,
+        raw_preview,
         camera_preview,
         full_then_resize,
     );
@@ -144,6 +173,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     assert!(
         final_metadata < Duration::from_secs_f64(2. * multiplier),
         "Metadata budget exceeded"
+    );
+    // Very large folder: photos on screen almost at once, the whole list soon after.
+    assert!(
+        huge_first < Duration::from_secs_f64(0.3 * multiplier),
+        "Large folder first photos budget exceeded"
+    );
+    assert!(
+        huge_listing < Duration::from_secs_f64(1. * multiplier),
+        "Large folder listing budget exceeded"
+    );
+    assert!(
+        raw_preview < 200. * multiplier,
+        "RAW preview budget exceeded (sensor decode instead of the embedded preview?)"
     );
     assert!(
         camera_preview < 250. * multiplier,
