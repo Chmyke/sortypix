@@ -40,6 +40,8 @@ enum Target {
     CardBadge,
     CardClose,
     Help,
+    /// The first word offered under the search field.
+    Completion,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -77,6 +79,10 @@ enum Step {
     CheckShow(Option<Kind>),
     /// Badges of these kinds are not drawn, the others are.
     CheckHidden(Kinds),
+    /// The field has the keyboard: the folder's words are offered, with their counts.
+    CheckCompletion,
+    /// The word taken is the tag the grid applies; the results are current.
+    WaitTag,
 }
 
 fn click(target: Target) -> [Step; 3] {
@@ -118,6 +124,13 @@ fn script() -> Vec<Step> {
     steps.extend(click(Target::Order));
     steps.extend(click(Target::Entry(None)));
     steps.push(Check(Some(true), Order::Oldest));
+    steps.extend(click(Target::Clear));
+    steps.push(Check(None, Order::Oldest));
+    // Tags: the list under the field, its first word taken, the grid filtered by it.
+    steps.extend(click(Target::Search));
+    steps.extend([Pause, CheckCompletion, Shot]);
+    steps.extend(click(Target::Completion));
+    steps.extend([WaitTag, Check(Some(true), Order::Oldest), Shot]);
     steps.extend(click(Target::Clear));
     steps.push(Check(None, Order::Oldest));
     for order in [
@@ -209,6 +222,8 @@ pub(crate) struct Run {
     step_waits: usize,
     /// The photo picked for the card.
     card: Option<PhotoId>,
+    /// The word taken from the completion list.
+    tag: Option<u16>,
 }
 
 impl Default for Run {
@@ -225,6 +240,7 @@ impl Default for Run {
             failed: false,
             step_waits: 0,
             card: None,
+            tag: None,
         }
     }
 }
@@ -252,6 +268,7 @@ impl Gallery {
                 .find(|(id, _)| Some(*id) == card)
                 .map(|(_, at)| *at),
             Target::CardClose => t.card_close,
+            Target::Completion => t.completions.first().map(|(_, at)| *at),
             Target::Help => self.diagnostic.as_ref().and_then(|d| d.help_target),
             Target::Reject => t.reject,
             Target::Search => t.search,
@@ -283,7 +300,17 @@ impl Gallery {
             return Err("a photo outside any burst is shown in Bursts".into());
         }
         if how.searching {
-            let matches = |i: usize| ai.facts[i].similarity.is_some_and(|s| s >= SEARCH_MIN);
+            // Free words at the threshold and every tag asked (computed here, not by the view).
+            let wanted = ai.search.tags();
+            let words = ai.search.query().is_some();
+            let matches = |i: usize| {
+                (!words || ai.facts[i].similarity.is_some_and(|s| s >= SEARCH_MIN))
+                    && wanted.iter().all(|w| {
+                        ai.tags[i]
+                            .as_ref()
+                            .is_some_and(|tags| tags.iter().any(|t| t.word == *w))
+                    })
+            };
             // A matching photo brings its whole burst.
             let expected = (0..ai.facts.len())
                 .filter(|&i| {
@@ -345,7 +372,7 @@ impl Gallery {
             let f = |i: usize| &ai.facts[i];
             let keys = block.iter().filter_map(|&i| {
                 if how.searching && how.best_match {
-                    f(i).similarity.map(|s| -s)
+                    f(i).matched.map(|s| -s)
                 } else {
                     match how.order {
                         Order::LowestScore => f(i).score,
@@ -671,6 +698,62 @@ impl Gallery {
                     ));
                 }
             }
+            Step::CheckCompletion => {
+                let offered = self.ai.completion.clone();
+                let counted: usize = self.ai.tag_counts.iter().sum();
+                let consistent = offered
+                    .iter()
+                    .all(|&(w, n)| n > 0 && self.ai.tag_counts.get(usize::from(w)) == Some(&n));
+                let Some(&(word, n)) = offered.first().filter(|_| consistent) else {
+                    return {
+                        run.failed = true;
+                        fail(
+                            ctx,
+                            format!(
+                                "no word offered under the search field ({} offered, {counted} tags in the folder)",
+                                offered.len()
+                            ),
+                        )
+                    };
+                };
+                run.tag = Some(word);
+                let names: Vec<String> = offered
+                    .iter()
+                    .map(|&(w, n)| {
+                        format!(
+                            "{} {n}",
+                            sortypix_ai::vocabulary::VOCABULARY[usize::from(w)].name
+                        )
+                    })
+                    .collect();
+                run.notes.push(format!(
+                    "the search field offers {} words, first {} on {n} photos ({})",
+                    offered.len(),
+                    sortypix_ai::vocabulary::VOCABULARY[usize::from(word)].name,
+                    names.join(", ")
+                ));
+            }
+            Step::WaitTag => {
+                let wanted = run.tag.map(|w| vec![w]).unwrap_or_default();
+                advance = self.ai.search.tags() == wanted.as_slice()
+                    && self.ai.search.query().is_none()
+                    && !self.ai.search.waiting()
+                    && self.ai.facts_current();
+                if advance && self.photos.is_empty() {
+                    return {
+                        run.failed = true;
+                        fail(ctx, "the tag taken from the list shows no photo".into())
+                    };
+                }
+                if advance {
+                    run.notes.push(format!(
+                        "tag '{}' taken from the list: the field reads '{}', grid {}",
+                        self.ai.search.text.trim_end_matches([',', ' ']),
+                        self.ai.search.text,
+                        self.ai_count_label().unwrap_or_default()
+                    ));
+                }
+            }
             Step::CheckMenu => {
                 if self.ai.targets.entries.len() != 1 + Order::ALL.len() {
                     return {
@@ -691,8 +774,8 @@ impl Gallery {
                 let low = |id: PhotoId| {
                     self.ai.facts_of(id).and_then(|f| f.score).is_some_and(|s| {
                         matches!(
-                            super::card::standing(s, &scores),
-                            Some(super::card::Standing::Lowest(_))
+                            super::suggest::standing(s, &scores),
+                            Some(super::suggest::Standing::Lowest(_))
                         )
                     })
                 };
@@ -751,16 +834,23 @@ impl Gallery {
                     let scores: Vec<f32> = self.ai.facts.iter().filter_map(|f| f.score).collect();
                     let lower = facts.score.is_some_and(|s| {
                         matches!(
-                            super::card::standing(s, &scores),
-                            Some(super::card::Standing::Lowest(_))
+                            super::suggest::standing(s, &scores),
+                            Some(super::suggest::Standing::Lowest(_))
                         )
                     });
                     let reason = lines
                         .iter()
                         .any(|l| l.starts_with("Likely reason: ") || l == "No clear reason");
                     let burst_line = lines.iter().any(|l| l.starts_with("Burst: one of "));
-                    let problem = if lines.first().is_none_or(|l| !l.contains("of this folder")) {
-                        Some("no score and standing line")
+                    let problem = if lines
+                        .first()
+                        .is_none_or(|l| !l.contains("of this folder for visual appeal"))
+                    {
+                        Some("no standing line")
+                    } else if !lines.iter().any(|l| l.starts_with("Aesthetic score ")) {
+                        Some("no aesthetic score line")
+                    } else if !lines.iter().any(|l| l.starts_with("Tags: ")) {
+                        Some("no tags line")
                     } else if lower != reason {
                         Some("reason line where it does not belong, or missing")
                     } else if facts.burst.is_some() && (!burst_line || self.ai.outlined < 2) {

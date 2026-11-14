@@ -258,6 +258,9 @@ impl Gallery {
         if std::mem::take(&mut self.hide_due) {
             self.hide_in_flight();
         }
+        // Only the newest snapshot is shown: each one carries the whole catalog, so the
+        // ones a burst of gestures queued behind it would be arranged for nothing.
+        let mut newest = None;
         while let Ok(state) = self.worker.events.try_recv() {
             if let Some(benchmark) = &mut self.benchmark {
                 benchmark.observe_catalog(state.catalog_final);
@@ -265,6 +268,9 @@ impl Gallery {
             if !self.catalog_final && state.catalog_final && self.root == state.root {
                 self.pending_transition = self.settings.resume.clone();
             }
+            newest = Some(state);
+        }
+        if let Some(state) = newest {
             let previous_id = self.photos.get(self.selected).map(|p| p.id);
             self.in_flight.retain(|(seq, _)| *seq > state.handled);
             self.photos = state.photos;
@@ -302,7 +308,7 @@ impl Gallery {
         }
         self.textures.poll(ctx);
         #[cfg(feature = "ai")]
-        self.ai_frame();
+        self.ai_frame(ctx);
         if !self.visible_ready_sent
             && self.root.is_some()
             && self.textures.loaded > 0
@@ -359,7 +365,7 @@ impl Gallery {
             self.error = Some(format!("Could not open folder: {error}"));
         }
     }
-    pub(crate) fn choose(&mut self) {
+    pub(crate) fn choose(&mut self, ctx: egui::Context) {
         if self.chooser.is_some() {
             return;
         }
@@ -367,6 +373,7 @@ impl Gallery {
         self.chooser = Some(receive);
         std::thread::spawn(move || {
             let _ = send.send(sortypix_app::dialog::choose_folder());
+            ctx.request_repaint();
         });
     }
 }
@@ -402,18 +409,42 @@ impl Gallery {
             .filter(|(_, at)| crate::feedback::notice_shown(*at, now))
             .map(|(text, _)| text.as_str());
         crate::feedback::overlay(&ctx, &mut self.error, notice);
-        if self
-            .flash
-            .is_some_and(|(_, at)| crate::feedback::glow(at, now) > 0.)
-        {
-            ctx.request_repaint();
-        }
         #[cfg(feature = "ai")]
         self.ai_card(&ctx);
         self.shortcut_dialog(&ctx);
         self.run_diagnostic(&ctx);
         self.run_session_probe(&ctx);
-        ctx.request_repaint_after(std::time::Duration::from_millis(100));
+        self.schedule_repaint(&ctx, now);
+    }
+    /// The application sleeps between events: the worker and the preview threads wake it,
+    /// and what changes on its own (glow, busy state, notice, a probe) names its deadline.
+    fn schedule_repaint(&self, ctx: &egui::Context, now: Instant) {
+        if let Some((_, at)) = self.flash
+            && crate::feedback::glow(at, now) > 0.
+        {
+            ctx.request_repaint_after(crate::feedback::GLOW_FRAME);
+        }
+        if let Some(since) = self.busy_since.filter(|_| self.busy)
+            && !crate::feedback::busy_shown(Some(since), now)
+        {
+            ctx.request_repaint_after(
+                crate::feedback::BUSY_DELAY.saturating_sub(now.saturating_duration_since(since)),
+            );
+        }
+        if let Some((_, at)) = self.notice
+            && crate::feedback::notice_shown(at, now)
+        {
+            ctx.request_repaint_after(
+                crate::feedback::NOTICE.saturating_sub(now.saturating_duration_since(at)),
+            );
+        }
+        if self.hide_due {
+            ctx.request_repaint();
+        }
+        // The probes step once per frame and wait on their own clocks.
+        if self.diagnostic.is_some() || self.session_probe.is_some() {
+            ctx.request_repaint_after(std::time::Duration::from_millis(100));
+        }
     }
 }
 impl Gallery {
@@ -425,7 +456,7 @@ impl Gallery {
             ui.label("Drop a folder of photos here, or open one to start sorting.");
             ui.add_space(20.);
             if ui.button("Open folder").clicked() {
-                self.choose();
+                self.choose(ui.ctx().clone());
             }
             ui.add_space(28.);
             let (rect, _) = ui.allocate_exact_size(egui::vec2(48., 64.), egui::Sense::hover());
@@ -519,7 +550,8 @@ mod tests {
     fn photos_in_flight_leave_with_their_turns_and_the_next_photo_takes_the_place() {
         let photo = |id| PhysicalPhoto {
             id: PhotoId(id),
-            members: vec![PathBuf::from(format!("{id}.jpg"))],
+            members: vec![PathBuf::from(format!("{id}.jpg"))].into(),
+            modified: 0,
             aspect_ratio: 1.5,
             capture_time: None,
             bytes: 0,

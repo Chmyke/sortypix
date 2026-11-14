@@ -3,7 +3,7 @@
 Sort thousands of photos fast: keep the good ones, set the rest aside.
 Desktop app for Windows and Linux, written in Rust. Download and demos: https://mickaelmancini.com/sortypix/
 
-Version 0.4.0 for Windows, and for Linux (x86_64 and ARM64); Sortypix AI 0.4.0 beta for Windows. English interface, offline, free and open source (MIT).
+Version 0.4.1 for Windows, and for Linux (x86_64 and ARM64); Sortypix AI 0.4.1 beta for Windows. English interface, offline, free and open source (MIT).
 
 > **Two separate apps, pick one.** **Sortypix** is the light sorter (about 5 MB, Windows and
 > Linux): you decide everything yourself. **Sortypix AI** (beta) is a separate, heavier app (about
@@ -48,20 +48,25 @@ Windows 11 integration uses a small, signed Explorer extension to offer “Open 
 Sortypix AI is a second app, in beta: the same Sortypix, plus a model that runs on your
 computer, looks at every photo of the open folder and suggests which ones to set aside.
 Windows only for now. While it analyses, a thin blue line runs under the toolbar;
-then the photos it would set aside get a red dashed outline with their score (or an amber
-"Off-topic" badge), "Suggest 20%" picks how many, and "Reject suggested" moves them all to
-`rejected/` in one gesture (one Ctrl+Z puts them back). A search field filters the grid by word,
-and the order menu adds "Lowest score first", "Highest score first" and "Most varied first", can
+then the photos it would set aside get a red dashed outline with their rank in the folder
+("Bottom 8%", or an amber "Off-topic" badge), "Suggest 20%" picks how many, and "Reject suggested"
+moves them all to `rejected/` in one gesture (one Ctrl+Z puts them back). The score rates general
+visual appeal (the LAION aesthetic predictor), not what a photo shows or means to you. The model
+also tags each photo with a few words (dog, beach, night, anime, 1girl...): click in the search
+field to see the folder's tags with their counts, pick one or type several separated by commas,
+like a prompt; other words search freely. Photos get up to four tags from a small layer trained
+on human-checked Open Images labels; drawn, rendered or generated images get fewer, from CLIP
+alone. Nothing is written into your files. The order menu adds "Lowest score first", "Highest score first" and "Most varied first", can
 show only the low scores, the off-topic photos or the bursts, and hides a kind of badge you do
-not want. Press I (or click a badge) for a photo's card: its score and where it stands in the
-folder, and a likely reason when the score is low (an estimate: only blur is told apart reliably
+not want. Press I (or click a badge) for a photo's card: where it stands in the folder, its
+score, its tags, and a likely reason when the score is low (an estimate: only blur is told apart reliably
 for now). On Windows the analysis progress also shows on the taskbar button.
 
 - **Pick Sortypix** if you want the lightest and fastest sorter. It knows nothing about what is
   in your photos, and that is the point: you decide everything, nothing runs in the background.
 - **Pick Sortypix AI** if your folders are huge and you would like a second opinion: a score for
-  each photo, bursts of near-identical shots, photos that do not fit with the rest, and search by
-  word ("dog", "sunset").
+  each photo, bursts of near-identical shots, photos that do not fit with the rest, tags, and search
+  by word ("dog", "sunset").
 
 | | Sortypix | Sortypix AI (beta) |
 |---|---|---|

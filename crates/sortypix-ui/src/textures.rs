@@ -6,7 +6,7 @@ use eframe::egui;
 use sortypix_app::{
     animation::Timeline,
     cache::{Cache, accept_result},
-    decode::DecodedImage,
+    decode::{DecodedImage, Resolution},
     thumbnail_cache::ThumbnailCache,
 };
 use std::{
@@ -17,6 +17,14 @@ use std::{
 };
 const QUICK_EDGE: u32 = 256;
 const STILL_BUDGET: usize = 256 * 1024 * 1024;
+/// Largest still image the GPU is handed.
+const STILL_LIMIT: usize = 256 * 1024 * 1024;
+/// Pixel buckets of still images, the smallest first: a grid cell at its default size
+/// needs about 300 px, so decoding it at 800 cost seven times its pixels in time,
+/// memory and disk cache.
+const STILL_EDGES: [u32; 6] = [384, 512, 800, 1600, 3200, 4096];
+/// A decoded image above this is imported alone in its frame.
+const LARGE_IMPORT: usize = 8 * 1024 * 1024;
 /// All playing animations together; separate so GIFs never push photos out.
 const ANIMATION_BUDGET: usize = 192 * 1024 * 1024;
 /// One grid cell: about 100 frames at 320 px.
@@ -32,9 +40,33 @@ struct Frames {
     native: (u32, u32),
     bytes: usize,
 }
+/// A still converted on the worker, so the UI thread only hands it to the GPU.
+struct Still {
+    image: egui::ColorImage,
+    resolution: Resolution,
+    bytes: usize,
+}
 enum Decoded {
-    Still(DecodedImage),
+    Still(Still),
     Animation(Frames),
+}
+fn still(image: DecodedImage) -> Result<Decoded, String> {
+    let bytes = image.rgba.len();
+    if bytes > STILL_LIMIT {
+        return Err("Image exceeds the display memory budget".into());
+    }
+    Ok(Decoded::Still(Still {
+        image: egui::ColorImage::from_rgba_unmultiplied(
+            [image.width as usize, image.height as usize],
+            &image.rgba,
+        ),
+        resolution: image.resolution,
+        bytes,
+    }))
+}
+fn is_gif(path: &std::path::Path) -> bool {
+    path.extension()
+        .is_some_and(|extension| extension.eq_ignore_ascii_case("gif"))
 }
 struct Ready {
     key: Key,
@@ -104,7 +136,7 @@ fn decode(disk: &ThumbnailCache, (path, edge): &Key) -> Result<Decoded, String> 
         return system_preview(path)
             .map(Ok)
             .unwrap_or_else(|| disk.decode(path, QUICK_EDGE))
-            .map(Decoded::Still);
+            .and_then(still);
     }
     let (max_edge, budget) = match *edge {
         0 => (None, VIEW_ANIMATION_BUDGET),
@@ -112,7 +144,7 @@ fn decode(disk: &ThumbnailCache, (path, edge): &Key) -> Result<Decoded, String> 
     };
     // A broken or oversized animation still shows as its first frame.
     let Ok(Some(animation)) = sortypix_app::animation::decode(path, max_edge, budget) else {
-        return disk.decode(path, *edge).map(Decoded::Still);
+        return disk.decode(path, *edge).and_then(still);
     };
     let size = [animation.width as usize, animation.height as usize];
     Ok(Decoded::Animation(Frames {
@@ -184,6 +216,8 @@ impl Textures {
         let mut imported = 0;
         loop {
             if imported > 0 && started.elapsed() >= Duration::from_millis(3) {
+                // What is left in the channel is imported by the next frame.
+                ctx.request_repaint();
                 break;
             }
             let Ok(result) = self.receive.try_recv() else {
@@ -192,7 +226,13 @@ impl Textures {
             if !accept_result(self.generation, result.generation) {
                 continue;
             }
-            if !self.pending.remove(&result.key) {
+            // A still decoded for a cell that scrolled away is kept when it is small: a scroll
+            // back finds it instead of decoding it again. Animations and native images are not.
+            let wanted = self.pending.remove(&result.key);
+            if !wanted
+                && !matches!(&result.image, Ok(Decoded::Still(still))
+                    if result.key.1 != 0 && still.bytes <= LARGE_IMPORT)
+            {
                 continue;
             }
             match result.image {
@@ -230,42 +270,34 @@ impl Textures {
                         // Dropping the handles frees the frames; the still preview remains.
                         self.declined.insert(result.key);
                     }
-                    if bytes > 8 * 1024 * 1024 {
+                    if bytes > LARGE_IMPORT {
                         break;
                     }
                 }
-                Ok(Decoded::Still(image)) => {
-                    if result.key.1 == 0
-                        && image.resolution != sortypix_app::decode::Resolution::Native
-                    {
+                Ok(Decoded::Still(still)) => {
+                    if result.key.1 == 0 && still.resolution != Resolution::Native {
                         self.errors
                             .insert(result.key, "Native resolution unavailable".into());
                         continue;
                     }
-                    let bytes = image.rgba.len();
-                    if bytes > 256 * 1024 * 1024 {
-                        self.errors
-                            .insert(result.key, "Image exceeds the display memory budget".into());
-                        continue;
-                    }
-                    let color = egui::ColorImage::from_rgba_unmultiplied(
-                        [image.width as usize, image.height as usize],
-                        &image.rgba,
-                    );
                     let texture = ctx.load_texture(
                         result.key.0.to_string_lossy(),
-                        color,
+                        still.image,
                         egui::TextureOptions::LINEAR,
                     );
-                    self.cache.insert(result.key, texture, bytes);
-                    self.loaded += 1;
+                    self.cache.insert(result.key, texture, still.bytes);
+                    if wanted {
+                        self.loaded += 1;
+                    }
                     imported += 1;
-                    if bytes > 8 * 1024 * 1024 {
+                    if still.bytes > LARGE_IMPORT {
                         break;
                     }
                 }
                 Err(error) => {
-                    self.errors.insert(result.key, error);
+                    if wanted {
+                        self.errors.insert(result.key, error);
+                    }
                 }
             }
         }
@@ -283,11 +315,25 @@ impl Textures {
         self.declined.retain(|key| self.desired.contains(key));
     }
     pub fn cached(&mut self, path: &std::path::Path, edge: u32) -> Option<Picture> {
-        let key = (path.to_path_buf(), edge);
-        if let Some(animation) = self.animations.get(&key) {
+        self.cached_key(&(path.to_path_buf(), edge))
+    }
+    fn cached_key(&mut self, key: &Key) -> Option<Picture> {
+        if let Some(animation) = self.animations.get(key) {
             return Some(Picture::Animated(animation.clone()));
         }
-        self.cache.get(&key).cloned().map(Picture::Still)
+        self.cache.get(key).cloned().map(Picture::Still)
+    }
+    /// A still already loaded at a larger bucket than `edge` (cells just got smaller, or a
+    /// view of the photo was shown): good to draw while the fitting one is decoded.
+    pub fn cached_above(&mut self, path: &std::path::Path, edge: u32) -> Option<Picture> {
+        let mut key = (path.to_path_buf(), edge);
+        for bucket in STILL_EDGES.into_iter().filter(|&bucket| bucket > edge) {
+            key.1 = bucket;
+            if let Some(texture) = self.cache.get(&key) {
+                return Some(Picture::Still(texture.clone()));
+            }
+        }
+        None
     }
     fn request(
         &mut self,
@@ -296,10 +342,11 @@ impl Textures {
         priority: Priority,
     ) -> Option<Picture> {
         let key = (path.to_path_buf(), edge);
-        self.desired.insert(key.clone());
-        if let Some(picture) = self.cached(path, edge) {
+        if let Some(picture) = self.cached_key(&key) {
+            self.desired.insert(key);
             return Some(picture);
         }
+        self.desired.insert(key.clone());
         if !self.pending.contains(&key)
             && !self.errors.contains_key(&key)
             && !self.declined.contains(&key)
@@ -394,7 +441,7 @@ pub fn fit(size: egui::Vec2, bounds: egui::Vec2, turns: u8) -> egui::Vec2 {
 
 pub fn thumbnail_edge(size: egui::Vec2, pixels_per_point: f32) -> u32 {
     let edge = size.max_elem() * pixels_per_point;
-    [800, 1600, 3200, 4096]
+    STILL_EDGES
         .into_iter()
         .find(|n| *n as f32 >= edge)
         .unwrap_or(4096)
@@ -402,7 +449,7 @@ pub fn thumbnail_edge(size: egui::Vec2, pixels_per_point: f32) -> u32 {
 /// Pixels to request for a grid cell; animated GIFs use finer steps to bound their memory.
 pub fn display_edge(path: &std::path::Path, size: egui::Vec2, pixels_per_point: f32) -> u32 {
     let edge = size.max_elem() * pixels_per_point;
-    if sortypix_app::catalog::extension(path) == "gif"
+    if is_gif(path)
         && let Some(step) = ANIMATION_EDGES.into_iter().find(|n| *n as f32 >= edge)
     {
         return step;
@@ -413,7 +460,7 @@ pub fn display_edge(path: &std::path::Path, size: egui::Vec2, pixels_per_point: 
 /// PITFALL: native 24 MP photos weigh 96 MB each, so the photo and its two preloaded
 /// neighbours overflowed `STILL_BUDGET` and evicted each other in a loop.
 pub fn view_edge(path: &std::path::Path, fitted: egui::Vec2, pixels_per_point: f32) -> u32 {
-    if sortypix_app::catalog::extension(path) == "gif" {
+    if is_gif(path) {
         return 0;
     }
     thumbnail_edge(fitted, pixels_per_point)
@@ -432,7 +479,11 @@ mod tests {
     use super::*;
     #[test]
     fn large_thumbnails_request_pixels_for_size_and_display_scale() {
-        assert_eq!(thumbnail_edge(egui::vec2(240., 160.), 1.), 800);
+        // A default cell (about 190 pt) at 1.5x needs about 285 px: the 384 bucket.
+        assert_eq!(thumbnail_edge(egui::vec2(190., 127.), 1.5), 384);
+        assert_eq!(thumbnail_edge(egui::vec2(240., 160.), 1.), 384);
+        assert_eq!(thumbnail_edge(egui::vec2(240., 160.), 2.), 512);
+        assert_eq!(thumbnail_edge(egui::vec2(400., 300.), 2.), 800);
         assert_eq!(thumbnail_edge(egui::vec2(1200., 800.), 1.), 1600);
         assert_eq!(thumbnail_edge(egui::vec2(1200., 800.), 2.), 3200);
         assert_eq!(thumbnail_edge(egui::vec2(1200., 2400.), 2.), 4096);
@@ -441,7 +492,7 @@ mod tests {
     fn visible_cells_request_a_quick_preview_before_refined_pixels() {
         assert_eq!(
             request_edges(thumbnail_edge(egui::vec2(240., 160.), 1.)),
-            [256, 800]
+            [256, 384]
         );
         assert_eq!(
             request_edges(thumbnail_edge(egui::vec2(1200., 800.), 2.)),
@@ -455,7 +506,7 @@ mod tests {
         assert_eq!(display_edge(gif, egui::vec2(120., 60.), 1.), 160);
         assert_eq!(display_edge(gif, egui::vec2(240., 160.), 1.25), 320);
         assert_eq!(display_edge(gif, egui::vec2(1200., 800.), 1.), 1600);
-        assert_eq!(display_edge(jpeg, egui::vec2(120., 60.), 1.), 800);
+        assert_eq!(display_edge(jpeg, egui::vec2(120., 60.), 1.), 384);
         for size in [10., 150., 300., 700.] {
             assert_ne!(display_edge(gif, egui::vec2(size, size), 1.), QUICK_EDGE);
         }

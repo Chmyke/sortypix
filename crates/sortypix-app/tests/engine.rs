@@ -145,3 +145,45 @@ fn a_read_only_folder_shows_its_photos_and_refuses_gestures() {
     }
     fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o755)).expect("unlock");
 }
+
+#[test]
+fn undo_puts_the_photo_back_in_its_place_without_listing_the_folder_again() {
+    let dir = tempfile::tempdir().expect("folder");
+    let fixtures = std::env::var_os("SORTYPIX_FIXTURES")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| {
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures")
+        });
+    // Three photos: b carries an EXIF date (2025), a and c only their file time (now).
+    fs::write(dir.path().join("a.jpg"), "a").expect("a");
+    fs::copy(fixtures.join("orientation-1.jpg"), dir.path().join("b.jpg")).expect("b");
+    fs::write(dir.path().join("c.NEF"), "c").expect("c raw");
+    fs::write(dir.path().join("c.jpg"), "c jpeg").expect("c jpeg");
+    let mut engine = Engine::default();
+    engine.open(dir.path()).expect("open");
+    let before: Vec<_> = engine.photos().iter().map(|p| p.members.clone()).collect();
+    let name =
+        |p: &sortypix_app::catalog::PhysicalPhoto| p.members[0].file_name().unwrap().to_owned();
+    assert_eq!(name(&engine.photos()[0]), "b.jpg", "oldest first");
+    let ids: Vec<_> = engine.photos().iter().map(|p| p.id).collect();
+    let (b, c) = (ids[0], ids[2]);
+    engine.decide(&[b, c], Decision::Reject).expect("reject");
+    assert_eq!(engine.photos().len(), 1);
+    // A file another program adds meanwhile is not listed by an undo.
+    fs::write(dir.path().join("new.jpg"), "new").expect("new");
+    engine.undo().expect("undo");
+    let after = engine.photos();
+    assert_eq!(
+        after.iter().map(|p| p.members.clone()).collect::<Vec<_>>(),
+        before,
+        "same photos in the same order, the pair kept together"
+    );
+    assert_eq!(after[0].id, b);
+    assert_eq!(after[2].id, c);
+    assert_eq!(
+        after[0].capture_time,
+        Some(1_748_781_000),
+        "metadata read again"
+    );
+    assert!(engine.decide(&[b], Decision::Keep).is_ok(), "pending again");
+}

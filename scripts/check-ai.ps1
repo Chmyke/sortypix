@@ -1,4 +1,4 @@
-# Sortypix AI probes: model integrity, speed and quality on the real models, plus the guard that
+# Sortypix AI probes: model integrity, speed, quality and tags on the real models, plus the guard that
 # the normal application never links ONNX Runtime. Run from check.ps1 after the release build.
 # -GuardOnly runs the dependency and binary guards alone (needs no models); -Binary names the
 # executable to scan (default target/release/sortypix.exe, skipped while it is not built).
@@ -38,14 +38,14 @@ try {
     python -I scripts/ai/fetch-models.py --check --dir $env:SORTYPIX_AI_DIR
     if ($LASTEXITCODE -ne 0) { Write-Output 'FAIL fetch-models.py --check'; exit 1 }
     # A stale report must not satisfy the existence check below.
-    foreach ($report in 'ai-speed.txt', 'ai-quality.txt') {
+    foreach ($report in 'ai-speed.txt', 'ai-quality.txt', 'ai-tags.txt') {
         Remove-Item (Join-Path $root "target/reports/$report") -ErrorAction SilentlyContinue
     }
-    foreach ($probe in 'ai_speed', 'ai_quality') {
+    foreach ($probe in 'ai_speed', 'ai_quality', 'ai_tags') {
         & (Join-Path $root "target/release/examples/$probe.exe")
         if ($LASTEXITCODE -ne 0) { Write-Output "FAIL $probe"; exit 1 }
     }
-    foreach ($report in 'ai-speed.txt', 'ai-quality.txt') {
+    foreach ($report in 'ai-speed.txt', 'ai-quality.txt', 'ai-tags.txt') {
         if (-not (Test-Path (Join-Path $root "target/reports/$report"))) {
             Write-Output "FAIL missing report $report"; exit 1
         }

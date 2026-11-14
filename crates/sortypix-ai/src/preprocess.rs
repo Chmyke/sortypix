@@ -38,8 +38,9 @@ pub fn preprocess(rgba: &[u8], width: u32, height: u32) -> Result<Vec<f32>, AiEr
     let side = width.min(height);
     let left = (width - side).div_ceil(2);
     let top = (height - side).div_ceil(2);
-    let square = imageops::crop_imm(&img, left, top, side, side).to_image();
-    let crop = imageops::resize(&square, INPUT, INPUT, FilterType::CatmullRom);
+    // Resized straight from the view of the square: the same pixels and filter, one copy less.
+    let square = imageops::crop_imm(&img, left, top, side, side);
+    let crop = imageops::resize(&*square, INPUT, INPUT, FilterType::CatmullRom);
 
     let plane = (INPUT * INPUT) as usize;
     let mut out = vec![0f32; 3 * plane];

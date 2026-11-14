@@ -1,10 +1,27 @@
 use std::path::Path;
 /// Read proportions without decoding pixels; orientation must match the rendered image.
 pub fn aspect_ratio(path: &Path) -> Option<f32> {
+    aspect_ratio_with(path, || crate::metadata::orientation(path))
+}
+/// [`aspect_ratio`] with the EXIF orientation supplied by the caller when it is needed, so
+/// the catalog reads the EXIF of a photo once.
+pub fn aspect_ratio_with(path: &Path, orientation: impl FnOnce() -> u16) -> Option<f32> {
+    let turned = |(width, height): (u32, u32)| {
+        let (width, height) = if matches!(orientation(), 5..=8) {
+            (height, width)
+        } else {
+            (width, height)
+        };
+        (width > 0 && height > 0).then_some(width as f32 / height as f32)
+    };
     match system_format(path) {
-        Some(SystemFormat::Raw) => return raw_aspect_ratio(path),
-        Some(SystemFormat::Other) => return other_aspect_ratio(path),
+        Some(SystemFormat::Raw) => return raw_size(path).and_then(turned),
+        Some(SystemFormat::Other) => return other_size(path).and_then(turned),
         None => {}
+    }
+    if crate::catalog::is_jpeg(path) {
+        // The frame header alone: the image crate reads a whole JPEG to open it.
+        return crate::embedded::jpeg_size(path).and_then(turned);
     }
     use image::ImageDecoder;
     if is_jxl(path) {
@@ -68,6 +85,12 @@ pub fn decode(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String
     image.apply_orientation(orientation);
     Ok(finish(image, max_edge))
 }
+/// Starts the threads the decoders share (the global pool jxl-oxide decodes on), so they
+/// exist before a priority change applies to threads created later (Sortypix AI lowers the
+/// process and raises the threads it has at that moment).
+pub fn start_shared_threads() {
+    let _ = rayon_core::current_num_threads();
+}
 fn limits() -> image::Limits {
     let mut limits = image::Limits::default();
     limits.max_alloc = Some(512 * 1024 * 1024);
@@ -127,33 +150,40 @@ fn system_format(path: &Path) -> Option<SystemFormat> {
 /// without a RAW codec, and on other systems, the previews stand in.
 #[cfg(windows)]
 fn decode_raw(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String> {
+    // The previews are listed once, and none is decoded before its size is known to fit.
+    let previews = crate::embedded::raw_previews(path);
     let preview = max_edge.and_then(|edge| {
-        crate::embedded::decode(path, Some(edge))
+        previews
+            .last()
+            .filter(|largest| large_enough(largest.edge(), edge))?;
+        crate::embedded::decode_from(path, &previews, Some(edge))
             .ok()
-            .filter(|image| large_enough(image, edge))
+            .filter(|image| large_enough(image.width.max(image.height), edge))
     });
     match preview {
         Some(image) => Ok(image),
-        None => crate::wic::decode(path, max_edge)
-            .or_else(|error| crate::embedded::decode(path, max_edge).map_err(|_| error)),
+        None => crate::wic::decode(path, max_edge).or_else(|error| {
+            crate::embedded::decode_from(path, &previews, max_edge).map_err(|_| error)
+        }),
     }
 }
 /// Within a few pixels of `edge` (previews and sensor differ by their margins).
 #[cfg(windows)]
-fn large_enough(image: &DecodedImage, edge: u32) -> bool {
-    image.width.max(image.height) + 32 >= edge
+fn large_enough(longest: u32, edge: u32) -> bool {
+    longest + 32 >= edge
 }
 #[cfg(not(windows))]
 fn decode_raw(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String> {
     crate::embedded::decode(path, max_edge)
 }
+/// Stored size of a RAW photo: the codec's, else its largest embedded preview's.
 #[cfg(windows)]
-fn raw_aspect_ratio(path: &Path) -> Option<f32> {
-    crate::wic::aspect_ratio(path).or_else(|| crate::embedded::aspect_ratio(path))
+fn raw_size(path: &Path) -> Option<(u32, u32)> {
+    crate::wic::size(path).or_else(|| crate::embedded::largest_preview_size(path))
 }
 #[cfg(not(windows))]
-fn raw_aspect_ratio(path: &Path) -> Option<f32> {
-    crate::embedded::aspect_ratio(path)
+fn raw_size(path: &Path) -> Option<(u32, u32)> {
+    crate::embedded::largest_preview_size(path)
 }
 #[cfg(windows)]
 fn decode_other(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String> {
@@ -167,10 +197,10 @@ fn decode_other(path: &Path, _max_edge: Option<u32>) -> Result<DecodedImage, Str
     ))
 }
 #[cfg(windows)]
-fn other_aspect_ratio(path: &Path) -> Option<f32> {
-    crate::wic::aspect_ratio(path)
+fn other_size(path: &Path) -> Option<(u32, u32)> {
+    crate::wic::size(path)
 }
 #[cfg(not(windows))]
-fn other_aspect_ratio(_path: &Path) -> Option<f32> {
+fn other_size(_path: &Path) -> Option<(u32, u32)> {
     None
 }

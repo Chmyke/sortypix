@@ -1,7 +1,7 @@
 //! ROLE: Couples physical transactions to pure session state across folders.
 //! OWNER: One engine lives on the application worker, never on the UI thread.
 use crate::{
-    catalog::{PhotoMetadata, PhysicalPhoto, read_metadata, scan_names_with},
+    catalog::{PhotoMetadata, PhysicalPhoto, photos_of, read_metadata, scan_names_with},
     storage::Storage,
 };
 use sortypix_core::{Decision, Photo, PhotoId, Session, Status};
@@ -25,6 +25,9 @@ pub struct Engine {
     root: Option<PathBuf>,
     catalog: Vec<PhysicalPhoto>,
     ids: BTreeMap<PathBuf, PhotoId>,
+    /// Sorting time of every photo read so far, by its key, so an undo can put a photo back
+    /// in its place without listing the folder again.
+    timestamps: BTreeMap<PathBuf, i64>,
     session: Session,
     storage: Storage,
     history: Vec<Gesture>,
@@ -86,27 +89,63 @@ impl Engine {
         Ok(())
     }
     pub fn apply_metadata(&mut self, metadata: Vec<PhotoMetadata>) {
-        let metadata: BTreeMap<_, _> = metadata
+        self.timestamps.clear();
+        Self::fill(&mut self.catalog, &mut self.timestamps, metadata);
+        self.sort_catalog();
+    }
+    fn fill(
+        photos: &mut [PhysicalPhoto],
+        timestamps: &mut BTreeMap<PathBuf, i64>,
+        metadata: Vec<PhotoMetadata>,
+    ) {
+        let mut fields: BTreeMap<_, _> = metadata
             .into_iter()
             .map(|value| {
-                let fields = (value.timestamp, value.aspect_ratio, value.capture_time);
-                (value.key, fields)
+                timestamps.insert(value.key.clone(), value.timestamp);
+                (value.key, (value.aspect_ratio, value.capture_time))
             })
             .collect();
-        for photo in &mut self.catalog {
-            if let Some((_, aspect_ratio, capture_time)) = metadata.get(&photo.members[0]) {
-                photo.aspect_ratio = *aspect_ratio;
-                photo.capture_time = *capture_time;
+        for photo in photos {
+            if let Some((aspect_ratio, capture_time)) = fields.remove(&photo.members[0]) {
+                photo.aspect_ratio = aspect_ratio;
+                photo.capture_time = capture_time;
             }
         }
-        self.catalog.sort_by_cached_key(|photo| {
-            (
-                metadata
-                    .get(&photo.members[0])
-                    .map_or(0, |(timestamp, _, _)| *timestamp),
-                photo.members[0].clone(),
-            )
+    }
+    /// Oldest first, then by name: the order of the listing for photos of one time.
+    fn sort_catalog(&mut self) {
+        let timestamps = &self.timestamps;
+        let timestamp = |photo: &PhysicalPhoto| timestamps.get(&photo.members[0]).copied();
+        self.catalog.sort_by(|a, b| {
+            timestamp(a)
+                .unwrap_or(0)
+                .cmp(&timestamp(b).unwrap_or(0))
+                .then_with(|| a.members[0].cmp(&b.members[0]))
         });
+    }
+    /// Puts files an undo brought back into the catalog, at their place, reading only them.
+    fn restore(&mut self, restored: Vec<PathBuf>) {
+        if restored.is_empty() {
+            return;
+        }
+        let files: Vec<_> = restored
+            .into_iter()
+            .map(|path| {
+                let metadata = std::fs::metadata(&path).ok();
+                crate::catalog::listed(path, metadata)
+            })
+            .collect();
+        let present: BTreeSet<_> = self.catalog.iter().map(|p| p.id).collect();
+        let mut photos = photos_of(&files);
+        for photo in &mut photos {
+            let next = PhotoId(self.ids.len() as u64);
+            photo.id = *self.ids.entry(photo.members[0].clone()).or_insert(next);
+        }
+        photos.retain(|photo| !present.contains(&photo.id));
+        let metadata = read_metadata(&photos);
+        Self::fill(&mut photos, &mut self.timestamps, metadata);
+        self.catalog.extend(photos);
+        self.sort_catalog();
     }
     pub fn root(&self) -> Option<&Path> {
         self.root.as_deref()
@@ -186,8 +225,7 @@ impl Engine {
         let wanted: BTreeSet<_> = ids.iter().collect();
         let mut gone = BTreeSet::new();
         for photo in self.catalog.iter_mut().filter(|p| wanted.contains(&p.id)) {
-            photo
-                .members
+            std::sync::Arc::make_mut(&mut photo.members)
                 .retain(|m| std::fs::symlink_metadata(m).is_ok());
             if photo.members.is_empty() {
                 gone.insert(photo.id);
@@ -212,21 +250,22 @@ impl Engine {
     }
     pub fn undo(&mut self) -> Result<(), String> {
         let last = self.history.last().ok_or("Nothing to undo")?;
+        let mut restored = Vec::new();
         if last.physical {
             let report = self.storage.undo();
             if !report.errors.is_empty() {
                 self.recovery_pending = true;
                 return Err(report.errors.join("\n"));
             }
+            restored = report.restored;
         }
         if last.logical {
             self.session.undo()?;
         }
         self.history.pop();
         self.recovery_pending = false;
-        if let Some(root) = self.root.clone() {
-            self.open(&root)?;
-        }
+        // Only the files that came back are read: the folder is not listed again.
+        self.restore(restored);
         Ok(())
     }
     pub fn turns(&self, id: PhotoId) -> u8 {

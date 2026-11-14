@@ -19,7 +19,7 @@ const SIBLING: Stroke = Stroke {
 /// Text and colour of a badge.
 pub(crate) fn badge_text(badge: Badge) -> (String, Color32) {
     match badge {
-        Badge::Score(score) => (format!("{score:.1}"), theme::RED),
+        Badge::Low(percent) => (format!("Bottom {percent}%"), theme::RED),
         Badge::OffTopic => ("Off-topic".to_string(), theme::AMBER),
         Badge::Burst => ("Burst".to_string(), theme::DIM),
     }

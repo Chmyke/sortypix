@@ -21,7 +21,7 @@ pub struct Preview {
     pub height: u32,
 }
 impl Preview {
-    fn edge(&self) -> u32 {
+    pub fn edge(&self) -> u32 {
         self.width.max(self.height)
     }
 }
@@ -83,7 +83,7 @@ fn measure_all(file: &mut File, length: u64, found: Vec<(u64, Option<u64>)>) -> 
 pub fn jpeg_thumbnail(path: &Path) -> Option<Preview> {
     let mut file = File::open(path).ok()?;
     let length = file.metadata().ok()?.len();
-    let base = exif_segment(&mut file, length)?;
+    let (base, _) = exif_segment(&mut file, length)?;
     let (offset, size) = tiff_previews(&mut file, base, length).into_iter().next()?;
     measure(&mut file, length, offset, size)
 }
@@ -108,7 +108,14 @@ pub fn quick(path: &Path, edge: u32) -> Option<DecodedImage> {
 /// Decodes the preview fitting `max_edge` best: the smallest at least that large, else the
 /// largest. Native means the largest preview at its full size, the best this file offers.
 pub fn decode(path: &Path, max_edge: Option<u32>) -> Result<DecodedImage, String> {
-    let previews = raw_previews(path);
+    decode_from(path, &raw_previews(path), max_edge)
+}
+/// [`decode`] with the previews already found, so a file is searched once.
+pub fn decode_from(
+    path: &Path,
+    previews: &[Preview],
+    max_edge: Option<u32>,
+) -> Result<DecodedImage, String> {
     let largest = *previews
         .last()
         .ok_or_else(|| format!("No embedded preview in {}", path.display()))?;
@@ -181,12 +188,16 @@ pub fn decode_preview(
 
 /// Proportions of the largest preview, turned like the photo.
 pub fn aspect_ratio(path: &Path) -> Option<f32> {
-    let largest = *raw_previews(path).last()?;
-    let (mut width, mut height) = (largest.width, largest.height);
+    let (mut width, mut height) = largest_preview_size(path)?;
     if matches!(crate::metadata::orientation(path), 5..=8) {
         std::mem::swap(&mut width, &mut height);
     }
     Some(width as f32 / height as f32)
+}
+/// Stored size of the largest preview, as the sensor saw it.
+pub fn largest_preview_size(path: &Path) -> Option<(u32, u32)> {
+    let largest = *raw_previews(path).last()?;
+    Some((largest.width, largest.height))
 }
 
 fn read_at(file: &mut File, offset: u64, buffer: &mut [u8]) -> std::io::Result<()> {
@@ -319,8 +330,9 @@ fn sub_ifds(
     }
 }
 
-/// Start of the TIFF structure inside the APP1 Exif segment of a JPEG file.
-fn exif_segment(file: &mut File, length: u64) -> Option<u64> {
+/// Start and length of the TIFF structure inside the APP1 Exif segment of a JPEG file,
+/// reading only the segment markers before the scan data.
+pub(crate) fn exif_segment(file: &mut File, length: u64) -> Option<(u64, u64)> {
     let mut marker = [0; 4];
     read_at(file, 0, &mut marker[..2]).ok()?;
     if marker[..2] != [0xFF, 0xD8] {
@@ -333,16 +345,84 @@ fn exif_segment(file: &mut File, length: u64) -> Option<u64> {
             return None;
         }
         let size = u64::from(u16::from_be_bytes([marker[2], marker[3]]));
-        if marker[1] == 0xE1 {
+        if marker[1] == 0xE1 && size >= 8 {
             let mut tag = [0; 6];
             read_at(file, at + 4, &mut tag).ok()?;
             if &tag == b"Exif\0\0" {
-                return Some(at + 10);
+                return Some((at + 10, (size - 8).min(length - at - 10)));
             }
         }
         at += 2 + size;
     }
     None
+}
+/// A TIFF header, as RAW files and DNG start with one.
+pub(crate) fn is_tiff(header: &[u8]) -> bool {
+    tiff_order(header).is_some()
+}
+/// What the marker segments of a JPEG say before its scan data.
+#[derive(Debug, Default, PartialEq, Eq)]
+pub(crate) struct JpegHeader {
+    /// Start and length of the TIFF structure of the APP1 Exif segment, in the file.
+    pub exif: Option<(u64, u64)>,
+    /// Frame size as stored, when the frame is one the decoder reads.
+    pub size: Option<(u32, u32)>,
+}
+/// Reads the marker segments in `bytes`, the start of a JPEG file of `length` bytes, up to the
+/// scan data. `None` when a segment runs past `bytes` before the EXIF segment and the frame
+/// are both known: the caller then walks the file itself.
+pub(crate) fn jpeg_header(bytes: &[u8], length: u64) -> Option<JpegHeader> {
+    if !bytes.starts_with(&[0xFF, 0xD8]) {
+        return None;
+    }
+    let mut header = JpegHeader::default();
+    let mut at = 2usize;
+    while header.exif.is_none() || header.size.is_none() {
+        if at as u64 + 4 > length {
+            break;
+        }
+        let marker = bytes.get(at..at + 4)?;
+        if marker[0] != 0xFF {
+            break;
+        }
+        match marker[1] {
+            0xFF => at += 1,
+            0x01 | 0xD0..=0xD7 => at += 2,
+            0xD9 | 0xDA => break,
+            code => {
+                let size = usize::from(u16::from_be_bytes([marker[2], marker[3]]));
+                if code == 0xE1 && size >= 8 {
+                    let tag = bytes.get(at + 4..at + 10)?;
+                    if tag == b"Exif\0\0" {
+                        let start = at as u64 + 10;
+                        header.exif = Some((start, (size as u64 - 8).min(length - start)));
+                    }
+                }
+                if matches!(code, 0xC0..=0xC2) {
+                    let frame = bytes.get(at + 5..at + 9)?;
+                    let height = u32::from(u16::from_be_bytes([frame[0], frame[1]]));
+                    let width = u32::from(u16::from_be_bytes([frame[2], frame[3]]));
+                    let fits = u64::from(width) * u64::from(height) <= MAX_PIXELS;
+                    if width == 0 || height == 0 || !fits {
+                        break;
+                    }
+                    header.size = Some((width, height));
+                }
+                // Lossless, arithmetic: not a frame the decoder reads (`measure` agrees).
+                if matches!(code, 0xC3 | 0xC5..=0xC7 | 0xC9..=0xCB | 0xCD..=0xCF) {
+                    break;
+                }
+                at += 2 + size;
+            }
+        }
+    }
+    Some(header)
+}
+/// Pixel size of a JPEG file from its frame header, as stored (not turned).
+pub fn jpeg_size(path: &Path) -> Option<(u32, u32)> {
+    let mut file = File::open(path).ok()?;
+    let length = file.metadata().ok()?.len();
+    measure(&mut file, length, 0, None).map(|p| (p.width, p.height))
 }
 
 /// Offsets of JPEG start markers, read in chunks so memory stays bounded.
@@ -368,7 +448,12 @@ fn scan(file: &mut File, length: u64) -> Vec<(u64, Option<u64>)> {
 }
 
 /// Reads a JPEG's markers up to its frame header: its size, if it is one the decoder reads.
-fn measure(file: &mut File, length: u64, offset: u64, size: Option<u64>) -> Option<Preview> {
+pub(crate) fn measure(
+    file: &mut File,
+    length: u64,
+    offset: u64,
+    size: Option<u64>,
+) -> Option<Preview> {
     let end = size.map_or(length, |s| offset.saturating_add(s));
     if end > length || offset + 4 > end {
         return None;
@@ -466,6 +551,30 @@ mod tests {
         );
         assert!((aspect_ratio(&path).unwrap() - 4. / 3.).abs() < 1e-6);
     }
+    #[test]
+    fn jpeg_header_reads_exif_and_frame_from_a_prefix_or_asks_for_more() {
+        let image = jpeg(64, 48);
+        let header = jpeg_header(&image, image.len() as u64).unwrap();
+        assert_eq!(
+            header,
+            JpegHeader {
+                exif: None,
+                size: Some((64, 48))
+            }
+        );
+        // The frame header lies past a short prefix.
+        assert_eq!(jpeg_header(&image[..20], image.len() as u64), None);
+        // An APP1 Exif segment right after SOI, as cameras write it.
+        // Segment length 16: the two length bytes, "Exif\0\0" and an 8-byte TIFF header.
+        let mut with_exif = vec![0xFF, 0xD8, 0xFF, 0xE1, 0, 16];
+        with_exif.extend(b"Exif\0\0II*\0\x08\0\0\0");
+        with_exif.extend(&image[2..]);
+        let header = jpeg_header(&with_exif, with_exif.len() as u64).unwrap();
+        assert_eq!(header.exif, Some((12, 8)));
+        assert_eq!(header.size, Some((64, 48)));
+        assert_eq!(jpeg_header(b"not a jpeg", 10), None);
+    }
+
     #[test]
     fn container_raw_previews_are_found_by_scanning() {
         let dir = tempfile::tempdir().unwrap();

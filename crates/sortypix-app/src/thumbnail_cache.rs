@@ -10,6 +10,9 @@ use std::{
     time::SystemTime,
 };
 
+/// Distinguishes temporary files of the decode threads of one process.
+static NEXT_TEMP: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
 #[derive(Default)]
 struct CacheIndex {
     entries: BTreeMap<PathBuf, (SystemTime, u64)>,
@@ -34,8 +37,10 @@ impl ThumbnailCache {
         }
     }
     fn key(&self, source: &Path, edge: u32) -> Option<PathBuf> {
-        let path = source.canonicalize().ok()?;
-        let meta = fs::metadata(&path).ok()?;
+        // The catalog hands canonical paths; another spelling only means a miss, never a
+        // wrong image (size and time are part of the key).
+        let path = source;
+        let meta = fs::metadata(path).ok()?;
         let modified = meta
             .modified()
             .ok()?
@@ -91,17 +96,43 @@ impl ThumbnailCache {
         if size > self.budget {
             return None;
         }
-        let mut index = self.index.lock().ok()?;
         fs::create_dir_all(&self.root).ok()?;
+        // The pixels are written before the index is locked: the decode threads only
+        // serialise on the bookkeeping, not on the disk.
+        let serial = NEXT_TEMP.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let temp = path.with_extension(format!("{}-{serial}.tmp", std::process::id()));
+        let written = (|| -> std::io::Result<()> {
+            let mut file = fs::File::create(&temp)?;
+            file.write_all(&image.width.to_le_bytes())?;
+            file.write_all(&image.height.to_le_bytes())?;
+            file.write_all(&image.rgba)
+        })();
+        if written.is_err() {
+            let _ = fs::remove_file(&temp);
+            return None;
+        }
+        let evicted = match self.place(path, size, &temp) {
+            Some(evicted) => evicted,
+            None => {
+                let _ = fs::remove_file(&temp);
+                return None;
+            }
+        };
+        for old in evicted {
+            let _ = fs::remove_file(old);
+        }
+        Some(())
+    }
+    /// Under the lock: makes room in the index, moves `temp` to `path` and records it.
+    /// Returns the files to delete once the lock is released.
+    fn place(&self, path: &Path, size: u64, temp: &Path) -> Option<Vec<PathBuf>> {
+        let mut index = self.index.lock().ok()?;
         if index.is_none() {
             *index = Some(self.scan_index()?);
         }
         let index = index.as_mut()?;
-        if let Some((_, previous)) = index.entries.get(path).copied() {
-            if fs::remove_file(path).is_err() && path.exists() {
-                return None;
-            }
-            index.entries.remove(path);
+        let mut evicted = Vec::new();
+        if let Some((_, previous)) = index.entries.remove(path) {
             index.total = index.total.saturating_sub(previous);
         }
         while index.total + size > self.budget {
@@ -110,32 +141,19 @@ impl ThumbnailCache {
                 .iter()
                 .min_by_key(|(_, (modified, _))| *modified)
                 .map(|(path, (_, bytes))| (path.clone(), *bytes))?;
-            if fs::remove_file(&old).is_err() && old.exists() {
-                return None;
-            }
             index.entries.remove(&old);
             index.total = index.total.saturating_sub(bytes);
+            evicted.push(old);
         }
-        let temp = path.with_extension(format!("{}.tmp", std::process::id()));
-        let result = (|| -> std::io::Result<()> {
-            let mut file = fs::File::create(&temp)?;
-            file.write_all(&image.width.to_le_bytes())?;
-            file.write_all(&image.height.to_le_bytes())?;
-            file.write_all(&image.rgba)?;
-            drop(file);
-            fs::rename(&temp, path)
-        })();
-        if result.is_err() {
-            let _ = fs::remove_file(temp);
-        } else {
-            let modified = path
-                .metadata()
-                .and_then(|metadata| metadata.modified())
-                .unwrap_or_else(|_| SystemTime::now());
-            index.entries.insert(path.to_path_buf(), (modified, size));
-            index.total += size;
-        }
-        result.ok()
+        // A replaced entry is overwritten in place: NTFS and POSIX renames replace files.
+        fs::rename(temp, path).ok()?;
+        let modified = path
+            .metadata()
+            .and_then(|metadata| metadata.modified())
+            .unwrap_or_else(|_| SystemTime::now());
+        index.entries.insert(path.to_path_buf(), (modified, size));
+        index.total += size;
+        Some(evicted)
     }
 
     fn scan_index(&self) -> Option<CacheIndex> {

@@ -7,7 +7,6 @@ use windows::{
     Win32::{
         Foundation::SIZE,
         Graphics::Gdi::{DIBSECTION, DeleteObject, GetObjectW, HBITMAP},
-        System::Com::{COINIT_MULTITHREADED, CoInitializeEx, CoUninitialize},
         UI::Shell::{
             IShellItemImageFactory, SHCreateItemFromParsingName, SIIGBF, SIIGBF_BIGGERSIZEOK,
             SIIGBF_INCACHEONLY, SIIGBF_THUMBNAILONLY,
@@ -15,13 +14,6 @@ use windows::{
     },
     core::PCWSTR,
 };
-
-struct ComGuard;
-impl Drop for ComGuard {
-    fn drop(&mut self) {
-        unsafe { CoUninitialize() };
-    }
-}
 
 struct BitmapGuard(HBITMAP);
 impl Drop for BitmapGuard {
@@ -47,9 +39,11 @@ pub fn extract(path: &Path, edge: u32) -> Option<DecodedImage> {
 fn get(path: &Path, edge: u32, flags: SIIGBF) -> Option<DecodedImage> {
     let edge = edge.clamp(1, 4096) as i32;
     let name: Vec<u16> = path.as_os_str().encode_wide().chain(Some(0)).collect();
+    // COM stays entered on this worker thread (wic.rs) instead of per request.
+    if !crate::wic::ensure_com() {
+        return None;
+    }
     unsafe {
-        CoInitializeEx(None, COINIT_MULTITHREADED).ok().ok()?;
-        let _com = ComGuard;
         let factory: IShellItemImageFactory =
             SHCreateItemFromParsingName(PCWSTR(name.as_ptr()), None).ok()?;
         let bitmap = BitmapGuard(factory.GetImage(SIZE { cx: edge, cy: edge }, flags).ok()?);

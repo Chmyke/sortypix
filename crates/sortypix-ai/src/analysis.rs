@@ -115,6 +115,50 @@ fn dot_avx(a: &[f32], b: &[f32]) -> f32 {
     dot_lanes(a, b)
 }
 
+/// Four dot products of `a` with `b[0..4]`, each bit for bit the one [`dot`] gives: the same
+/// sixteen lanes add the same products in the same order, and `a` is read from memory once
+/// per chunk for the four columns instead of once per pair. Columns of another length than
+/// `a` fall back to [`dot`].
+pub(crate) fn dot4(a: &[f32], b: [&[f32]; 4]) -> [f32; 4] {
+    if b.iter().any(|column| column.len() != a.len()) {
+        return b.map(|column| dot(a, column));
+    }
+    #[cfg(target_arch = "x86_64")]
+    if std::arch::is_x86_feature_detected!("avx") {
+        // SAFETY: the processor supports AVX, checked just above.
+        return unsafe { dot4_avx(a, b) };
+    }
+    dot4_lanes(a, b)
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx")]
+fn dot4_avx(a: &[f32], b: [&[f32]; 4]) -> [f32; 4] {
+    dot4_lanes(a, b)
+}
+
+#[inline(always)]
+fn dot4_lanes(a: &[f32], b: [&[f32]; 4]) -> [f32; 4] {
+    const LANES: usize = 16;
+    let (a_chunks, a_rest) = a.as_chunks::<LANES>();
+    let columns = b.map(|column| column.as_chunks::<LANES>());
+    let mut acc = [[0f32; LANES]; 4];
+    for (i, x) in a_chunks.iter().enumerate() {
+        for (col, (chunks, _)) in columns.iter().enumerate() {
+            let y = &chunks[i];
+            for lane in 0..LANES {
+                acc[col][lane] += x[lane] * y[lane];
+            }
+        }
+    }
+    let mut out = [0f32; 4];
+    for (col, (_, rest)) in columns.iter().enumerate() {
+        let tail: f32 = a_rest.iter().zip(*rest).map(|(x, y)| x * y).sum();
+        out[col] = acc[col].iter().sum::<f32>() + tail;
+    }
+    out
+}
+
 #[inline(always)]
 fn dot_lanes(a: &[f32], b: &[f32]) -> f32 {
     const LANES: usize = 16;
@@ -351,7 +395,22 @@ fn nearest_mean_symmetric(items: &[Embedding], k: usize) -> Vec<f32> {
             for other in tile..tiles {
                 let columns = other * TILE..((other + 1) * TILE).min(n);
                 for i in rows.clone() {
-                    for j in columns.clone().filter(|&j| j > i) {
+                    // Four columns per pass share one read of the row (`dot4`); the last
+                    // ones go one by one. Every distance is the one `cosine` gives.
+                    let mut j = columns.start.max(i + 1);
+                    while j + 4 <= columns.end {
+                        let scores = dot4(
+                            &items[i],
+                            [&items[j], &items[j + 1], &items[j + 2], &items[j + 3]],
+                        );
+                        for (m, score) in scores.into_iter().enumerate() {
+                            let d = 1.0 - score;
+                            nearest.offer(i, d);
+                            nearest.offer(j + m, d);
+                        }
+                        j += 4;
+                    }
+                    for j in j..columns.end {
                         let d = 1.0 - cosine(&items[i], &items[j]);
                         nearest.offer(i, d);
                         nearest.offer(j, d);
@@ -436,7 +495,11 @@ pub fn coverage_order_with_outliers(items: &[Embedding], z: &[f32], seed: u64) -
     let (mut off_topic, kept): (Vec<usize>, Vec<usize>) = (0..n).partition(off_topic);
     off_topic.sort_by(|&a, &b| z[a].total_cmp(&z[b]).then(a.cmp(&b)));
     let mut order = Vec::with_capacity(n);
-    if !kept.is_empty() {
+    if kept.len() == n {
+        // Nothing off topic (the usual case): no copy of the embeddings.
+        let k = (n / 8).clamp(1, MAX_GROUPS);
+        order.extend(group_and_interleave(items, seed, k));
+    } else if !kept.is_empty() {
         let subset: Vec<Embedding> = kept.iter().map(|&i| items[i]).collect();
         let k = (subset.len() / 8).clamp(1, MAX_GROUPS);
         order.extend(
@@ -542,12 +605,23 @@ fn assign(items: &[Embedding], centers: &[Embedding], assignment: &mut [usize]) 
     par_each(assignment, |i, slot| {
         let mut best = 0;
         let mut best_score = f32::NEG_INFINITY;
-        for (c, center) in centers.iter().enumerate() {
-            let score = cosine(&items[i], center);
+        let mut offer = |c: usize, score: f32| {
             if score.total_cmp(&best_score).is_gt() {
                 best = c;
                 best_score = score;
             }
+        };
+        // Four centers per pass share one read of the item; the centers stay in order, so
+        // ties still go to the lowest index.
+        let (fours, rest) = centers.as_chunks::<4>();
+        for (f, four) in fours.iter().enumerate() {
+            let scores = dot4(&items[i], [&four[0], &four[1], &four[2], &four[3]]);
+            for (m, score) in scores.into_iter().enumerate() {
+                offer(f * 4 + m, score);
+            }
+        }
+        for (m, center) in rest.iter().enumerate() {
+            offer(fours.len() * 4 + m, cosine(&items[i], center));
         }
         *slot = best;
     });
@@ -874,6 +948,29 @@ mod tests {
                 assert_eq!(avx.to_bits(), dot_lanes(&a, &b).to_bits());
             }
         }
+    }
+
+    #[test]
+    fn four_columns_at_once_give_the_same_bits_as_one_by_one() {
+        let mut rng = SplitMix64::new(11);
+        for _ in 0..100 {
+            let a = random_unit(&mut rng);
+            let b: Vec<Embedding> = (0..4).map(|_| random_unit(&mut rng)).collect();
+            let four = dot4(&a, [&b[0], &b[1], &b[2], &b[3]]);
+            for (m, column) in b.iter().enumerate() {
+                assert_eq!(four[m].to_bits(), dot(&a, column).to_bits());
+            }
+        }
+        // Lengths that are not a multiple of the lanes, and columns of another length.
+        let short = dot4(
+            &[1.0, 2.0, 3.0],
+            [&[1.0; 3], &[2.0; 3], &[0.5; 3], &[0.0; 3]],
+        );
+        assert_eq!(short, [6.0, 12.0, 3.0, 0.0]);
+        assert_eq!(
+            dot4(&[1.0, 2.0], [&[1.0], &[1.0, 1.0], &[], &[3.0, 3.0]]),
+            [1.0, 3.0, 0.0, 9.0]
+        );
     }
 
     /// Straightforward O(n^2) mean distance to the k nearest, in f64.

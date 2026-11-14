@@ -289,6 +289,20 @@ impl Engine {
         Ok(result)
     }
 
+    /// Embeds one preprocessed image, taking its buffer over: the tensor is built on it
+    /// without a copy (the analysis calls this once per photo).
+    pub fn embed_one(&self, input: Vec<f32>) -> Result<Embedding, AiError> {
+        if input.len() != IMAGE_LEN {
+            return Err(AiError::Image(format!(
+                "preprocessed image has {} values, expected {IMAGE_LEN}",
+                input.len()
+            )));
+        }
+        run_visual_owned(&mut self.acquire_visual(), input, 1)?
+            .pop()
+            .ok_or_else(|| AiError::Model("visual model returned nothing".into()))
+    }
+
     /// Runs every visual session once on a blank image, one after the other. A session's first
     /// run allocates its working memory; several sessions doing it at once stalled the whole
     /// machine for a moment (UI benchmark during analysis, 2026-10-23).
@@ -340,6 +354,19 @@ impl Engine {
 
 /// One run of a visual session on `group` (inputs of the right size, at most its batch size).
 fn run_visual(session: &mut Session, group: &[Vec<f32>]) -> Result<Vec<Embedding>, AiError> {
+    let mut flat = Vec::with_capacity(group.len() * IMAGE_LEN);
+    for v in group {
+        flat.extend_from_slice(v);
+    }
+    run_visual_owned(session, flat, group.len())
+}
+
+/// [`run_visual`] on `count` images already laid out one after the other in `flat`.
+fn run_visual_owned(
+    session: &mut Session,
+    flat: Vec<f32>,
+    count: usize,
+) -> Result<Vec<Embedding>, AiError> {
     let fail = |e: &dyn std::fmt::Display| AiError::Model(format!("visual model: {e}"));
     let input_name = session
         .inputs()
@@ -352,22 +379,17 @@ fn run_visual(session: &mut Session, group: &[Vec<f32>]) -> Result<Vec<Embedding
         .map(|o| o.name().to_string())
         .ok_or_else(|| AiError::Model("visual model has no output".into()))?;
     let side = crate::INPUT as usize;
-    let mut flat = Vec::with_capacity(group.len() * IMAGE_LEN);
-    for v in group {
-        flat.extend_from_slice(v);
-    }
-    let tensor = ort::value::Tensor::from_array(([group.len(), 3, side, side], flat))
-        .map_err(|e| fail(&e))?;
+    let tensor =
+        ort::value::Tensor::from_array(([count, 3, side, side], flat)).map_err(|e| fail(&e))?;
     let outputs = session
         .run(ort::inputs![input_name.as_str() => tensor])
         .map_err(|e| fail(&e))?;
     let (shape, data) = outputs[output_name.as_str()]
         .try_extract_tensor::<f32>()
         .map_err(|e| fail(&e))?;
-    if shape.len() != 2 || shape[0] != group.len() as i64 || shape[1] != EMBED_DIM as i64 {
+    if shape.len() != 2 || shape[0] != count as i64 || shape[1] != EMBED_DIM as i64 {
         return Err(AiError::Model(format!(
-            "visual output has shape {shape:?}, expected [{}, {EMBED_DIM}]",
-            group.len()
+            "visual output has shape {shape:?}, expected [{count}, {EMBED_DIM}]"
         )));
     }
     data.as_chunks::<EMBED_DIM>()

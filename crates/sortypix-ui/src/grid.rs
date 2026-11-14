@@ -80,19 +80,29 @@ impl Gallery {
                     && let Some(root) = &self.root
                 {
                     let cell = self.layout.cells[row.start];
-                    self.settings.resume = Some(sortypix_app::settings::Resume {
-                        folder: root.clone(),
-                        photo: photo.display_source(false).to_path_buf(),
-                        index: row.start,
-                        fraction: ((viewport.top() - cell.top()) / cell.height()).clamp(0., 1.),
+                    let fraction = ((viewport.top() - cell.top()) / cell.height()).clamp(0., 1.);
+                    let same = self.settings.resume.as_ref().is_some_and(|resume| {
+                        resume.index == row.start
+                            && resume.fraction == fraction
+                            && resume.folder == *root
+                            && resume.photo == photo.display_source(false)
                     });
+                    if !same {
+                        self.settings.resume = Some(sortypix_app::settings::Resume {
+                            folder: root.clone(),
+                            photo: photo.display_source(false).to_path_buf(),
+                            index: row.start,
+                            fraction,
+                        });
+                    }
                 }
+                let pixels_per_point = ui.ctx().pixels_per_point();
                 for row in visible.clone() {
                     for index in self.layout.rows[row].clone() {
-                        let photo = self.photos[index].clone();
+                        let photo_id = self.photos[index].id;
                         let turns = self.turns[index];
                         let rect = self.layout.cells[index].translate(origin);
-                        let response = ui.interact(rect, ui.id().with(photo.id.0), Sense::click());
+                        let response = ui.interact(rect, ui.id().with(photo_id.0), Sense::click());
                         let painter = ui.painter();
                         if index == 2
                             && let Some(d) = &mut self.diagnostic
@@ -102,16 +112,13 @@ impl Gallery {
                         }
                         painter.rect_filled(rect, 8, crate::theme::CARD);
                         let photo_rect = rect;
-                        let source = photo.display_source(false);
-                        let edge = textures::display_edge(
-                            source,
-                            photo_rect.size(),
-                            ui.ctx().pixels_per_point(),
-                        );
+                        let source = self.photos[index].display_source(false);
+                        let edge =
+                            textures::display_edge(source, photo_rect.size(), pixels_per_point);
                         if let Some(texture) = self
                             .textures
                             .visible(source, edge)
-                            .or_else(|| self.textures.cached(source, 800))
+                            .or_else(|| self.textures.cached_above(source, edge))
                         {
                             let size = textures::fit(texture.size_vec2(), photo_rect.size(), turns);
                             textures::paint(
@@ -143,18 +150,18 @@ impl Gallery {
                         }
                         #[cfg(feature = "ai")]
                         let response =
-                            self.ai_mark(ui, response, rect, photo.id, index == self.selected);
+                            self.ai_mark(ui, response, rect, photo_id, index == self.selected);
                         let inspect =
-                            inspect_overlay(ui, &response, rect, photo.id.0).is_some_and(|r| {
+                            inspect_overlay(ui, &response, rect, photo_id.0).is_some_and(|r| {
                                 r.on_hover_text(self.shortcut_tip(crate::shortcuts::Action::Expand))
                                     .clicked()
                             });
-                        let rotate = rotate_overlay(ui, &response, rect, photo.id.0)
+                        let rotate = rotate_overlay(ui, &response, rect, photo_id.0)
                             .is_some_and(|r| r.on_hover_text(self.rotate_tip()).clicked());
                         if rotate && !self.busy && !self.shortcut_editor.open {
                             self.selected = index;
                             let right = !ui.input(|i| i.modifiers.shift);
-                            self.send(Command::Rotate(photo.id, right));
+                            self.send(Command::Rotate(photo_id, right));
                         } else if inspect && !self.shortcut_editor.open {
                             self.selected = index;
                             self.viewer = true;
@@ -171,7 +178,7 @@ impl Gallery {
                             self.selected = index;
                             let control = ui.input(|i| i.modifiers.ctrl);
                             match click(
-                                photo.id,
+                                photo_id,
                                 response.secondary_clicked(),
                                 self.settings.swapped,
                                 control,
@@ -201,7 +208,7 @@ impl Gallery {
                     for index in self.layout.rows[row].clone() {
                         let edge = textures::thumbnail_edge(
                             self.layout.cells[index].size(),
-                            ui.ctx().pixels_per_point(),
+                            pixels_per_point,
                         );
                         self.textures
                             .prefetch(self.photos[index].display_source(false), edge);
@@ -496,7 +503,8 @@ mod tests {
         let root = PathBuf::from("C:/photos");
         let photo = |id, name: &str, ratio| PhysicalPhoto {
             id: PhotoId(id),
-            members: vec![root.join(name)],
+            members: vec![root.join(name)].into(),
+            modified: 0,
             aspect_ratio: ratio,
             capture_time: None,
             bytes: 0,

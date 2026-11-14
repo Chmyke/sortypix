@@ -2,6 +2,16 @@
 
 What changed in Sortypix, as you would notice it. Newest first.
 
+## 0.4.1 · 2026-11-14
+
+- Folders open much faster, RAW folders and memory cards most of all: Sortypix now reads only the few bytes it needs from each photo instead of the whole file, and reads several photos at once.
+- Undo is instant: the photo comes back to its place without the whole folder being read again.
+- Thumbnails are decoded at the size of their cell, so the grid fills faster and scrolling back finds them still there. Your eyes will not notice the difference, your laptop fan will.
+- Sortypix now sleeps when you do nothing: no more quiet redrawing in the background ten times a second.
+- Sortypix AI keeps its model busy while photos are decoded, so the analysis of a folder finishes sooner.
+- **New** · Sortypix AI tags your photos (dog, beach, night, crowd, 1girl...): up to four words per photo from a small layer trained on labels checked by people, a couple per drawing or generated image. Click in Search to see the folder's tags with their counts, pick one or type a few separated by commas, like a prompt. Nothing is written in your files.
+- The score stops pretending: instead of a mysterious 4.7, a suggested photo says Bottom 8% of this folder, and the photo details explain that it rates visual appeal, not what the photo means to you.
+
 ## 0.4.0 · 2026-10-30
 
 - **New** · A new order menu: oldest, newest, by name (IMG_2 comes before IMG_10, as it should), largest or smallest files first. Tiny files are often the misfires.

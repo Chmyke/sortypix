@@ -39,6 +39,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+=== Tag weights (built into Sortypix AI.exe) - trained on Open Images V7 labels, CC BY 4.0 ===
+https://storage.googleapis.com/openimages/web/index.html
+The tag weights were trained by the Sortypix project over CLIP ViT-L/14 embeddings of
+Open Images V7 thumbnails, with the human-verified image-level labels of its test and
+validation splits ("Open Images V7" annotations, Copyright Google LLC, licensed under the
+Creative Commons Attribution 4.0 International License,
+https://creativecommons.org/licenses/by/4.0/). Only images listed under CC BY 2.0 were used,
+and no image ships with Sortypix AI. The labels were mapped to Sortypix words and changed into
+model weights; scripts: scripts/ai/tags/ in the Sortypix repository.
+
 === LAION improved aesthetic predictor (aesthetic-l14.bin) - Apache-2.0 ===
 https://github.com/christophschuhmann/improved-aesthetic-predictor
 Weights of sac+logos+ava1-l14-linearMSE.pth (revision

@@ -116,7 +116,8 @@ mod tests {
     fn photo(name: &str, bytes: u64) -> PhysicalPhoto {
         PhysicalPhoto {
             id: PhotoId(0),
-            members: vec![PathBuf::from(name)],
+            members: vec![PathBuf::from(name)].into(),
+            modified: 0,
             aspect_ratio: 1.5,
             capture_time: None,
             bytes,

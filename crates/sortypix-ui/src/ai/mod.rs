@@ -22,7 +22,8 @@ use filters::{Kind, Kinds};
 use search::Search;
 use sortypix_ai::cache::{MODEL_LABEL, cache_root};
 use sortypix_ai::service::{Analyzer, DECODE_EDGE, Decoder, Status};
-use sortypix_ai::{BURST_SUGGEST, cosine, search_prompt};
+use sortypix_ai::vocabulary::VOCABULARY;
+use sortypix_ai::{BURST_SUGGEST, Tag, cosine, search_prompt};
 use sortypix_app::catalog::PhysicalPhoto;
 use sortypix_core::PhotoId;
 use std::collections::HashMap;
@@ -30,7 +31,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use suggest::{Marks, suggest};
-use view::{Arrangement, Burst, Facts, Order};
+use view::{Arrangement, Burst, Facts, Order, matched};
 
 /// Without any preview to wait for (empty screen, empty folder), the model loads after this.
 const START_DELAY: Duration = Duration::from_secs(2);
@@ -73,6 +74,9 @@ pub(crate) struct Targets {
     pub toggles: Vec<(Kind, egui::Pos2)>,
     /// The cross of the open photo card.
     pub card_close: Option<egui::Pos2>,
+    /// Words offered under the search field, and the tags of the open card.
+    pub completions: Vec<(u16, egui::Pos2)>,
+    pub card_tags: Vec<(u16, egui::Pos2)>,
 }
 
 use eframe::egui;
@@ -84,6 +88,7 @@ struct Stamp {
     records: usize,
     analysis: Option<usize>,
     query: Option<String>,
+    tags: Vec<u16>,
 }
 
 /// Which toolbar controls fit (decided right to left, the button first).
@@ -114,6 +119,16 @@ pub struct Ai {
     rank: Option<(sortypix_app::order::FileOrder, Vec<usize>)>,
     /// What the analysis knows of each photo of `base`.
     facts: Vec<Facts>,
+    /// Tags of each photo of `base` (`None` until it is analysed).
+    tags: Vec<Option<Arc<[Tag]>>>,
+    /// Photos of `base` carrying each word of the vocabulary.
+    pub(crate) tag_counts: Vec<usize>,
+    /// The completion list under the search field: was it under the pointer last frame (a click
+    /// on it takes the focus from the field), and what it offered (diagnostic).
+    pub(crate) completion_hovered: bool,
+    pub(crate) completion: Vec<(u16, usize)>,
+    /// The row chosen with the arrow keys (`None`: the first is the one Tab or Enter takes).
+    completion_cursor: Option<usize>,
     /// Indices of `base` the grid shows, in display order.
     view: Vec<usize>,
     /// The same before the "show only" filter: the marks are computed on it.
@@ -162,6 +177,17 @@ fn models_dir() -> PathBuf {
         .unwrap_or_else(sortypix_ai::models_dir)
 }
 
+/// The mean probability of the `wanted` words on a photo with `tags`, `None` when one is missing
+/// (or the photo is not analysed).
+fn tag_match(tags: Option<&[Tag]>, wanted: &[u16]) -> Option<f32> {
+    let tags = tags?;
+    let mut sum = 0.;
+    for w in wanted {
+        sum += tags.iter().find(|t| t.word == *w)?.probability;
+    }
+    Some(sum / wanted.len().max(1) as f32)
+}
+
 /// Sends `photos` (grid order first) to the analyzer when the list changed (photos, order, or
 /// capture times once the metadata is read), or when a folder was just opened.
 fn observe(
@@ -192,6 +218,7 @@ impl Ai {
     /// Call once the interface, preview and file threads exist: they keep the normal priority,
     /// the analysis threads started later run below them.
     pub fn new(cache_dir: &Path, cc: &eframe::CreationContext<'_>) -> Ai {
+        sortypix_app::decode::start_shared_threads();
         sortypix_ai::priority::favour_interface();
         Ai {
             analyzer: None,
@@ -205,6 +232,11 @@ impl Ai {
             base_turns: Vec::new(),
             rank: None,
             facts: Vec::new(),
+            tags: Vec::new(),
+            tag_counts: vec![0; VOCABULARY.len()],
+            completion_hovered: false,
+            completion: Vec::new(),
+            completion_cursor: None,
             view: Vec::new(),
             arranged_view: Vec::new(),
             index: HashMap::new(),
@@ -272,6 +304,7 @@ impl Ai {
     /// A new snapshot from the worker (capture order).
     fn set_base(&mut self, photos: Vec<PhysicalPhoto>, turns: Vec<u8>) {
         self.facts = vec![Facts::default(); photos.len()];
+        self.tags = vec![None; photos.len()];
         self.index = photos
             .iter()
             .enumerate()
@@ -304,6 +337,7 @@ impl Ai {
             records: results.records.len(),
             analysis: results.analysis.as_ref().map(|a| Arc::as_ptr(a) as usize),
             query: self.search.applied().map(str::to_owned),
+            tags: self.search.tags().to_vec(),
         };
         if !force && self.stamp.as_ref() == Some(&stamp) {
             return false;
@@ -342,16 +376,40 @@ impl Ai {
             }
         }
         let query = self.search.query();
-        self.facts = self
+        let wanted = self.search.tags();
+        let mut counts = vec![0usize; VOCABULARY.len()];
+        self.tags = self
             .base
             .iter()
             .map(|photo| {
+                let tags = results
+                    .tags
+                    .get(photo.display_source(false))
+                    .filter(|_| current)
+                    .cloned();
+                for t in tags.iter().flat_map(|t| t.iter()) {
+                    if let Some(c) = counts.get_mut(usize::from(t.word)) {
+                        *c += 1;
+                    }
+                }
+                tags
+            })
+            .collect();
+        self.tag_counts = counts;
+        let tags = &self.tags;
+        self.facts = self
+            .base
+            .iter()
+            .enumerate()
+            .map(|(i, photo)| {
                 let path = photo.display_source(false);
                 let record = if current {
                     results.records.get(path)
                 } else {
                     None
                 };
+                let similarity = record.zip(query).map(|(r, q)| cosine(q, &r.embedding));
+                let tag_match = (!wanted.is_empty()).then(|| tag_match(tags[i].as_deref(), wanted));
                 let at = analysis.and_then(|_| index.get(path).copied());
                 Facts {
                     score: record.map(|r| r.score),
@@ -360,7 +418,8 @@ impl Ai {
                         .and_then(|(a, i)| a.outliers.get(i).copied()),
                     burst: at.and_then(|i| bursts.get(i).copied().flatten()),
                     coverage: at.and_then(|i| ranks.get(i).copied().flatten()),
-                    similarity: record.zip(query).map(|(r, q)| cosine(q, &r.embedding)),
+                    similarity,
+                    matched: matched(query.map(|_| similarity), tag_match),
                     reason: analysis
                         .zip(at)
                         .and_then(|(a, i)| a.reasons.get(i).copied()),
@@ -458,6 +517,25 @@ impl Ai {
         })
     }
 
+    /// The analysis runs on its own threads without waking the interface: while it has
+    /// something to show (its start, its progress, a search answer), the interface comes
+    /// back at the refresh pace; once it is done, nothing wakes it.
+    fn schedule_repaint(&self, ctx: &egui::Context, now: Instant) {
+        let Some(analyzer) = &self.analyzer else {
+            ctx.request_repaint_after(START_DELAY.saturating_sub(self.created.elapsed()));
+            return;
+        };
+        let (done, total) = analyzer.progress();
+        let analysing = analyzer.status() == Status::Loading || done < total;
+        if analysing || self.search.waiting() {
+            ctx.request_repaint_after(
+                self.next_refresh
+                    .saturating_duration_since(now)
+                    .clamp(Duration::from_millis(50), REFRESH_INTERVAL),
+            );
+        }
+    }
+
     /// Photos analysed and photos in the folder, while the progress line should show.
     fn progress_line(&mut self, now: Instant) -> Option<(usize, usize)> {
         let analyzer = self.analyzer.as_ref()?;
@@ -468,6 +546,15 @@ impl Ai {
         }
         let since = *self.incomplete_since.get_or_insert(now);
         (now.saturating_duration_since(since) >= LINE_DELAY).then_some((done, total))
+    }
+
+    /// Tags of the photo `id` of the snapshot, once it is analysed.
+    pub(crate) fn tags_of(&self, id: PhotoId) -> Option<Arc<[Tag]>> {
+        self.index
+            .get(&id.0)
+            .and_then(|&i| self.tags.get(i))
+            .cloned()
+            .flatten()
     }
 
     /// What the analysis knows of the photo `id` of the snapshot.
@@ -517,6 +604,7 @@ impl Ai {
                     && stamp.records == results.records.len()
                     && stamp.analysis == results.analysis.as_ref().map(|a| Arc::as_ptr(a) as usize)
                     && stamp.query.as_deref() == self.search.applied()
+                    && stamp.tags == self.search.tags()
             })
         })
     }
@@ -575,7 +663,7 @@ impl Gallery {
         if order.needs_model() && matches!(self.ai.state(), State::Off(_)) {
             order = Order::from_file(self.settings.order);
         }
-        let searching = self.ai.search.query().is_some();
+        let searching = self.ai.search.active();
         Arrangement {
             order,
             searching,
@@ -616,7 +704,7 @@ impl Gallery {
 
     /// The marks changed (share, new results): a "show only" filter follows them.
     pub(crate) fn ai_marks_changed(&mut self) {
-        if self.ai.search.query().is_some() || self.ai_show().is_some() {
+        if self.ai.search.active() || self.ai_show().is_some() {
             self.ai_arrange();
         } else {
             self.ai.remark(prefs::suggest_percent(&self.settings));
@@ -624,9 +712,10 @@ impl Gallery {
     }
 
     /// Each frame: analysis start, search answers, new results, the taskbar progress.
-    pub(crate) fn ai_frame(&mut self) {
+    pub(crate) fn ai_frame(&mut self, ctx: &egui::Context) {
         self.ai.poll(self.textures.loaded > 0);
         let now = Instant::now();
+        self.ai.schedule_repaint(ctx, now);
         self.ai.hidden = prefs::hidden(&self.settings);
         self.ai.line = self.ai.progress_line(now);
         let shown = taskbar::Shown::of(self.ai.line);

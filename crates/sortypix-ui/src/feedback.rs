@@ -6,6 +6,34 @@ use std::time::{Duration, Instant};
 /// Short file moves stay invisible; only a slow drive shows the busy state.
 pub const BUSY_DELAY: Duration = Duration::from_millis(300);
 pub const GLOW: Duration = Duration::from_millis(700);
+/// Frames of the glow: smooth enough for a fade, a third of a fast screen's rate.
+pub const GLOW_FRAME: Duration = Duration::from_millis(33);
+/// A spinner that advances by steps, so a long duplicate scan does not redraw the whole
+/// window at the screen's rate.
+pub const SPINNER_STEP: Duration = Duration::from_millis(100);
+
+/// Rotating arc, drawn at [`SPINNER_STEP`] instead of every frame like `ui.spinner()`.
+pub fn slow_spinner(ui: &mut egui::Ui) -> egui::Response {
+    let size = ui.spacing().interact_size.y;
+    let (rect, response) = ui.allocate_exact_size(egui::vec2(size, size), egui::Sense::hover());
+    if ui.is_rect_visible(rect) {
+        ui.ctx().request_repaint_after(SPINNER_STEP);
+        let step = (ui.input(|i| i.time) / SPINNER_STEP.as_secs_f64()).floor();
+        let start = step * std::f64::consts::TAU / 12.;
+        let radius = (rect.height() / 2. - 2.).max(1.);
+        let points: Vec<egui::Pos2> = (0..=16)
+            .map(|n| {
+                let angle = start + n as f64 / 16. * std::f64::consts::TAU * 0.75;
+                rect.center() + radius * egui::vec2(angle.cos() as f32, angle.sin() as f32)
+            })
+            .collect();
+        ui.painter().add(egui::Shape::line(
+            points,
+            egui::Stroke::new(2., ui.visuals().strong_text_color()),
+        ));
+    }
+    response
+}
 pub const NOTICE: Duration = Duration::from_millis(2500);
 
 pub fn busy_shown(since: Option<Instant>, now: Instant) -> bool {

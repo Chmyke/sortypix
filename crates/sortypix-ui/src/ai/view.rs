@@ -22,6 +22,9 @@ pub(crate) struct Facts {
     pub coverage: Option<usize>,
     /// Cosine with the current search query, when there is one.
     pub similarity: Option<f32>,
+    /// The photo matches the whole search (free words at `SEARCH_MIN` and every tag), with the
+    /// key that ranks it in "Best match" (the cosine, else the tags' mean probability).
+    pub matched: Option<f32>,
     /// Likely reason of a low score, from the latest folder analysis.
     pub reason: Option<Likely>,
 }
@@ -111,6 +114,22 @@ impl Order {
     }
 }
 
+/// How well a photo matches the search, if it does. `free`: `None` without free words, else the
+/// photo's cosine with them (`None` until it is analysed); `tags`: `None` without tags, else the
+/// mean probability of the asked tags on the photo (`None` when one is missing). The free words
+/// need [`SEARCH_MIN`]; the key ranks "Best match" (the cosine, else the tags' probability).
+pub(crate) fn matched(free: Option<Option<f32>>, tags: Option<Option<f32>>) -> Option<f32> {
+    let free = match free {
+        None => None,
+        Some(similarity) => Some(similarity.filter(|s| *s >= SEARCH_MIN)?),
+    };
+    let tags = match tags {
+        None => None,
+        Some(mean) => Some(mean?),
+    };
+    free.or(tags)
+}
+
 /// How the grid is arranged.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Arrangement {
@@ -128,7 +147,7 @@ pub(crate) struct Arrangement {
 /// keeps only the bursts, in the capture order of their first photo.
 pub(crate) fn arrange(facts: &[Facts], how: Arrangement) -> Vec<usize> {
     let mut shown: Vec<usize> = if how.searching {
-        let matches = |i: usize| facts[i].similarity.is_some_and(|s| s >= SEARCH_MIN);
+        let matches = |i: usize| facts[i].matched.is_some();
         let bursts: HashSet<usize> = (0..facts.len())
             .filter(|&i| matches(i))
             .filter_map(|i| facts[i].burst.map(|b| b.group))
@@ -141,7 +160,7 @@ pub(crate) fn arrange(facts: &[Facts], how: Arrangement) -> Vec<usize> {
     };
     if how.searching && how.best_match {
         shown.sort_by(|&a, &b| {
-            let (sa, sb) = (facts[a].similarity, facts[b].similarity);
+            let (sa, sb) = (facts[a].matched, facts[b].matched);
             sb.unwrap_or(f32::MIN)
                 .total_cmp(&sa.unwrap_or(f32::MIN))
                 .then(a.cmp(&b))
@@ -277,6 +296,7 @@ mod tests {
             .iter()
             .map(|&similarity| Facts {
                 similarity,
+                matched: matched(Some(similarity), None),
                 ..Facts::default()
             })
             .collect();
@@ -340,6 +360,22 @@ mod tests {
     }
 
     #[test]
+    fn tags_and_free_words_must_all_match() {
+        let low = SEARCH_MIN - 0.01;
+        let high = SEARCH_MIN + 0.01;
+        assert_eq!(matched(None, None), None);
+        assert_eq!(matched(Some(Some(high)), None), Some(high));
+        assert_eq!(matched(Some(Some(low)), None), None);
+        assert_eq!(matched(Some(None), None), None);
+        assert_eq!(matched(None, Some(Some(0.4))), Some(0.4));
+        assert_eq!(matched(None, Some(None)), None);
+        // Both: each must pass, the cosine ranks.
+        assert_eq!(matched(Some(Some(high)), Some(Some(0.4))), Some(high));
+        assert_eq!(matched(Some(Some(high)), Some(None)), None);
+        assert_eq!(matched(Some(Some(low)), Some(Some(0.4))), None);
+    }
+
+    #[test]
     fn capture_orders_are_unchanged_by_bursts() {
         let facts = with_burst();
         assert_eq!(arrange(&facts, how(Order::Oldest)), [0, 1, 2, 3, 4]);
@@ -352,6 +388,7 @@ mod tests {
         let sims = [0.30, 0.10, 0.20, 0.10, 0.25];
         for (f, s) in facts.iter_mut().zip(sims) {
             f.similarity = Some(s);
+            f.matched = matched(Some(Some(s)), None);
         }
         let mut search = Arrangement {
             order: Order::Oldest,
@@ -365,7 +402,7 @@ mod tests {
         search.order = Order::LowestScore;
         assert_eq!(arrange(&facts, search), [1, 2, 3, 4, 0]);
         // No member of the burst matches: none is shown.
-        facts[2].similarity = Some(0.10);
+        facts[2].matched = matched(Some(Some(0.10)), None);
         assert_eq!(arrange(&facts, search), [4, 0]);
     }
 

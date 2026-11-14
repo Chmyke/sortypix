@@ -75,6 +75,8 @@ impl FileOps for NativeFiles {
 pub struct BatchReport {
     pub completed: Vec<PhotoId>,
     pub errors: Vec<String>,
+    /// Files back in the folder after an undo, once the whole gesture is taken back.
+    pub restored: Vec<PathBuf>,
 }
 #[derive(Debug)]
 struct Movement {
@@ -86,6 +88,8 @@ struct Transaction {
     moves: Vec<Movement>,
     created_dirs: Vec<PathBuf>,
     ids: Vec<PhotoId>,
+    /// Taken back so far by Undo, kept across a retry after a conflict.
+    restored: Vec<PathBuf>,
 }
 pub struct Storage<F = NativeFiles> {
     files: F,
@@ -189,11 +193,14 @@ impl<F: FileOps> Storage<F> {
                     ));
                     break;
                 }
-                tx.moves.pop();
+                if let Some(moved) = tx.moves.pop() {
+                    tx.restored.push(moved.from);
+                }
             }
             if tx.moves.is_empty() {
                 cleanup_dirs(&tx.created_dirs);
                 report.completed = tx.ids.clone();
+                report.restored = std::mem::take(&mut tx.restored);
                 self.journal.pop();
             }
         }
@@ -224,7 +231,7 @@ fn arrived(to: &Path, from: &Path, bytes: Option<u64>) -> Result<(), String> {
 fn targets(photo: &PhysicalPhoto, destination: &Path) -> Result<Vec<PathBuf>, String> {
     for suffix in 0..u32::MAX {
         let mut paths = Vec::new();
-        for member in &photo.members {
+        for member in photo.members.iter() {
             let name = member.file_name().ok_or("Invalid file name")?;
             let path = if suffix == 0 {
                 destination.join(name)

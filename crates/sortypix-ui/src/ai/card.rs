@@ -7,7 +7,7 @@
 //! worded as an estimate ("Likely reason") and only for a photo in the lower half of the
 //! folder; a probe `ai_quality` did not recognise is never named.
 use super::marks::{BADGE_FILL, badge_text};
-use super::suggest::Badge;
+use super::suggest::{Badge, SCORE_TIP, Standing, standing};
 use super::view::Facts;
 use crate::gallery::Gallery;
 use crate::shortcuts::{self, Action};
@@ -20,32 +20,6 @@ use sortypix_core::PhotoId;
 const WIDTH: f32 = 280.;
 /// Gap between the photo and its card.
 const GAP: f32 = 8.;
-
-/// Where a score stands among the analysed photos of the folder.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Standing {
-    /// In the lowest `n` % (the photo is in the lower half).
-    Lowest(u32),
-    /// In the highest `n` %.
-    Highest(u32),
-}
-
-/// The standing of `score` among `scores` (the folder's, the photo's own included). `None`
-/// with fewer than two scores. Ties count in the photo's favour on both sides.
-pub(crate) fn standing(score: f32, scores: &[f32]) -> Option<Standing> {
-    let n = scores.len();
-    if n < 2 {
-        return None;
-    }
-    let below = scores.iter().filter(|&&s| s < score).count();
-    let above = scores.iter().filter(|&&s| s > score).count();
-    let share = |rank: usize| ((100 * (rank + 1)).div_ceil(n)).clamp(1, 100) as u32;
-    Some(if below <= above {
-        Standing::Lowest(share(below))
-    } else {
-        Standing::Highest(share(above))
-    })
-}
 
 /// Tone of a card line.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -83,6 +57,18 @@ fn line(text: impl Into<String>, tone: Tone) -> Line {
     }
 }
 
+/// Hover text of the tags.
+pub(crate) const TAGS_TIP: &str = "Tags are guesses from what the photo looks like, the clearest first. Nothing is written in the file.";
+
+/// The card's tags as one line (diagnostic).
+pub(crate) fn tag_line(names: &[&str]) -> String {
+    if names.is_empty() {
+        "Tags: none clear".to_string()
+    } else {
+        format!("Tags: {}", names.join(", "))
+    }
+}
+
 /// Hover text of the reason line.
 pub(crate) const REASON_TIP: &str = "An estimate from what the photo looks like next to the rest of the folder, not a certainty. Only blur is recognized reliably for now.";
 
@@ -95,16 +81,25 @@ pub(crate) fn content(facts: &Facts, scores: &[f32], suggested: bool) -> Vec<Lin
         return lines;
     };
     let standing = standing(score, scores);
-    lines.push(line(
-        match standing {
-            Some(Standing::Lowest(p)) => format!("Score {score:.1}, lowest {p}% of this folder"),
-            Some(Standing::Highest(p)) => {
-                format!("Score {score:.1}, highest {p}% of this folder")
-            }
-            None => format!("Score {score:.1}"),
-        },
-        Tone::Text,
-    ));
+    if let Some(s) = standing {
+        lines.push(Line {
+            tip: Some(SCORE_TIP),
+            ..line(
+                match s {
+                    Standing::Lowest(p) => format!("Bottom {p}% of this folder for visual appeal"),
+                    Standing::Highest(p) => format!("Top {p}% of this folder for visual appeal"),
+                },
+                Tone::Text,
+            )
+        });
+    }
+    lines.push(Line {
+        tip: Some(SCORE_TIP),
+        ..line(
+            format!("Aesthetic score {score:.1} (LAION, about 1 to 10)"),
+            Tone::Dim,
+        )
+    });
     if matches!(standing, Some(Standing::Lowest(_))) {
         let reason = match facts.reason {
             Some(Likely::Clear(reason)) => Some(line(
@@ -156,6 +151,14 @@ impl Gallery {
         }
     }
 
+    /// A tag of the card clicked: the grid shows the photos carrying it (the search becomes it).
+    pub(crate) fn ai_show_tag(&mut self, word: u16) {
+        if let Some(w) = sortypix_ai::vocabulary::VOCABULARY.get(usize::from(word)) {
+            self.ai.search.text = super::search::complete("", w.name);
+            self.ai.search.submit();
+        }
+    }
+
     pub(crate) fn ai_toggle_card(&mut self, id: PhotoId) {
         self.ai.card = if self.ai.card == Some(id) {
             None
@@ -190,8 +193,9 @@ impl Gallery {
         let scores: Vec<f32> = self.ai.facts.iter().filter_map(|f| f.score).collect();
         let suggested = self.ai.marks.by_id.get(&id.0).is_some_and(|m| m.suggested);
         let lines = content(&facts, &scores, suggested);
+        let tags = facts.score.and(self.ai.tags_of(id));
         let grid = self.grid_rect;
-        let height = 40. + 20. * lines.len() as f32;
+        let height = 40. + 20. * (lines.len() + usize::from(tags.is_some())) as f32;
         let mut pos = match self.ai.card_cell {
             Some(cell) if cell.right() + GAP + WIDTH <= grid.right() => {
                 cell.right_top() + egui::vec2(GAP, 0.)
@@ -213,6 +217,8 @@ impl Gallery {
         };
         let mut close = false;
         let mut close_at = None;
+        let mut picked = None;
+        let mut tag_targets = Vec::new();
         egui::Area::new(egui::Id::new("sortypix-ai-card"))
             .order(egui::Order::Foreground)
             .fixed_pos(pos)
@@ -262,12 +268,46 @@ impl Gallery {
                                 label.on_hover_text(tip);
                             }
                         }
+                        if let Some(tags) = &tags {
+                            ui.horizontal_wrapped(|ui| {
+                                ui.spacing_mut().item_spacing.x = 4.;
+                                ui.label(RichText::new("Tags").color(theme::DIM));
+                                if tags.is_empty() {
+                                    ui.label(RichText::new("none clear").color(theme::DIM))
+                                        .on_hover_text(TAGS_TIP);
+                                }
+                                for t in tags.iter() {
+                                    let button = egui::Button::new(
+                                        RichText::new(t.name()).small().color(theme::TEXT),
+                                    )
+                                    .corner_radius(9)
+                                    .stroke(Stroke::new(1., theme::LINE));
+                                    let response = ui.add(button).on_hover_text(format!(
+                                        "About {:.0}% sure. Click to show the photos tagged {}.\n{TAGS_TIP}",
+                                        100. * t.probability,
+                                        t.name()
+                                    ));
+                                    tag_targets.push((t.word, response.rect.center()));
+                                    if response.clicked() {
+                                        picked = Some(t.word);
+                                    }
+                                }
+                            });
+                        }
                         ui.add_space(2.);
                         ui.label(RichText::new(&hint).small().color(theme::DIM));
                     });
             });
         self.ai.targets.card_close = close_at;
+        self.ai.targets.card_tags = tag_targets;
         self.ai.card_lines = lines.into_iter().map(|l| l.text).collect();
+        if let Some(tags) = &tags {
+            let names: Vec<&str> = tags.iter().map(|t| t.name()).collect();
+            self.ai.card_lines.push(tag_line(&names));
+        }
+        if let Some(word) = picked {
+            self.ai_show_tag(word);
+        }
         if close {
             self.ai.card = None;
         }
@@ -280,8 +320,8 @@ impl Gallery {
         ui.strong("Marks");
         let entries = [
             (
-                Badge::Score(3.1),
-                "Low score: among the lowest share set by Suggest, outlined in red",
+                Badge::Low(8),
+                "Low visual appeal: its rank in the folder, among the lowest share set by Suggest, outlined in red",
             ),
             (
                 Badge::OffTopic,
@@ -356,17 +396,19 @@ mod tests {
         let mut low = facts(1.);
         low.reason = Some(Likely::Clear(Reason::Blurry));
         let lines = content(&low, &scores, true);
-        assert_eq!(lines[0].text, "Score 1.0, lowest 10% of this folder");
-        assert_eq!(lines[1].text, "Likely reason: blurry or out of focus");
-        assert_eq!(lines[1].tip, Some(REASON_TIP));
+        assert_eq!(lines[0].text, "Bottom 10% of this folder for visual appeal");
+        assert_eq!(lines[0].tip, Some(SCORE_TIP));
+        assert_eq!(lines[1].text, "Aesthetic score 1.0 (LAION, about 1 to 10)");
+        assert_eq!(lines[2].text, "Likely reason: blurry or out of focus");
+        assert_eq!(lines[2].tip, Some(REASON_TIP));
         assert_eq!(lines.last().unwrap().text, "Suggested for rejection");
         low.reason = Some(Likely::Unclear);
-        assert_eq!(content(&low, &scores, false)[1].text, "No clear reason");
+        assert_eq!(content(&low, &scores, false)[2].text, "No clear reason");
         // A high photo gets no reason line, even when a probe leans its way.
         let mut high = facts(9.);
         high.reason = Some(Likely::Clear(Reason::Blurry));
         let lines = content(&high, &scores, false);
-        assert_eq!(lines[0].text, "Score 9.0, highest 20% of this folder");
+        assert_eq!(lines[0].text, "Top 20% of this folder for visual appeal");
         assert!(lines.iter().all(|l| !l.text.contains("reason")));
         // Reasons not computed (probes unavailable): no line rather than a guess.
         low.reason = None;
@@ -390,7 +432,8 @@ mod tests {
         assert_eq!(
             texts,
             [
-                "Score 6.0, highest 50% of this folder",
+                "Top 50% of this folder for visual appeal",
+                "Aesthetic score 6.0 (LAION, about 1 to 10)",
                 "Off-topic: unlike the rest of the folder",
                 "Burst: one of 4 similar shots taken together, outlined in the grid",
                 "Suggested for rejection",
@@ -398,7 +441,7 @@ mod tests {
         );
         f.off_topic = Some(1.);
         assert_eq!(
-            content(&f, &scores, false)[1].text,
+            content(&f, &scores, false)[2].text,
             "Fits with the rest of the folder"
         );
         assert_eq!(
@@ -409,5 +452,14 @@ mod tests {
             assert!(!l.text.contains('\u{2014}') && !l.text.contains(" \u{2013} ")); // dash-ok
         }
         assert!(!REASON_TIP.contains('\u{2014}')); // dash-ok
+        assert!(!SCORE_TIP.contains('\u{2014}')); // dash-ok
+        assert!(!TAGS_TIP.contains('\u{2014}')); // dash-ok
+        assert_eq!(tag_line(&[]), "Tags: none clear");
+        assert_eq!(tag_line(&["dog", "beach"]), "Tags: dog, beach");
+        // A single analysed photo has no rank, only its score.
+        assert_eq!(
+            content(&facts(5.), &[5.], false)[0].text,
+            "Aesthetic score 5.0 (LAION, about 1 to 10)"
+        );
     }
 }

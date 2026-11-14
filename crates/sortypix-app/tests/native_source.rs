@@ -25,7 +25,8 @@ fn small_jpeg_pair_inspects_full_raw_sensor() {
         capture_time: None,
         bytes: 0,
         id: PhotoId(1),
-        members: vec![jpeg.clone(), raw.clone()],
+        members: vec![jpeg.clone(), raw.clone()].into(),
+        modified: 0,
     };
     assert_eq!(photo.display_source(false), jpeg);
     assert_eq!(photo.display_source(true), raw);

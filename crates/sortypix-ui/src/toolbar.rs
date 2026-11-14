@@ -22,7 +22,7 @@ impl Gallery {
             ui.set_min_height(32.);
             if icons::button(ui, Icon::Folder, &self.shortcut_tip(Action::Open), !busy).clicked()
             {
-                self.choose();
+                self.choose(ui.ctx().clone());
             }
             for (icon, action, lit) in [
                 (Icon::SourceFolder, Action::OpenSource, 0.),
@@ -150,7 +150,7 @@ impl Gallery {
                 #[cfg(feature = "ai")]
                 self.ai_controls(ui, busy);
                 if busy || self.scanning {
-                    ui.spinner().on_hover_text(if self.scanning {
+                    crate::feedback::slow_spinner(ui).on_hover_text(if self.scanning {
                         "Checking exact copies…"
                     } else {
                         "Working…"

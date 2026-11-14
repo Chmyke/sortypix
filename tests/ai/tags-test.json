@@ -1,0 +1,7689 @@
+{
+ "schema": 1,
+ "comment": "Held-out test set of the tag probe (ai_tags): photos of the five real days never used to tune (150 evenly spaced and the 108 of the former tags-holdout.json, 31 of them in both) and 75 generated or drawn images from Wikimedia Commons (ai-dev tags-test/generated/manifest.json: title, page, license, author). Judged exhaustively on 2026-11-13 by Claude subagents on 512 px copies, before any tag of the head was seen: yes = present, doubt = borderline (neither right nor wrong), every other word absent; no = judged absent explicitly (former held-out verdicts, or --recheck). The former held-out verdicts were kept: present ones added to yes, absent ones contradicting a yes moved to doubt. Never used to tune.",
+ "images": {
+  "calibration/amsterdam-walk/002.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "facade",
+    "fence",
+    "neighborhood",
+    "outdoors",
+    "photo",
+    "sky",
+    "sunlight",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "lamp",
+    "playground",
+    "street"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/003.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "facade",
+    "fence",
+    "neighborhood",
+    "outdoors",
+    "photo",
+    "sky",
+    "sunlight",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "bicycle",
+    "lamp",
+    "playground",
+    "street"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/006.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "fence",
+    "grass",
+    "outdoors",
+    "photo",
+    "sky",
+    "skyscraper",
+    "sunlight",
+    "tree",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "lamp",
+    "tower"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/007.jpg": {
+   "yes": [
+    "building",
+    "city",
+    "facade",
+    "fence",
+    "grass",
+    "lawn",
+    "outdoors",
+    "photo",
+    "sign",
+    "sky",
+    "sunlight",
+    "tree",
+    "walkway",
+    "wall",
+    "water",
+    "window"
+   ],
+   "doubt": [
+    "harbor",
+    "lake",
+    "plant",
+    "river"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/008.jpg": {
+   "yes": [
+    "bicycle",
+    "boat",
+    "building",
+    "car",
+    "harbor",
+    "outdoors",
+    "photo",
+    "sign",
+    "sky",
+    "street",
+    "sunlight",
+    "tree",
+    "walkway",
+    "window"
+   ],
+   "doubt": [
+    "lamp",
+    "river",
+    "ship",
+    "sunset",
+    "tower"
+   ],
+   "no": [
+    "bridge"
+   ]
+  },
+  "calibration/amsterdam-walk/011.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "facade",
+    "outdoors",
+    "photo",
+    "sign",
+    "sky",
+    "sunlight",
+    "text",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "lamp",
+    "motorcycle",
+    "scooter",
+    "street",
+    "tree"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/014.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "fountain",
+    "grass",
+    "lawn",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "sculpture",
+    "sky",
+    "statue",
+    "tree",
+    "water",
+    "window"
+   ],
+   "doubt": [
+    "horse",
+    "lamp",
+    "street",
+    "sunlight"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/015.jpg": {
+   "yes": [
+    "building",
+    "city",
+    "facade",
+    "grass",
+    "lawn",
+    "outdoors",
+    "park",
+    "photo",
+    "sculpture",
+    "sign",
+    "sky",
+    "statue",
+    "tree",
+    "water",
+    "window"
+   ],
+   "doubt": [
+    "fountain",
+    "horse",
+    "plant",
+    "swimming pool"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/016.jpg": {
+   "yes": [
+    "building",
+    "door",
+    "facade",
+    "outdoors",
+    "photo",
+    "plant",
+    "tree",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "flower",
+    "lamp",
+    "shop",
+    "sky",
+    "text"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/019.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "bicycle",
+    "car",
+    "neighborhood",
+    "water"
+   ],
+   "no": [
+    "tower",
+    "windmill"
+   ]
+  },
+  "calibration/amsterdam-walk/022.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "grass",
+    "lawn",
+    "outdoors",
+    "photo",
+    "sky",
+    "sunlight",
+    "tree",
+    "walkway",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "lamp",
+    "street"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/023.jpg": {
+   "yes": [
+    "bicycle",
+    "building",
+    "city",
+    "door",
+    "facade",
+    "grass",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "tree",
+    "walkway",
+    "wall",
+    "water",
+    "window"
+   ],
+   "doubt": [
+    "river",
+    "sign",
+    "skyscraper",
+    "sunlight"
+   ],
+   "no": [
+    "house"
+   ]
+  },
+  "calibration/amsterdam-walk/024.jpg": {
+   "yes": [
+    "book",
+    "bookcase",
+    "building",
+    "door",
+    "flower",
+    "indoors",
+    "photo",
+    "plant",
+    "river",
+    "shelf",
+    "sky",
+    "tree",
+    "wall",
+    "water",
+    "window"
+   ],
+   "doubt": [
+    "floor",
+    "houseplant",
+    "lavender",
+    "outdoors",
+    "room"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/027.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "outdoors",
+    "photo",
+    "reflection",
+    "river",
+    "sky",
+    "stairs",
+    "wall",
+    "water",
+    "window"
+   ],
+   "doubt": [
+    "sunlight",
+    "tree"
+   ],
+   "no": [
+    "skyscraper",
+    "tower"
+   ]
+  },
+  "calibration/amsterdam-walk/028.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "grass",
+    "lawn",
+    "outdoors",
+    "photo",
+    "reflection",
+    "river",
+    "sky",
+    "stairs",
+    "wall",
+    "water",
+    "window"
+   ],
+   "doubt": [
+    "sunlight",
+    "tree"
+   ],
+   "no": [
+    "skyscraper"
+   ]
+  },
+  "calibration/amsterdam-walk/031.jpg": {
+   "yes": [
+    "boat",
+    "bridge",
+    "building",
+    "city",
+    "cityscape",
+    "outdoors",
+    "panorama",
+    "photo",
+    "river",
+    "sky",
+    "skyscraper",
+    "tree",
+    "water"
+   ],
+   "doubt": [
+    "bird",
+    "duck",
+    "harbor",
+    "reflection",
+    "tower"
+   ],
+   "no": [
+    "lake"
+   ]
+  },
+  "calibration/amsterdam-walk/034.jpg": {
+   "yes": [
+    "building",
+    "outdoors",
+    "photo",
+    "reflection",
+    "river",
+    "sky",
+    "tree",
+    "wall",
+    "water"
+   ],
+   "doubt": [
+    "harbor",
+    "sign",
+    "sunlight"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/035.jpg": {
+   "yes": [
+    "boat",
+    "building",
+    "city",
+    "facade",
+    "fence",
+    "grass",
+    "outdoors",
+    "photo",
+    "plant",
+    "reflection",
+    "river",
+    "sky",
+    "tree",
+    "water",
+    "window"
+   ],
+   "doubt": [
+    "harbor",
+    "ship"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/036.jpg": {
+   "yes": [
+    "building",
+    "grass",
+    "outdoors",
+    "photo",
+    "plant",
+    "reflection",
+    "river",
+    "sky",
+    "tree",
+    "water"
+   ],
+   "doubt": [
+    "city",
+    "cityscape",
+    "lake",
+    "sunlight",
+    "wetland"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/039.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "grass",
+    "lawn",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "tree",
+    "van",
+    "walkway",
+    "window"
+   ],
+   "doubt": [
+    "bench",
+    "car",
+    "lamp",
+    "playground",
+    "sign"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/042.jpg": {
+   "yes": [
+    "bicycle",
+    "building",
+    "facade",
+    "outdoors",
+    "photo",
+    "plant",
+    "sculpture",
+    "tree",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "door",
+    "statue"
+   ],
+   "no": [
+    "indoors"
+   ]
+  },
+  "calibration/amsterdam-walk/043.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "outdoors",
+    "photo",
+    "sign",
+    "text",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "door",
+    "grass",
+    "street"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/044.jpg": {
+   "yes": [
+    "building",
+    "door",
+    "facade",
+    "outdoors",
+    "photo",
+    "sign",
+    "sky",
+    "street",
+    "sunlight",
+    "tree",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "grass",
+    "neighborhood",
+    "walkway"
+   ],
+   "no": [
+    "house"
+   ]
+  },
+  "calibration/amsterdam-walk/047.jpg": {
+   "yes": [
+    "building",
+    "columns",
+    "facade",
+    "outdoors",
+    "photo",
+    "sky",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "fence",
+    "lamp",
+    "plant"
+   ],
+   "no": [
+    "tower"
+   ]
+  },
+  "calibration/amsterdam-walk/050.jpg": {
+   "yes": [
+    "building",
+    "door",
+    "facade",
+    "outdoors",
+    "photo",
+    "plant",
+    "stairs",
+    "wall",
+    "window"
+   ],
+   "doubt": [],
+   "no": [
+    "fence"
+   ]
+  },
+  "calibration/amsterdam-walk/051.jpg": {
+   "yes": [
+    "building",
+    "door",
+    "facade",
+    "outdoors",
+    "photo",
+    "sky",
+    "stairs",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "motorcycle",
+    "plant",
+    "scooter",
+    "water"
+   ],
+   "no": [
+    "house",
+    "museum"
+   ]
+  },
+  "calibration/amsterdam-walk/052.jpg": {
+   "yes": [
+    "bicycle",
+    "building",
+    "door",
+    "facade",
+    "outdoors",
+    "photo",
+    "plant",
+    "sign",
+    "stairs",
+    "text",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "lamp"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/054.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "city",
+    "facade",
+    "outdoors",
+    "photo",
+    "sky",
+    "street",
+    "sunlight",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "fence",
+    "road",
+    "text"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/055.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "city",
+    "facade",
+    "outdoors",
+    "photo",
+    "road",
+    "sky",
+    "street",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "fence",
+    "sign",
+    "sunlight"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/056.jpg": {
+   "yes": [
+    "floor",
+    "houseplant",
+    "indoors",
+    "photo",
+    "plant",
+    "room",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "bench",
+    "chair",
+    "door",
+    "sculpture"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/059.jpg": {
+   "yes": [
+    "ceiling",
+    "floor",
+    "houseplant",
+    "indoors",
+    "minimalist",
+    "photo",
+    "plant",
+    "room",
+    "wall"
+   ],
+   "doubt": [
+    "bench",
+    "chair",
+    "door",
+    "lamp",
+    "sculpture",
+    "window"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/062.jpg": {
+   "yes": [
+    "bicycle",
+    "building",
+    "car",
+    "door",
+    "facade",
+    "neighborhood",
+    "outdoors",
+    "photo",
+    "street",
+    "sunlight",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "lamp",
+    "stairs",
+    "suv"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/063.jpg": {
+   "yes": [
+    "bicycle",
+    "building",
+    "city",
+    "door",
+    "facade",
+    "outdoors",
+    "photo",
+    "plant",
+    "street",
+    "sunlight",
+    "tree",
+    "walkway",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "motorcycle",
+    "neighborhood",
+    "scooter",
+    "sign"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/064.jpg": {
+   "yes": [
+    "building",
+    "door",
+    "facade",
+    "lamp",
+    "outdoors",
+    "photo",
+    "stairs",
+    "street",
+    "sunlight",
+    "tree",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "bicycle",
+    "house",
+    "sky",
+    "walkway"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/067.jpg": {
+   "yes": [
+    "bicycle",
+    "building",
+    "city",
+    "facade",
+    "flower",
+    "garden",
+    "grass",
+    "lavender",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "window"
+   ],
+   "doubt": [
+    "neighborhood",
+    "reflection",
+    "street",
+    "walkway",
+    "water",
+    "wildflowers"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/070.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "fence",
+    "grass",
+    "house",
+    "neighborhood",
+    "outdoors",
+    "photo",
+    "road",
+    "rope",
+    "sky",
+    "street",
+    "sunlight",
+    "suv",
+    "walkway",
+    "water"
+   ],
+   "doubt": [
+    "city",
+    "lake",
+    "river",
+    "sunset",
+    "tree"
+   ],
+   "no": []
+  },
+  "calibration/amsterdam-walk/071.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "facade",
+    "fence",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "tree",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "city",
+    "lamp",
+    "neighborhood",
+    "sunlight"
+   ],
+   "no": [
+    "house"
+   ]
+  },
+  "calibration/amsterdam-walk/072.jpg": {
+   "yes": [
+    "boat",
+    "building",
+    "city",
+    "cityscape",
+    "outdoors",
+    "photo",
+    "river",
+    "ship",
+    "sky",
+    "tree",
+    "water"
+   ],
+   "doubt": [
+    "grass",
+    "harbor",
+    "lake",
+    "skyscraper",
+    "sunset"
+   ],
+   "no": [
+    "bridge"
+   ]
+  },
+  "calibration/amsterdam-walk/075.jpg": {
+   "yes": [
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree",
+    "walkway",
+    "wall",
+    "water"
+   ],
+   "doubt": [
+    "bench",
+    "coast",
+    "harbor",
+    "lake",
+    "park",
+    "river",
+    "sea",
+    "tower"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/002.jpg": {
+   "yes": [
+    "arch",
+    "bench",
+    "building",
+    "facade",
+    "lamp",
+    "outdoors",
+    "photo",
+    "sky",
+    "sunlight",
+    "tower",
+    "tree",
+    "walkway",
+    "wall"
+   ],
+   "doubt": [
+    "city",
+    "lantern",
+    "monument",
+    "mosque",
+    "plant",
+    "street",
+    "travel"
+   ],
+   "no": [
+    "road"
+   ]
+  },
+  "calibration/bukhara-visit/003.jpg": {
+   "yes": [
+    "bench",
+    "building",
+    "lamp",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "sky",
+    "tower",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "garden",
+    "monument",
+    "mosque",
+    "travel"
+   ],
+   "no": [
+    "backyard"
+   ]
+  },
+  "calibration/bukhara-visit/006.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "outdoors",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "street",
+    "text",
+    "wall"
+   ],
+   "doubt": [
+    "door",
+    "fence",
+    "man",
+    "solo"
+   ],
+   "no": [
+    "van"
+   ]
+  },
+  "calibration/bukhara-visit/007.jpg": {
+   "yes": [
+    "fence",
+    "outdoors",
+    "photo",
+    "plant",
+    "road",
+    "sign",
+    "sky",
+    "text",
+    "tree",
+    "umbrella"
+   ],
+   "doubt": [
+    "park",
+    "person",
+    "playground",
+    "shop",
+    "statue",
+    "toy"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/010.jpg": {
+   "yes": [
+    "building",
+    "fence",
+    "lamp",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "sky",
+    "stairs",
+    "tree"
+   ],
+   "doubt": [
+    "festival",
+    "playground",
+    "sign",
+    "statue",
+    "toy"
+   ],
+   "no": [
+    "person"
+   ]
+  },
+  "calibration/bukhara-visit/011.jpg": {
+   "yes": [
+    "building",
+    "fence",
+    "outdoors",
+    "photo",
+    "roof",
+    "sign",
+    "sky",
+    "text",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "park",
+    "playground"
+   ],
+   "no": [
+    "person"
+   ]
+  },
+  "calibration/bukhara-visit/014.jpg": {
+   "yes": [
+    "box",
+    "lamp",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "sign",
+    "sky",
+    "teddy bear",
+    "text",
+    "toy",
+    "tree"
+   ],
+   "doubt": [
+    "festival",
+    "market",
+    "poster",
+    "road"
+   ],
+   "no": [
+    "person"
+   ]
+  },
+  "calibration/bukhara-visit/015.jpg": {
+   "yes": [
+    "outdoors",
+    "photo",
+    "sign",
+    "text",
+    "tree"
+   ],
+   "doubt": [
+    "food",
+    "ice cream",
+    "park",
+    "person",
+    "road",
+    "umbrella"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/018.jpg": {
+   "yes": [
+    "fence",
+    "full body",
+    "man",
+    "outdoors",
+    "person",
+    "photo",
+    "shop",
+    "sign",
+    "solo",
+    "text",
+    "tree",
+    "walking"
+   ],
+   "doubt": [
+    "cap",
+    "hat",
+    "park",
+    "phone",
+    "poster",
+    "street",
+    "t-shirt"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/019.jpg": {
+   "yes": [
+    "grass",
+    "lawn",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "road",
+    "sign",
+    "sky",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "garden"
+   ],
+   "no": [
+    "street"
+   ]
+  },
+  "calibration/bukhara-visit/022.jpg": {
+   "yes": [
+    "bag",
+    "book",
+    "cap",
+    "cart",
+    "from behind",
+    "full body",
+    "grass",
+    "lawn",
+    "man",
+    "outdoors",
+    "park",
+    "people",
+    "person",
+    "photo",
+    "shoes",
+    "sunglasses",
+    "sunlight",
+    "tree",
+    "walkway",
+    "woman"
+   ],
+   "doubt": [
+    "couple",
+    "hat",
+    "jeans",
+    "market",
+    "poster",
+    "shop",
+    "text",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/023.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "camera",
+    "cap",
+    "dress",
+    "full body",
+    "glasses",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shorts",
+    "sitting",
+    "sunglasses",
+    "sunlight",
+    "t-shirt",
+    "travel",
+    "tree",
+    "wall",
+    "woman"
+   ],
+   "doubt": [
+    "audience",
+    "beard",
+    "crowd",
+    "hat",
+    "phone",
+    "walking"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/026.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "grass",
+    "lawn",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "stairs",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "garden",
+    "pet"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/027.jpg": {
+   "yes": [
+    "arch",
+    "building",
+    "facade",
+    "monument",
+    "outdoors",
+    "photo",
+    "sky",
+    "wall"
+   ],
+   "doubt": [
+    "mosque",
+    "symmetry",
+    "temple",
+    "travel",
+    "tree"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/030.jpg": {
+   "yes": [
+    "photo",
+    "sign",
+    "text",
+    "wall"
+   ],
+   "doubt": [
+    "facade",
+    "logo",
+    "monument",
+    "outdoors"
+   ],
+   "no": [
+    "sky"
+   ]
+  },
+  "calibration/bukhara-visit/031.jpg": {
+   "yes": [
+    "close-up",
+    "photo",
+    "wall"
+   ],
+   "doubt": [
+    "facade",
+    "outdoors"
+   ],
+   "no": [
+    "graffiti",
+    "ruins",
+    "sky"
+   ]
+  },
+  "calibration/bukhara-visit/034.jpg": {
+   "yes": [
+    "arch",
+    "backpack",
+    "building",
+    "door",
+    "dress",
+    "facade",
+    "from behind",
+    "full body",
+    "monument",
+    "outdoors",
+    "person",
+    "photo",
+    "solo",
+    "stairs",
+    "sunlight",
+    "walking",
+    "wall",
+    "woman"
+   ],
+   "doubt": [
+    "1girl",
+    "columns",
+    "shoes",
+    "short hair",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/035.jpg": {
+   "yes": [
+    "arch",
+    "building",
+    "door",
+    "facade",
+    "monument",
+    "outdoors",
+    "photo",
+    "sign",
+    "sky",
+    "stairs",
+    "tree",
+    "wall"
+   ],
+   "doubt": [
+    "travel"
+   ],
+   "no": [
+    "mosque"
+   ]
+  },
+  "calibration/bukhara-visit/038.jpg": {
+   "yes": [
+    "arch",
+    "building",
+    "facade",
+    "outdoors",
+    "photo",
+    "symmetry",
+    "wall"
+   ],
+   "doubt": [
+    "door",
+    "monument"
+   ],
+   "no": [
+    "sky"
+   ]
+  },
+  "calibration/bukhara-visit/039.jpg": {
+   "yes": [
+    "close-up",
+    "photo",
+    "wall"
+   ],
+   "doubt": [
+    "arch",
+    "outdoors",
+    "sculpture",
+    "symmetry"
+   ],
+   "no": [
+    "desert",
+    "ruins",
+    "temple"
+   ]
+  },
+  "calibration/bukhara-visit/042.jpg": {
+   "yes": [
+    "arch",
+    "ceiling",
+    "indoors",
+    "photo",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "building",
+    "monument",
+    "roof",
+    "room",
+    "symmetry"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/043.jpg": {
+   "yes": [
+    "close-up",
+    "indoors",
+    "photo",
+    "wall"
+   ],
+   "doubt": [],
+   "no": [
+    "carpet",
+    "graffiti",
+    "symmetry"
+   ]
+  },
+  "calibration/bukhara-visit/046.jpg": {
+   "yes": [
+    "audience",
+    "backpack",
+    "bag",
+    "bench",
+    "chair",
+    "floor",
+    "glasses",
+    "indoors",
+    "man",
+    "people",
+    "person",
+    "phone",
+    "room",
+    "shoes",
+    "short hair",
+    "sitting",
+    "wall",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "camera",
+    "cap",
+    "crowd",
+    "hat",
+    "jeans",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/047.jpg": {
+   "yes": [
+    "arch",
+    "photo",
+    "wall"
+   ],
+   "doubt": [
+    "close-up",
+    "door",
+    "symmetry"
+   ],
+   "no": [
+    "mosque",
+    "stairs"
+   ]
+  },
+  "calibration/bukhara-visit/050.jpg": {
+   "yes": [
+    "fence",
+    "outdoors",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "bridge",
+    "park",
+    "river",
+    "road",
+    "sky",
+    "stream",
+    "water"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/051.jpg": {
+   "yes": [
+    "fence",
+    "grass",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "sky",
+    "tree",
+    "walkway",
+    "water"
+   ],
+   "doubt": [
+    "river",
+    "stream"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/054.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "roof",
+    "sky",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "garden",
+    "house",
+    "lamp",
+    "museum"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/055.jpg": {
+   "yes": [
+    "building",
+    "garden",
+    "grass",
+    "outdoors",
+    "person",
+    "photo",
+    "plant",
+    "sky",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "camera",
+    "lamp",
+    "monument",
+    "park",
+    "sculpture",
+    "solo",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/058.jpg": {
+   "yes": [
+    "photo",
+    "sign",
+    "text",
+    "wall"
+   ],
+   "doubt": [
+    "document",
+    "outdoors"
+   ],
+   "no": [
+    "facade"
+   ]
+  },
+  "calibration/bukhara-visit/059.jpg": {
+   "yes": [
+    "building",
+    "outdoors",
+    "photo",
+    "rope",
+    "sign",
+    "sky",
+    "stairs",
+    "text",
+    "tree",
+    "wall"
+   ],
+   "doubt": [
+    "monument",
+    "people",
+    "person"
+   ],
+   "no": [
+    "mosque",
+    "road"
+   ]
+  },
+  "calibration/bukhara-visit/062.jpg": {
+   "yes": [
+    "photo",
+    "sign",
+    "text",
+    "wall"
+   ],
+   "doubt": [
+    "document",
+    "outdoors"
+   ],
+   "no": [
+    "painting"
+   ]
+  },
+  "calibration/bukhara-visit/063.jpg": {
+   "yes": [
+    "arch",
+    "building",
+    "door",
+    "facade",
+    "outdoors",
+    "photo",
+    "sign",
+    "sky",
+    "text",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "monument",
+    "mosque"
+   ],
+   "no": [
+    "museum"
+   ]
+  },
+  "calibration/bukhara-visit/066.jpg": {
+   "yes": [
+    "map",
+    "photo",
+    "poster",
+    "sign",
+    "text"
+   ],
+   "doubt": [
+    "exhibition",
+    "indoors",
+    "museum",
+    "paper",
+    "wall"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/067.jpg": {
+   "yes": [
+    "arch",
+    "ceiling",
+    "indoors",
+    "photo",
+    "wall"
+   ],
+   "doubt": [
+    "minimalist",
+    "room",
+    "window"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/070.jpg": {
+   "yes": [
+    "arch",
+    "building",
+    "man",
+    "painting",
+    "people",
+    "person",
+    "sky",
+    "stairs",
+    "tree"
+   ],
+   "doubt": [
+    "autumn leaves",
+    "facade",
+    "illustration",
+    "jar",
+    "monument",
+    "mosque",
+    "outdoors",
+    "photo",
+    "wall"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/071.jpg": {
+   "yes": [
+    "ceiling",
+    "curtain",
+    "exhibition",
+    "floor",
+    "indoors",
+    "map",
+    "museum",
+    "photo",
+    "poster",
+    "room",
+    "text",
+    "wall"
+   ],
+   "doubt": [
+    "hut",
+    "sculpture",
+    "sign",
+    "window"
+   ],
+   "no": [
+    "cave",
+    "person",
+    "ruins"
+   ]
+  },
+  "calibration/bukhara-visit/074.jpg": {
+   "yes": [
+    "arch",
+    "ceiling",
+    "indoors",
+    "photo",
+    "window"
+   ],
+   "doubt": [
+    "minimalist",
+    "room",
+    "symmetry"
+   ],
+   "no": [
+    "stairs"
+   ]
+  },
+  "calibration/bukhara-visit/075.jpg": {
+   "yes": [
+    "arch",
+    "ceiling",
+    "indoors",
+    "photo",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "building",
+    "minimalist",
+    "mosque",
+    "room",
+    "symmetry",
+    "temple"
+   ],
+   "no": [
+    "castle"
+   ]
+  },
+  "calibration/bukhara-visit/078.jpg": {
+   "yes": [
+    "map",
+    "photo",
+    "poster",
+    "text"
+   ],
+   "doubt": [
+    "chart",
+    "exhibition",
+    "indoors",
+    "museum",
+    "sign"
+   ],
+   "no": [
+    "aerial view",
+    "sand",
+    "underwater"
+   ]
+  },
+  "calibration/bukhara-visit/079.jpg": {
+   "yes": [
+    "exhibition",
+    "indoors",
+    "map",
+    "museum",
+    "photo",
+    "poster",
+    "text",
+    "wall"
+   ],
+   "doubt": [
+    "curtain",
+    "room",
+    "sign"
+   ],
+   "no": [
+    "person"
+   ]
+  },
+  "calibration/bukhara-visit/082.jpg": {
+   "yes": [
+    "building",
+    "fountain",
+    "garden",
+    "grass",
+    "lawn",
+    "outdoors",
+    "park",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "lamp"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/083.jpg": {
+   "yes": [
+    "building",
+    "clouds",
+    "facade",
+    "outdoors",
+    "photo",
+    "sky",
+    "stairs",
+    "tree",
+    "wall"
+   ],
+   "doubt": [
+    "monument",
+    "museum",
+    "plant",
+    "sign",
+    "walkway"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/086.jpg": {
+   "yes": [
+    "banner",
+    "man",
+    "market",
+    "outdoors",
+    "person",
+    "photo",
+    "shop",
+    "sign",
+    "text",
+    "tree"
+   ],
+   "doubt": [
+    "bottle",
+    "chair",
+    "food",
+    "motorcycle",
+    "poster",
+    "soft drink",
+    "solo",
+    "street",
+    "t-shirt",
+    "tent"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/087.jpg": {
+   "yes": [
+    "banner",
+    "bottle",
+    "from behind",
+    "jeans",
+    "man",
+    "market",
+    "outdoors",
+    "person",
+    "photo",
+    "shop",
+    "short hair",
+    "sign",
+    "soft drink",
+    "t-shirt",
+    "text"
+   ],
+   "doubt": [
+    "cocktail",
+    "cup",
+    "food",
+    "solo",
+    "street",
+    "tree",
+    "upper body"
+   ],
+   "no": [
+    "bar",
+    "tent"
+   ]
+  },
+  "calibration/bukhara-visit/090.jpg": {
+   "yes": [
+    "outdoors",
+    "photo",
+    "plant",
+    "road",
+    "street",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "bridge",
+    "fence",
+    "park",
+    "person"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/091.jpg": {
+   "yes": [
+    "grass",
+    "leaves",
+    "man",
+    "outdoors",
+    "park",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sunlight",
+    "tree",
+    "walking",
+    "walkway"
+   ],
+   "doubt": [
+    "backpack",
+    "car",
+    "fence",
+    "garden",
+    "plant",
+    "sky",
+    "woman"
+   ],
+   "no": [
+    "hiking"
+   ]
+  },
+  "calibration/bukhara-visit/094.jpg": {
+   "yes": [
+    "arch",
+    "building",
+    "columns",
+    "fence",
+    "outdoors",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "banner",
+    "monument",
+    "person",
+    "poster"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/095.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "facade",
+    "fence",
+    "outdoors",
+    "photo",
+    "road",
+    "roof",
+    "sky",
+    "street",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "city",
+    "flag",
+    "house",
+    "neighborhood",
+    "sign"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/098.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "city",
+    "outdoors",
+    "photo",
+    "plant",
+    "road",
+    "sky",
+    "street",
+    "sunlight",
+    "suv",
+    "tower",
+    "tree"
+   ],
+   "doubt": [
+    "people",
+    "person"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/102.jpg": {
+   "yes": [
+    "arch",
+    "building",
+    "ceiling",
+    "columns",
+    "facade",
+    "outdoors",
+    "person",
+    "photo",
+    "sky",
+    "walkway",
+    "wall"
+   ],
+   "doubt": [
+    "bicycle",
+    "monument",
+    "mosque",
+    "people",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/106.jpg": {
+   "yes": [
+    "arch",
+    "bicycle",
+    "building",
+    "columns",
+    "door",
+    "facade",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "wall",
+    "window"
+   ],
+   "doubt": [
+    "monument",
+    "mosque",
+    "travel"
+   ],
+   "no": [
+    "stairs"
+   ]
+  },
+  "calibration/bukhara-visit/110.jpg": {
+   "yes": [
+    "building",
+    "outdoors",
+    "park",
+    "people",
+    "person",
+    "photo",
+    "pond",
+    "reflection",
+    "sky",
+    "stairs",
+    "tower",
+    "tree",
+    "water"
+   ],
+   "doubt": [
+    "bench",
+    "city",
+    "lake"
+   ],
+   "no": []
+  },
+  "calibration/bukhara-visit/114.jpg": {
+   "yes": [
+    "building",
+    "outdoors",
+    "photo",
+    "sky",
+    "tower",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "monument"
+   ],
+   "no": [
+    "columns"
+   ]
+  },
+  "calibration/bukhara-visit/118.jpg": {
+   "yes": [
+    "arch",
+    "building",
+    "ceiling",
+    "columns",
+    "facade",
+    "lamp",
+    "outdoors",
+    "photo",
+    "sky",
+    "wall"
+   ],
+   "doubt": [
+    "monument",
+    "mosque"
+   ],
+   "no": []
+  },
+  "calibration/concert/002.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "eyes",
+    "face",
+    "graffiti",
+    "hands",
+    "jewelry",
+    "long hair",
+    "looking at viewer",
+    "outdoors",
+    "person",
+    "photo",
+    "portrait",
+    "sign",
+    "smile",
+    "solo",
+    "street",
+    "text",
+    "upper body",
+    "wall",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "bar",
+    "black hair",
+    "building",
+    "poster",
+    "restaurant",
+    "shop"
+   ],
+   "no": []
+  },
+  "calibration/concert/003.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "eyes",
+    "face",
+    "graffiti",
+    "jewelry",
+    "long hair",
+    "looking at viewer",
+    "outdoors",
+    "person",
+    "photo",
+    "portrait",
+    "sign",
+    "smile",
+    "solo",
+    "street",
+    "text",
+    "upper body",
+    "wall",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "bar",
+    "black hair",
+    "building",
+    "poster",
+    "restaurant",
+    "shop"
+   ],
+   "no": []
+  },
+  "calibration/concert/006.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "eyes",
+    "guitar",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "face",
+    "portrait"
+   ],
+   "no": []
+  },
+  "calibration/concert/007.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "concert",
+    "curtain",
+    "full body",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "chair",
+    "dress",
+    "face",
+    "keyboard",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/008.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "chair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "keyboard",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "full body",
+    "night",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/011.jpg": {
+   "yes": [
+    "beard",
+    "bottle",
+    "brown hair",
+    "chair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "keyboard",
+    "long hair",
+    "man",
+    "microphone",
+    "musician",
+    "people",
+    "performance",
+    "person",
+    "photo",
+    "piano",
+    "sign",
+    "sitting",
+    "stage",
+    "suit",
+    "text",
+    "woman"
+   ],
+   "doubt": [
+    "couple",
+    "dress",
+    "jacket",
+    "night"
+   ],
+   "no": []
+  },
+  "calibration/concert/014.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "chair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "keyboard",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "night",
+    "piano",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/015.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "face",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "keyboard",
+    "looking at viewer",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/016.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "chair",
+    "dress",
+    "keyboard",
+    "night",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/019.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "long hair",
+    "looking at viewer",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "bottle",
+    "chair",
+    "dress",
+    "keyboard",
+    "night",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/020.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "bottle",
+    "chair",
+    "dress",
+    "keyboard",
+    "looking at viewer",
+    "night",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/023.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "chair",
+    "dress",
+    "keyboard",
+    "night",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/026.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "chair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "keyboard",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "night",
+    "piano",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/027.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "concert",
+    "curtain",
+    "face",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "chair",
+    "dress",
+    "keyboard",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/028.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "chair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "keyboard",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "night",
+    "piano",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/031.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "chair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "keyboard",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "night",
+    "piano",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/034.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "chair",
+    "concert",
+    "curtain",
+    "guitar",
+    "indoors",
+    "keyboard",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "night",
+    "piano",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/035.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "concert",
+    "curtain",
+    "face",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "chair",
+    "dress",
+    "keyboard",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/036.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "chair",
+    "concert",
+    "curtain",
+    "hands",
+    "indoors",
+    "keyboard",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "dancing",
+    "full body",
+    "night",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/039.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "hands",
+    "keyboard",
+    "night",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/040.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "eyes",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "keyboard",
+    "night",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/043.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "eyes",
+    "night"
+   ],
+   "no": [
+    "guitar"
+   ]
+  },
+  "calibration/concert/046.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "eyes",
+    "face",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "hands",
+    "night"
+   ],
+   "no": []
+  },
+  "calibration/concert/047.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "eyes",
+    "face",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "portrait",
+    "smile"
+   ],
+   "no": []
+  },
+  "calibration/concert/048.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "keyboard",
+    "night",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/051.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "face",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "eyes",
+    "keyboard",
+    "night",
+    "piano",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/054.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "keyboard",
+    "night",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/055.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "face",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "portrait"
+   ],
+   "no": []
+  },
+  "calibration/concert/056.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "keyboard",
+    "night",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/058.jpg": {
+   "yes": [
+    "beard",
+    "black hair",
+    "brown hair",
+    "concert",
+    "couple",
+    "curtain",
+    "indoors",
+    "long hair",
+    "man",
+    "microphone",
+    "musician",
+    "people",
+    "performance",
+    "person",
+    "photo",
+    "piano",
+    "short hair",
+    "sign",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "hands",
+    "jacket",
+    "keyboard",
+    "night",
+    "sitting",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/059.jpg": {
+   "yes": [
+    "beard",
+    "black hair",
+    "brown hair",
+    "concert",
+    "curtain",
+    "hands",
+    "indoors",
+    "jacket",
+    "long hair",
+    "man",
+    "microphone",
+    "musician",
+    "people",
+    "performance",
+    "person",
+    "photo",
+    "piano",
+    "short hair",
+    "sign",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "couple",
+    "keyboard",
+    "smile",
+    "suit",
+    "text"
+   ],
+   "no": []
+  },
+  "calibration/concert/060.jpg": {
+   "yes": [
+    "beard",
+    "black hair",
+    "brown hair",
+    "concert",
+    "curtain",
+    "indoors",
+    "long hair",
+    "man",
+    "microphone",
+    "musician",
+    "people",
+    "performance",
+    "person",
+    "photo",
+    "piano",
+    "short hair",
+    "sign",
+    "smile",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "couple",
+    "hands",
+    "jacket",
+    "keyboard",
+    "night",
+    "sitting",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/063.jpg": {
+   "yes": [
+    "beard",
+    "black hair",
+    "brown hair",
+    "concert",
+    "curtain",
+    "indoors",
+    "long hair",
+    "man",
+    "microphone",
+    "musician",
+    "people",
+    "performance",
+    "person",
+    "photo",
+    "piano",
+    "short hair",
+    "sign",
+    "stage",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "couple",
+    "hands",
+    "jacket",
+    "keyboard",
+    "night",
+    "sitting",
+    "upper body"
+   ],
+   "no": []
+  },
+  "calibration/concert/066.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "keyboard",
+    "night"
+   ],
+   "no": []
+  },
+  "calibration/concert/067.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "concert",
+    "curtain",
+    "face",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "chair",
+    "dress",
+    "keyboard",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/concert/068.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "keyboard",
+    "night"
+   ],
+   "no": []
+  },
+  "calibration/concert/071.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "keyboard",
+    "looking at viewer",
+    "night"
+   ],
+   "no": []
+  },
+  "calibration/concert/074.jpg": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "concert",
+    "curtain",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "computer",
+    "keyboard",
+    "night"
+   ],
+   "no": []
+  },
+  "calibration/concert/075.jpg": {
+   "yes": [
+    "1girl",
+    "bottle",
+    "brown hair",
+    "concert",
+    "curtain",
+    "face",
+    "guitar",
+    "hands",
+    "indoors",
+    "long hair",
+    "microphone",
+    "musician",
+    "performance",
+    "person",
+    "photo",
+    "smile",
+    "solo",
+    "stage",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "chair",
+    "dress",
+    "keyboard",
+    "piano"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/002.jpg": {
+   "yes": [
+    "audience",
+    "backpack",
+    "bag",
+    "banner",
+    "building",
+    "cap",
+    "columns",
+    "crowd",
+    "facade",
+    "from behind",
+    "hat",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shoes",
+    "shorts",
+    "sign",
+    "stairs",
+    "t-shirt",
+    "text",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "black hair",
+    "blonde hair",
+    "brown hair",
+    "city",
+    "festival",
+    "glasses",
+    "microphone",
+    "monument",
+    "street",
+    "sunglasses"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/003.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "building",
+    "cap",
+    "columns",
+    "crowd",
+    "facade",
+    "festival",
+    "from behind",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shorts",
+    "stairs",
+    "t-shirt",
+    "text",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "audience",
+    "city",
+    "glasses",
+    "jeans",
+    "monument",
+    "sign",
+    "street"
+   ],
+   "no": [
+    "stage"
+   ]
+  },
+  "calibration/forest-march/006.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "building",
+    "cap",
+    "columns",
+    "crowd",
+    "dress",
+    "facade",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "stairs",
+    "text",
+    "uniform",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "backpack",
+    "city",
+    "full body",
+    "glasses",
+    "jeans",
+    "monument",
+    "sitting",
+    "sunglasses"
+   ],
+   "no": [
+    "orange"
+   ]
+  },
+  "calibration/forest-march/007.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "cap",
+    "columns",
+    "dress",
+    "facade",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "stairs",
+    "text",
+    "uniform",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "crowd",
+    "full body",
+    "jeans",
+    "monument",
+    "sunglasses",
+    "t-shirt"
+   ],
+   "no": [
+    "orange"
+   ]
+  },
+  "calibration/forest-march/010.jpg": {
+   "yes": [
+    "backpack",
+    "hands",
+    "outdoors",
+    "paper",
+    "person",
+    "photo",
+    "sign",
+    "solo",
+    "stairs",
+    "text",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "1girl",
+    "bag",
+    "close-up",
+    "drawing",
+    "face",
+    "smile"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/011.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "cap",
+    "columns",
+    "crowd",
+    "dress",
+    "facade",
+    "full body",
+    "jeans",
+    "man",
+    "microphone",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shoes",
+    "sign",
+    "sky",
+    "stairs",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "woman"
+   ],
+   "doubt": [
+    "camera",
+    "child",
+    "drums",
+    "monument",
+    "piano",
+    "shorts"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/014.jpg": {
+   "yes": [
+    "face",
+    "glasses",
+    "hands",
+    "jewelry",
+    "outdoors",
+    "paper",
+    "person",
+    "photo",
+    "short hair",
+    "solo",
+    "stairs",
+    "sunglasses",
+    "t-shirt",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "1girl",
+    "bokeh",
+    "microphone",
+    "performance",
+    "portrait",
+    "text"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/015.jpg": {
+   "yes": [
+    "building",
+    "camera",
+    "cap",
+    "columns",
+    "crowd",
+    "dress",
+    "hands",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shoes",
+    "sign",
+    "stairs",
+    "sunglasses",
+    "t-shirt",
+    "tattoo",
+    "text",
+    "woman"
+   ],
+   "doubt": [
+    "banner",
+    "from behind",
+    "glasses",
+    "shorts",
+    "street"
+   ],
+   "no": [
+    "suit"
+   ]
+  },
+  "calibration/forest-march/018.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "building",
+    "camera",
+    "cap",
+    "columns",
+    "crowd",
+    "facade",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shoes",
+    "shorts",
+    "sign",
+    "sitting",
+    "stairs",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "dress",
+    "full body",
+    "glasses",
+    "hat",
+    "jeans",
+    "long hair",
+    "monument"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/019.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "building",
+    "clouds",
+    "columns",
+    "crowd",
+    "dress",
+    "facade",
+    "flag",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "phone",
+    "photo",
+    "sign",
+    "sitting",
+    "sky",
+    "stairs",
+    "text",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "backpack",
+    "camera",
+    "hands",
+    "jeans",
+    "monument",
+    "shorts",
+    "t-shirt"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/022.jpg": {
+   "yes": [
+    "hands",
+    "jewelry",
+    "outdoors",
+    "person",
+    "photo",
+    "short hair",
+    "solo",
+    "stairs",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "upper body"
+   ],
+   "doubt": [
+    "1girl",
+    "face",
+    "man",
+    "microphone",
+    "performance",
+    "portrait",
+    "woman"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/023.jpg": {
+   "yes": [
+    "columns",
+    "face",
+    "hands",
+    "outdoors",
+    "paper",
+    "person",
+    "photo",
+    "short hair",
+    "solo",
+    "stairs",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "1girl",
+    "building",
+    "jewelry",
+    "microphone",
+    "portrait"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/026.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "columns",
+    "crowd",
+    "facade",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "stairs",
+    "text",
+    "uniform",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "backpack",
+    "city",
+    "dress",
+    "glasses",
+    "monument",
+    "street",
+    "sunglasses"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/027.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "boots",
+    "building",
+    "clouds",
+    "columns",
+    "crowd",
+    "dress",
+    "facade",
+    "flag",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "sky",
+    "stairs",
+    "text",
+    "tree",
+    "walkway",
+    "woman"
+   ],
+   "doubt": [
+    "city",
+    "from behind",
+    "monument",
+    "street",
+    "uniform"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/030.jpg": {
+   "yes": [
+    "aerial view",
+    "backpack",
+    "bag",
+    "banner",
+    "cap",
+    "car",
+    "city",
+    "crowd",
+    "dress",
+    "flower",
+    "grass",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "uniform",
+    "woman"
+   ],
+   "doubt": [
+    "blonde hair",
+    "child",
+    "festival",
+    "jeans",
+    "long hair",
+    "plant",
+    "road",
+    "shorts"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/031.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "cap",
+    "child",
+    "crowd",
+    "dress",
+    "festival",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shoes",
+    "shorts",
+    "sign",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "aerial view",
+    "glasses",
+    "jeans",
+    "tree"
+   ],
+   "no": [
+    "collage"
+   ]
+  },
+  "calibration/forest-march/034.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "beard",
+    "blonde hair",
+    "cap",
+    "crowd",
+    "dress",
+    "glasses",
+    "hat",
+    "jacket",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "short hair",
+    "sign",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "woman"
+   ],
+   "doubt": [
+    "aerial view",
+    "child",
+    "festival",
+    "grass",
+    "jeans",
+    "shorts",
+    "street"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/035.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "beard",
+    "cap",
+    "child",
+    "crowd",
+    "festival",
+    "glasses",
+    "grass",
+    "hat",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shorts",
+    "sign",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "aerial view",
+    "bicycle",
+    "dress",
+    "paper"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/038.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "beard",
+    "blonde hair",
+    "cap",
+    "crowd",
+    "glasses",
+    "hat",
+    "jacket",
+    "long hair",
+    "man",
+    "outdoors",
+    "paper",
+    "people",
+    "person",
+    "photo",
+    "short hair",
+    "sign",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "woman"
+   ],
+   "doubt": [
+    "aerial view",
+    "child",
+    "dress",
+    "festival",
+    "grass",
+    "jeans",
+    "smile",
+    "street"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/039.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "camera",
+    "cap",
+    "crowd",
+    "festival",
+    "flag",
+    "hat",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "aerial view",
+    "beard",
+    "child",
+    "glasses",
+    "grass",
+    "jacket",
+    "paper",
+    "shorts"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/042.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "building",
+    "camera",
+    "columns",
+    "crowd",
+    "facade",
+    "helmet",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "sky",
+    "stairs",
+    "t-shirt",
+    "text",
+    "tree",
+    "uniform",
+    "woman"
+   ],
+   "doubt": [
+    "city",
+    "glasses",
+    "monument",
+    "short hair",
+    "shorts",
+    "street",
+    "sunglasses"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/043.jpg": {
+   "yes": [
+    "backpack",
+    "banner",
+    "building",
+    "cap",
+    "city",
+    "clouds",
+    "columns",
+    "crowd",
+    "facade",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "sky",
+    "stairs",
+    "street",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "festival",
+    "flag",
+    "monument",
+    "shorts"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/046.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "cap",
+    "columns",
+    "door",
+    "facade",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shoes",
+    "sunglasses",
+    "text",
+    "tree",
+    "woman"
+   ],
+   "doubt": [
+    "boots",
+    "crowd",
+    "full body",
+    "glasses",
+    "monument",
+    "sign",
+    "sky",
+    "stairs",
+    "street"
+   ],
+   "no": [
+    "flag"
+   ]
+  },
+  "calibration/forest-march/047.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "city",
+    "columns",
+    "crowd",
+    "dress",
+    "facade",
+    "glasses",
+    "jacket",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "beard",
+    "clouds",
+    "monument",
+    "stairs",
+    "sunglasses"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/050.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "columns",
+    "crowd",
+    "door",
+    "dress",
+    "facade",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sky",
+    "sunglasses",
+    "text",
+    "tree",
+    "uniform",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "bicycle",
+    "glasses",
+    "jeans",
+    "monument",
+    "short hair",
+    "stairs",
+    "street",
+    "t-shirt"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/051.jpg": {
+   "yes": [
+    "banner",
+    "bicycle",
+    "building",
+    "city",
+    "columns",
+    "crowd",
+    "dress",
+    "facade",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "short hair",
+    "sign",
+    "sky",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "glasses",
+    "monument",
+    "stairs"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/054.jpg": {
+   "yes": [
+    "bag",
+    "bicycle",
+    "building",
+    "columns",
+    "crowd",
+    "dress",
+    "facade",
+    "glasses",
+    "hat",
+    "jacket",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "short hair",
+    "sign",
+    "stairs",
+    "sunglasses",
+    "text",
+    "uniform",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "banner",
+    "beard",
+    "long hair",
+    "monument",
+    "shorts",
+    "street",
+    "t-shirt"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/055.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "beard",
+    "bicycle",
+    "building",
+    "cap",
+    "city",
+    "columns",
+    "crowd",
+    "dress",
+    "facade",
+    "glasses",
+    "hat",
+    "jacket",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shorts",
+    "sign",
+    "stairs",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "mask",
+    "monument",
+    "tree",
+    "uniform"
+   ],
+   "no": [
+    "sculpture"
+   ]
+  },
+  "calibration/forest-march/058.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "cap",
+    "city",
+    "clouds",
+    "flag",
+    "hat",
+    "jeans",
+    "man",
+    "motorcycle",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "scooter",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "woman"
+   ],
+   "doubt": [
+    "bicycle",
+    "crowd",
+    "highway",
+    "sunglasses",
+    "walking"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/059.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "city",
+    "clouds",
+    "crowd",
+    "hat",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "text",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "cap",
+    "t-shirt",
+    "tree",
+    "uniform"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/062.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "cap",
+    "church",
+    "city",
+    "clouds",
+    "columns",
+    "crowd",
+    "from behind",
+    "jeans",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "tower",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bicycle",
+    "blonde hair",
+    "brown hair",
+    "car",
+    "full body",
+    "hat",
+    "highway",
+    "solo",
+    "uniform"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/063.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "building",
+    "cap",
+    "city",
+    "clouds",
+    "from behind",
+    "jeans",
+    "long hair",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "tower",
+    "tree",
+    "woman"
+   ],
+   "doubt": [
+    "church",
+    "crowd",
+    "hat",
+    "uniform",
+    "walking"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/066.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "cap",
+    "church",
+    "city",
+    "clouds",
+    "crowd",
+    "from behind",
+    "hat",
+    "jeans",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "tower",
+    "tree",
+    "uniform",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "blonde hair",
+    "brown hair",
+    "bus",
+    "car",
+    "full body",
+    "sunglasses",
+    "tram"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/067.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "building",
+    "cap",
+    "city",
+    "clouds",
+    "crowd",
+    "from behind",
+    "hat",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "tower",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "car",
+    "church",
+    "long hair"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/070.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "cap",
+    "church",
+    "city",
+    "clouds",
+    "crowd",
+    "from behind",
+    "hat",
+    "jeans",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "tower",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "blonde hair",
+    "brown hair",
+    "car",
+    "full body",
+    "tram",
+    "uniform"
+   ],
+   "no": [
+    "flag"
+   ]
+  },
+  "calibration/forest-march/071.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "building",
+    "cap",
+    "city",
+    "crowd",
+    "from behind",
+    "jeans",
+    "long hair",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "tower",
+    "tree",
+    "woman"
+   ],
+   "doubt": [
+    "church",
+    "clouds",
+    "man",
+    "walking"
+   ],
+   "no": [
+    "flag"
+   ]
+  },
+  "calibration/forest-march/074.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "church",
+    "city",
+    "clouds",
+    "crowd",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sky",
+    "street",
+    "text",
+    "tower",
+    "tree",
+    "walking"
+   ],
+   "doubt": [
+    "car",
+    "hat",
+    "man",
+    "park",
+    "sign",
+    "tram",
+    "woman"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/075.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "city",
+    "clouds",
+    "crowd",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "sky",
+    "street",
+    "text",
+    "tree"
+   ],
+   "doubt": [
+    "hat",
+    "man",
+    "tower",
+    "walking",
+    "woman"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/078.jpg": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "beard",
+    "camera",
+    "cap",
+    "crowd",
+    "dress",
+    "graffiti",
+    "hat",
+    "jeans",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "shorts",
+    "sign",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "tree",
+    "uniform",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "blonde hair",
+    "brown hair",
+    "child",
+    "city",
+    "festival",
+    "flag",
+    "glasses",
+    "smile"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/079.jpg": {
+   "yes": [
+    "backpack",
+    "cap",
+    "city",
+    "crowd",
+    "flag",
+    "graffiti",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "shorts",
+    "sign",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "glasses",
+    "jeans",
+    "long hair",
+    "uniform"
+   ],
+   "no": [
+    "festival"
+   ]
+  },
+  "calibration/forest-march/082.jpg": {
+   "yes": [
+    "bag",
+    "building",
+    "city",
+    "crowd",
+    "dress",
+    "full body",
+    "hat",
+    "jeans",
+    "leaves",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "street",
+    "sunglasses",
+    "sunlight",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "banner",
+    "boots",
+    "fence",
+    "park",
+    "t-shirt"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/083.jpg": {
+   "yes": [
+    "building",
+    "cap",
+    "city",
+    "crowd",
+    "dress",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "street",
+    "sunglasses",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "bicycle",
+    "glasses",
+    "long hair",
+    "sculpture"
+   ],
+   "no": [
+    "skyscraper"
+   ]
+  },
+  "calibration/forest-march/086.jpg": {
+   "yes": [
+    "bag",
+    "building",
+    "city",
+    "crowd",
+    "dress",
+    "full body",
+    "hat",
+    "jeans",
+    "leaves",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sculpture",
+    "shorts",
+    "sign",
+    "street",
+    "sunglasses",
+    "sunlight",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "car",
+    "shoes",
+    "statue",
+    "t-shirt"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/087.jpg": {
+   "yes": [
+    "bag",
+    "building",
+    "cap",
+    "city",
+    "crowd",
+    "dress",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sculpture",
+    "shorts",
+    "sign",
+    "street",
+    "sunglasses",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "glasses",
+    "jacket",
+    "jeans"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/090.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "blonde hair",
+    "cap",
+    "crowd",
+    "dress",
+    "hat",
+    "jewelry",
+    "leaves",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "sunglasses",
+    "sunlight",
+    "t-shirt",
+    "text",
+    "tree",
+    "upper body",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "backpack",
+    "city",
+    "dog",
+    "glasses",
+    "street"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/091.jpg": {
+   "yes": [
+    "bag",
+    "banner",
+    "building",
+    "cap",
+    "city",
+    "crowd",
+    "from behind",
+    "jeans",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shop",
+    "sign",
+    "street",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "camera",
+    "road",
+    "sky"
+   ],
+   "no": [
+    "flag"
+   ]
+  },
+  "calibration/forest-march/094.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "city",
+    "crowd",
+    "facade",
+    "glasses",
+    "hat",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "shop",
+    "sign",
+    "sky",
+    "street",
+    "sunlight",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bicycle",
+    "flag",
+    "full body",
+    "t-shirt",
+    "uniform",
+    "window"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/095.jpg": {
+   "yes": [
+    "banner",
+    "building",
+    "city",
+    "crowd",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shop",
+    "sign",
+    "sky",
+    "street",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bicycle",
+    "jeans",
+    "road",
+    "sunglasses",
+    "uniform"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/098.jpg": {
+   "yes": [
+    "banner",
+    "cap",
+    "child",
+    "city",
+    "crowd",
+    "flag",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "street",
+    "sunglasses",
+    "sunlight",
+    "t-shirt",
+    "text",
+    "tree",
+    "uniform",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "car",
+    "glasses",
+    "jeans"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/102.jpg": {
+   "yes": [
+    "backpack",
+    "banner",
+    "city",
+    "crowd",
+    "dress",
+    "flag",
+    "full body",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "shorts",
+    "sign",
+    "street",
+    "sunglasses",
+    "sunlight",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "building",
+    "cap",
+    "glasses",
+    "uniform"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/106.jpg": {
+   "yes": [
+    "backpack",
+    "banner",
+    "cap",
+    "city",
+    "crowd",
+    "flag",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "sign",
+    "street",
+    "sunglasses",
+    "sunlight",
+    "t-shirt",
+    "tattoo",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "glasses",
+    "long hair"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/110.jpg": {
+   "yes": [
+    "backpack",
+    "banner",
+    "cap",
+    "city",
+    "crowd",
+    "flag",
+    "hat",
+    "long hair",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "street",
+    "sunglasses",
+    "sunlight",
+    "t-shirt",
+    "text",
+    "tree",
+    "uniform",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "car",
+    "dress",
+    "glasses",
+    "tattoo"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/114.jpg": {
+   "yes": [
+    "backpack",
+    "cap",
+    "child",
+    "city",
+    "crowd",
+    "glasses",
+    "hat",
+    "headphones",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "road",
+    "sign",
+    "street",
+    "sunglasses",
+    "sunlight",
+    "t-shirt",
+    "text",
+    "tree",
+    "uniform",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "banner",
+    "flag",
+    "shorts"
+   ],
+   "no": []
+  },
+  "calibration/forest-march/118.jpg": {
+   "yes": [
+    "backpack",
+    "cap",
+    "city",
+    "crowd",
+    "flag",
+    "glasses",
+    "hat",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "shorts",
+    "sign",
+    "street",
+    "sunglasses",
+    "sunlight",
+    "t-shirt",
+    "text",
+    "tree",
+    "walking",
+    "woman"
+   ],
+   "doubt": [
+    "bag",
+    "banner",
+    "boots",
+    "child",
+    "phone",
+    "uniform"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/002.jpg": {
+   "yes": [
+    "grass",
+    "hill",
+    "mountain",
+    "outdoors",
+    "photo",
+    "plant",
+    "road",
+    "rocks",
+    "sky",
+    "sunlight",
+    "travel",
+    "tree",
+    "wall"
+   ],
+   "doubt": [
+    "cliff",
+    "countryside",
+    "hdr",
+    "highway",
+    "hiking",
+    "landscape"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/003.jpg": {
+   "yes": [
+    "hill",
+    "landscape",
+    "mountain",
+    "outdoors",
+    "photo",
+    "plant",
+    "road",
+    "rocks",
+    "sky",
+    "valley",
+    "wall"
+   ],
+   "doubt": [
+    "grass",
+    "hdr",
+    "travel",
+    "tree"
+   ],
+   "no": [
+    "panorama"
+   ]
+  },
+  "calibration/sequoia-hike/004.jpg": {
+   "yes": [
+    "car",
+    "grass",
+    "hill",
+    "outdoors",
+    "photo",
+    "plant",
+    "road",
+    "rocks",
+    "sign",
+    "sunlight",
+    "text",
+    "travel",
+    "tree",
+    "wall"
+   ],
+   "doubt": [
+    "cliff",
+    "countryside",
+    "forest",
+    "hdr",
+    "highway",
+    "landscape",
+    "mountain",
+    "suv",
+    "truck"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/007.jpg": {
+   "yes": [
+    "fence",
+    "forest",
+    "grass",
+    "outdoors",
+    "park",
+    "photo",
+    "sky",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "hiking",
+    "leaves",
+    "plant",
+    "road",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/010.jpg": {
+   "yes": [
+    "close-up",
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "hiking",
+    "leaves",
+    "park",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/011.jpg": {
+   "yes": [
+    "forest",
+    "grass",
+    "outdoors",
+    "photo",
+    "plant",
+    "rocks",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "hdr",
+    "hiking",
+    "leaves"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/012.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "close-up",
+    "leaves",
+    "park",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/015.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "hdr"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/016.jpg": {
+   "yes": [
+    "animal",
+    "bear",
+    "forest",
+    "grass",
+    "outdoors",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree",
+    "wildlife"
+   ],
+   "doubt": [
+    "hiking",
+    "moss",
+    "park"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/019.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "hdr",
+    "leaves",
+    "park",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/022.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "grass",
+    "hiking",
+    "leaves",
+    "park",
+    "sky",
+    "travel",
+    "walkway"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/023.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "fire",
+    "hdr",
+    "leaves",
+    "rocks"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/024.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "grass",
+    "hiking",
+    "leaves",
+    "park",
+    "travel",
+    "walkway"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/027.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "hiking",
+    "leaves",
+    "walkway"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/028.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "park",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/031.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree",
+    "walking",
+    "walkway"
+   ],
+   "doubt": [
+    "child",
+    "hiking",
+    "leaves",
+    "rocks",
+    "sky",
+    "travel"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/034.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "fence",
+    "hiking",
+    "leaves"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/035.jpg": {
+   "yes": [
+    "forest",
+    "hiking",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree",
+    "walking",
+    "walkway"
+   ],
+   "doubt": [
+    "backpack",
+    "child",
+    "from behind",
+    "hdr",
+    "leaves",
+    "shorts",
+    "sky"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/036.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "walkway"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/039.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "hdr"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/040.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "rocks",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "person"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/043.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "leaves"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/046.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "sunlight",
+    "symmetry"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/047.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "hdr",
+    "symmetry"
+   ],
+   "no": [
+    "panorama"
+   ]
+  },
+  "calibration/sequoia-hike/048.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "sunlight"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/051.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "landscape",
+    "rocks",
+    "sky"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/055.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "sign"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/058.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "grass"
+   ],
+   "no": [
+    "rocks"
+   ]
+  },
+  "calibration/sequoia-hike/059.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "close-up",
+    "hdr",
+    "rocks"
+   ],
+   "no": [
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/060.jpg": {
+   "yes": [
+    "forest",
+    "full body",
+    "outdoors",
+    "person",
+    "photo",
+    "plant",
+    "sky",
+    "solo",
+    "tree"
+   ],
+   "doubt": [
+    "1girl",
+    "jacket",
+    "leaves",
+    "sunlight",
+    "woman"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/063.jpg": {
+   "yes": [
+    "forest",
+    "hill",
+    "landscape",
+    "mountain",
+    "outdoors",
+    "photo",
+    "sky",
+    "sunlight",
+    "tree",
+    "valley"
+   ],
+   "doubt": [
+    "plant"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/067.jpg": {
+   "yes": [
+    "fence",
+    "forest",
+    "moss",
+    "outdoors",
+    "photo",
+    "plant",
+    "sign",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "sky",
+    "text"
+   ],
+   "no": [
+    "cave",
+    "rocks"
+   ]
+  },
+  "calibration/sequoia-hike/070.jpg": {
+   "yes": [
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "sunlight"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/071.jpg": {
+   "yes": [
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "forest",
+    "minimalist"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/072.jpg": {
+   "yes": [
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "sunlight"
+   ],
+   "no": [
+    "forest"
+   ]
+  },
+  "calibration/sequoia-hike/075.jpg": {
+   "yes": [
+    "fence",
+    "forest",
+    "moss",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree"
+   ],
+   "doubt": [
+    "leaves"
+   ],
+   "no": []
+  },
+  "calibration/sequoia-hike/079.jpg": {
+   "yes": [
+    "fence",
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sky",
+    "sunlight",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "people",
+    "person"
+   ],
+   "no": [
+    "sculpture",
+    "spring"
+   ]
+  },
+  "calibration/sequoia-hike/082.jpg": {
+   "yes": [
+    "fence",
+    "moss",
+    "outdoors",
+    "photo",
+    "tree",
+    "walkway"
+   ],
+   "doubt": [
+    "cave",
+    "person",
+    "plant",
+    "sunlight"
+   ],
+   "no": [
+    "rocks"
+   ]
+  },
+  "calibration/sequoia-hike/083.jpg": {
+   "yes": [
+    "cave",
+    "person",
+    "photo",
+    "solo",
+    "walking"
+   ],
+   "doubt": [
+    "hiking",
+    "outdoors",
+    "rocks",
+    "silhouette",
+    "tree"
+   ],
+   "no": [
+    "panorama",
+    "wall"
+   ]
+  },
+  "calibration/sequoia-hike/084.jpg": {
+   "yes": [
+    "fence",
+    "jacket",
+    "jeans",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "photo",
+    "tree",
+    "woman"
+   ],
+   "doubt": [
+    "blonde hair",
+    "camera",
+    "cave",
+    "from behind",
+    "full body",
+    "hiking",
+    "phone",
+    "sunlight",
+    "walking"
+   ],
+   "no": [
+    "rocks"
+   ]
+  },
+  "calibration/sequoia-hike/087.jpg": {
+   "yes": [
+    "fence",
+    "forest",
+    "outdoors",
+    "photo",
+    "plant",
+    "sign",
+    "text",
+    "tree"
+   ],
+   "doubt": [
+    "leaves",
+    "sky"
+   ],
+   "no": [
+    "spring"
+   ]
+  },
+  "generated/3d-render-01.org&": {
+   "yes": [
+    "3d render",
+    "minimalist"
+   ],
+   "doubt": [
+    "illustration",
+    "symmetry"
+   ],
+   "no": [
+    "stars",
+    "text"
+   ]
+  },
+  "generated/3d-render-02.org&": {
+   "yes": [
+    "3d render",
+    "symmetry"
+   ],
+   "doubt": [
+    "illustration",
+    "minimalist",
+    "science fiction"
+   ],
+   "no": [
+    "macro"
+   ]
+  },
+  "generated/3d-render-03.org&": {
+   "yes": [
+    "3d render"
+   ],
+   "doubt": [
+    "ball",
+    "box"
+   ],
+   "no": [
+    "fork",
+    "macro",
+    "text"
+   ]
+  },
+  "generated/3d-render-04.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "3d render",
+    "box"
+   ],
+   "no": [
+    "monitor"
+   ]
+  },
+  "generated/3d-render-05.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "3d render",
+    "box"
+   ],
+   "no": [
+    "monitor"
+   ]
+  },
+  "generated/3d-render-06.org&": {
+   "yes": [
+    "3d render"
+   ],
+   "doubt": [
+    "illustration",
+    "minimalist"
+   ],
+   "no": [
+    "animal",
+    "macro"
+   ]
+  },
+  "generated/3d-render-07.org&": {
+   "yes": [
+    "3d render",
+    "box"
+   ],
+   "doubt": [
+    "minimalist",
+    "text"
+   ],
+   "no": [
+    "basket",
+    "logo"
+   ]
+  },
+  "generated/3d-render-08.org&": {
+   "yes": [
+    "3d render",
+    "box"
+   ],
+   "doubt": [
+    "illustration",
+    "minimalist"
+   ],
+   "no": [
+    "indoors",
+    "logo",
+    "text"
+   ]
+  },
+  "generated/3d-render-09.org&": {
+   "yes": [
+    "3d render",
+    "box"
+   ],
+   "doubt": [
+    "minimalist"
+   ],
+   "no": [
+    "cupboard",
+    "text",
+    "wall"
+   ]
+  },
+  "generated/3d-render-10.org&": {
+   "yes": [
+    "3d render",
+    "box"
+   ],
+   "doubt": [
+    "illustration",
+    "minimalist",
+    "text"
+   ],
+   "no": [
+    "logo"
+   ]
+  },
+  "generated/anime-01.org&": {
+   "yes": [
+    "animal",
+    "anime",
+    "cat",
+    "digital art",
+    "drawing",
+    "illustration",
+    "lying down",
+    "pet",
+    "pillow"
+   ],
+   "doubt": [
+    "bed",
+    "cartoon",
+    "kitten",
+    "stars"
+   ],
+   "no": []
+  },
+  "generated/anime-02.org&": {
+   "yes": [
+    "backpack",
+    "bag",
+    "banner",
+    "building",
+    "crowd",
+    "exhibition",
+    "glasses",
+    "indoors",
+    "jeans",
+    "man",
+    "people",
+    "person",
+    "photo",
+    "poster",
+    "shoes",
+    "shop",
+    "sign",
+    "t-shirt",
+    "text",
+    "woman"
+   ],
+   "doubt": [
+    "anime",
+    "audience",
+    "ceiling",
+    "columns",
+    "festival",
+    "market",
+    "monitor",
+    "shorts",
+    "television"
+   ],
+   "no": []
+  },
+  "generated/anime-03.org&": {
+   "yes": [
+    "1girl",
+    "anime",
+    "cartoon",
+    "clouds",
+    "digital art",
+    "drawing",
+    "eyes",
+    "face",
+    "full body",
+    "graffiti",
+    "grass",
+    "highway",
+    "illustration",
+    "jacket",
+    "long hair",
+    "looking at viewer",
+    "outdoors",
+    "person",
+    "road",
+    "shoes",
+    "sign",
+    "sitting",
+    "sky",
+    "solo",
+    "text"
+   ],
+   "doubt": [
+    "building",
+    "child",
+    "costume",
+    "desert",
+    "fence",
+    "plant",
+    "ruins",
+    "woman"
+   ],
+   "no": []
+  },
+  "generated/anime-04.org&": {
+   "yes": [
+    "anime",
+    "cartoon",
+    "digital art",
+    "doll",
+    "floor",
+    "full body",
+    "illustration",
+    "long hair",
+    "looking at viewer",
+    "person",
+    "smile",
+    "text"
+   ],
+   "doubt": [
+    "1girl",
+    "child",
+    "dress",
+    "sky",
+    "solo",
+    "toy",
+    "uniform"
+   ],
+   "no": [
+    "strawberry"
+   ]
+  },
+  "generated/anime-05.org&": {
+   "yes": [
+    "brown hair",
+    "camera",
+    "doll",
+    "face",
+    "full body",
+    "long hair",
+    "photo",
+    "shoes",
+    "smile",
+    "toy",
+    "uniform"
+   ],
+   "doubt": [
+    "1girl",
+    "anime",
+    "close-up",
+    "looking at viewer",
+    "minimalist",
+    "person",
+    "sculpture",
+    "solo",
+    "woman"
+   ],
+   "no": [
+    "blonde hair",
+    "wall"
+   ]
+  },
+  "generated/anime-06.org&": {
+   "yes": [
+    "1girl",
+    "anime",
+    "digital art",
+    "eyes",
+    "face",
+    "hands",
+    "illustration",
+    "indoors",
+    "long hair",
+    "looking at viewer",
+    "person",
+    "portrait",
+    "smile",
+    "solo",
+    "uniform",
+    "upper body",
+    "window"
+   ],
+   "doubt": [
+    "jacket",
+    "sunlight",
+    "woman"
+   ],
+   "no": []
+  },
+  "generated/anime-07.org&": {
+   "yes": [
+    "1girl",
+    "anime",
+    "cartoon",
+    "digital art",
+    "dress",
+    "eyes",
+    "face",
+    "full body",
+    "illustration",
+    "person",
+    "solo",
+    "uniform"
+   ],
+   "doubt": [
+    "child",
+    "costume",
+    "drawing",
+    "minimalist",
+    "shoes",
+    "short hair"
+   ],
+   "no": []
+  },
+  "generated/anime-08.org&": {
+   "yes": [
+    "anime",
+    "brown hair",
+    "digital art",
+    "eyes",
+    "face",
+    "hands",
+    "illustration",
+    "long hair",
+    "looking at viewer",
+    "people",
+    "person",
+    "uniform",
+    "upper body"
+   ],
+   "doubt": [
+    "cartoon",
+    "child",
+    "manga",
+    "tie",
+    "woman"
+   ],
+   "no": []
+  },
+  "generated/anime-09.org&": {
+   "yes": [
+    "anime",
+    "black hair",
+    "brown hair",
+    "cartoon",
+    "digital art",
+    "glasses",
+    "hat",
+    "illustration",
+    "long hair",
+    "looking at viewer",
+    "people",
+    "person",
+    "smile",
+    "text",
+    "uniform",
+    "upper body"
+   ],
+   "doubt": [
+    "cap",
+    "man",
+    "tie",
+    "woman"
+   ],
+   "no": []
+  },
+  "generated/anime-10.org&": {
+   "yes": [
+    "anime",
+    "beach",
+    "brown hair",
+    "long hair",
+    "person",
+    "sand",
+    "screenshot",
+    "sea",
+    "text",
+    "water"
+   ],
+   "doubt": [
+    "1girl",
+    "digital art",
+    "illustration",
+    "ocean",
+    "outdoors",
+    "solo",
+    "swimwear"
+   ],
+   "no": [
+    "coat"
+   ]
+  },
+  "generated/comic-01.org&": {
+   "yes": [
+    "animal",
+    "basket",
+    "bed",
+    "child",
+    "comic",
+    "digital art",
+    "flower",
+    "forest",
+    "glasses",
+    "hat",
+    "house",
+    "illustration",
+    "indoors",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "text",
+    "tree",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "bedroom",
+    "cartoon",
+    "collage",
+    "curtain",
+    "dog",
+    "drawing",
+    "fantasy",
+    "food",
+    "gun",
+    "pillow"
+   ],
+   "no": [
+    "poster"
+   ]
+  },
+  "generated/comic-02.org&": {
+   "yes": [
+    "animal",
+    "basket",
+    "bed",
+    "child",
+    "comic",
+    "digital art",
+    "flower",
+    "forest",
+    "glasses",
+    "hat",
+    "house",
+    "illustration",
+    "indoors",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "text",
+    "tree",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "bedroom",
+    "cartoon",
+    "collage",
+    "curtain",
+    "dog",
+    "drawing",
+    "fantasy",
+    "food",
+    "gun",
+    "pillow"
+   ],
+   "no": []
+  },
+  "generated/comic-03.org&": {
+   "yes": [
+    "3d render",
+    "building",
+    "car",
+    "cartoon",
+    "city",
+    "digital art",
+    "hat",
+    "illustration",
+    "person",
+    "science fiction",
+    "skyscraper",
+    "spaceship",
+    "text"
+   ],
+   "doubt": [
+    "1boy",
+    "armor",
+    "cityscape",
+    "comic",
+    "concept art",
+    "costume",
+    "man",
+    "night",
+    "toy"
+   ],
+   "no": [
+    "poster"
+   ]
+  },
+  "generated/comic-04.org&": {
+   "yes": [
+    "animal",
+    "cartoon",
+    "comic",
+    "digital art",
+    "illustration",
+    "suit",
+    "text",
+    "tie"
+   ],
+   "doubt": [
+    "drawing",
+    "portrait",
+    "upper body"
+   ],
+   "no": [
+    "poster"
+   ]
+  },
+  "generated/comic-05.org&": {
+   "yes": [
+    "cartoon",
+    "chart",
+    "comic",
+    "computer",
+    "digital art",
+    "hat",
+    "illustration",
+    "laptop",
+    "man",
+    "paper",
+    "people",
+    "person",
+    "poster",
+    "text"
+   ],
+   "doubt": [
+    "book",
+    "child",
+    "document",
+    "drawing",
+    "glasses",
+    "indoors",
+    "lamp",
+    "shelf",
+    "sign",
+    "woman"
+   ],
+   "no": [
+    "screenshot"
+   ]
+  },
+  "generated/comic-06.org&": {
+   "yes": [
+    "banner",
+    "building",
+    "car",
+    "chair",
+    "child",
+    "comic",
+    "crowd",
+    "digital art",
+    "flag",
+    "illustration",
+    "indoors",
+    "man",
+    "map",
+    "outdoors",
+    "people",
+    "person",
+    "sky",
+    "suit",
+    "table",
+    "text",
+    "tie",
+    "woman"
+   ],
+   "doubt": [
+    "cartoon",
+    "drawing",
+    "gun",
+    "microphone",
+    "office",
+    "poster",
+    "sign",
+    "soldier",
+    "stairs",
+    "street",
+    "uniform"
+   ],
+   "no": [
+    "collage"
+   ]
+  },
+  "generated/comic-07.org&": {
+   "yes": [
+    "1girl",
+    "black hair",
+    "computer",
+    "drawing",
+    "hands",
+    "illustration",
+    "jewelry",
+    "laptop",
+    "leaves",
+    "person",
+    "plant",
+    "solo",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "digital art",
+    "face",
+    "indoors",
+    "painting",
+    "palm tree",
+    "portrait",
+    "screenshot",
+    "sitting",
+    "sketch",
+    "t-shirt",
+    "text",
+    "watercolor"
+   ],
+   "no": []
+  },
+  "generated/comic-08.org&": {
+   "yes": [
+    "animal",
+    "basket",
+    "bed",
+    "child",
+    "comic",
+    "digital art",
+    "flower",
+    "forest",
+    "glasses",
+    "hat",
+    "house",
+    "illustration",
+    "indoors",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "text",
+    "tree",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "bedroom",
+    "cartoon",
+    "collage",
+    "curtain",
+    "dog",
+    "drawing",
+    "fantasy",
+    "food",
+    "gun",
+    "pillow"
+   ],
+   "no": []
+  },
+  "generated/comic-09.org&": {
+   "yes": [
+    "animal",
+    "basket",
+    "bed",
+    "child",
+    "comic",
+    "digital art",
+    "flower",
+    "forest",
+    "glasses",
+    "hat",
+    "house",
+    "illustration",
+    "indoors",
+    "man",
+    "outdoors",
+    "people",
+    "person",
+    "text",
+    "tree",
+    "window",
+    "woman"
+   ],
+   "doubt": [
+    "bedroom",
+    "cartoon",
+    "collage",
+    "curtain",
+    "dog",
+    "drawing",
+    "fantasy",
+    "food",
+    "gun",
+    "pillow",
+    "poster"
+   ],
+   "no": []
+  },
+  "generated/comic-10.org&": {
+   "yes": [
+    "1boy",
+    "beard",
+    "clock",
+    "comic",
+    "costume",
+    "digital art",
+    "eyes",
+    "fantasy",
+    "gloves",
+    "hands",
+    "illustration",
+    "looking at viewer",
+    "man",
+    "person",
+    "short hair",
+    "solo",
+    "text"
+   ],
+   "doubt": [
+    "black hair",
+    "cartoon",
+    "face",
+    "house",
+    "night",
+    "portrait",
+    "science fiction",
+    "sky",
+    "upper body"
+   ],
+   "no": []
+  },
+  "generated/digital-art-01.org&": {
+   "yes": [
+    "3d render",
+    "digital art"
+   ],
+   "doubt": [
+    "fantasy",
+    "illustration",
+    "reflection",
+    "science fiction"
+   ],
+   "no": [
+    "close-up",
+    "macro",
+    "painting"
+   ]
+  },
+  "generated/digital-art-02.org&": {
+   "yes": [
+    "digital art"
+   ],
+   "doubt": [
+    "building",
+    "drawing",
+    "fence",
+    "illustration",
+    "painting",
+    "wall"
+   ],
+   "no": [
+    "cow"
+   ]
+  },
+  "generated/digital-art-03.org&": {
+   "yes": [
+    "cartoon",
+    "digital art",
+    "illustration",
+    "text",
+    "truck"
+   ],
+   "doubt": [
+    "drawing",
+    "minimalist"
+   ],
+   "no": [
+    "car",
+    "suv"
+   ]
+  },
+  "generated/digital-art-04.org&": {
+   "yes": [
+    "bowl",
+    "clouds",
+    "digital art"
+   ],
+   "doubt": [
+    "basket",
+    "drawing",
+    "illustration",
+    "painting",
+    "sky"
+   ],
+   "no": [
+    "water"
+   ]
+  },
+  "generated/digital-art-05.org&": {
+   "yes": [
+    "clouds",
+    "digital art"
+   ],
+   "doubt": [
+    "3d render",
+    "minimalist",
+    "ocean",
+    "science fiction",
+    "water"
+   ],
+   "no": [
+    "sky",
+    "sunlight"
+   ]
+  },
+  "generated/digital-art-06.org&": {
+   "yes": [
+    "1boy",
+    "black hair",
+    "digital art",
+    "eyes",
+    "face",
+    "illustration",
+    "man",
+    "minimalist",
+    "person",
+    "portrait",
+    "short hair",
+    "solo"
+   ],
+   "doubt": [
+    "3d render",
+    "brown hair",
+    "looking at viewer"
+   ],
+   "no": []
+  },
+  "generated/digital-art-07.org&": {
+   "yes": [
+    "concept art",
+    "digital art",
+    "fantasy",
+    "mountain",
+    "reflection",
+    "science fiction",
+    "sky",
+    "sunlight",
+    "water"
+   ],
+   "doubt": [
+    "collage",
+    "hill",
+    "illustration",
+    "lake",
+    "painting",
+    "sunrise"
+   ],
+   "no": [
+    "macro"
+   ]
+  },
+  "generated/digital-art-08.org&": {
+   "yes": [
+    "animal",
+    "bird",
+    "digital art",
+    "illustration",
+    "minimalist"
+   ],
+   "doubt": [
+    "wildlife"
+   ],
+   "no": [
+    "close-up"
+   ]
+  },
+  "generated/digital-art-09.org&": {
+   "yes": [
+    "bread",
+    "cartoon",
+    "drawing",
+    "face",
+    "food",
+    "glasses",
+    "hands",
+    "illustration",
+    "man",
+    "portrait",
+    "text"
+   ],
+   "doubt": [
+    "comic",
+    "digital art",
+    "jar",
+    "meme",
+    "person",
+    "smile"
+   ],
+   "no": []
+  },
+  "generated/digital-art-10.org&": {
+   "yes": [
+    "digital art",
+    "logo",
+    "minimalist",
+    "symmetry",
+    "text"
+   ],
+   "doubt": [
+    "3d render",
+    "illustration",
+    "sign"
+   ],
+   "no": [
+    "sunlight",
+    "wall"
+   ]
+  },
+  "generated/painting-01.org&": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "dress",
+    "eyes",
+    "face",
+    "looking at viewer",
+    "painting",
+    "person",
+    "portrait",
+    "short hair",
+    "solo",
+    "upper body",
+    "vintage",
+    "woman"
+   ],
+   "doubt": [
+    "jewelry",
+    "smile",
+    "watercolor"
+   ],
+   "no": []
+  },
+  "generated/painting-02.org&": {
+   "yes": [
+    "building",
+    "facade",
+    "house",
+    "neighborhood",
+    "outdoors",
+    "painting",
+    "road",
+    "roof",
+    "street",
+    "sunlight",
+    "tree",
+    "village",
+    "watercolor",
+    "window"
+   ],
+   "doubt": [
+    "cart",
+    "city",
+    "door",
+    "horse",
+    "lamp",
+    "lantern",
+    "people",
+    "person",
+    "sky"
+   ],
+   "no": [
+    "drawing"
+   ]
+  },
+  "generated/painting-03.org&": {
+   "yes": [
+    "arch",
+    "black and white",
+    "building",
+    "drawing",
+    "house",
+    "outdoors",
+    "roof",
+    "sketch",
+    "village",
+    "vintage",
+    "window"
+   ],
+   "doubt": [
+    "bridge",
+    "facade",
+    "illustration",
+    "painting",
+    "river",
+    "ruins",
+    "street",
+    "text",
+    "watercolor"
+   ],
+   "no": []
+  },
+  "generated/painting-04.org&": {
+   "yes": [
+    "1boy",
+    "black and white",
+    "eyes",
+    "face",
+    "man",
+    "painting",
+    "person",
+    "portrait",
+    "solo",
+    "uniform",
+    "upper body",
+    "vintage"
+   ],
+   "doubt": [
+    "drawing",
+    "jacket",
+    "looking at viewer",
+    "soldier"
+   ],
+   "no": [
+    "illustration"
+   ]
+  },
+  "generated/painting-05.org&": {
+   "yes": [
+    "illustration",
+    "minimalist",
+    "painting",
+    "paper",
+    "text",
+    "vintage",
+    "watercolor"
+   ],
+   "doubt": [
+    "animal",
+    "drawing",
+    "sea"
+   ],
+   "no": [
+    "boat"
+   ]
+  },
+  "generated/painting-06.org&": {
+   "yes": [
+    "1girl",
+    "brown hair",
+    "eyes",
+    "face",
+    "long hair",
+    "painting",
+    "person",
+    "portrait",
+    "smile",
+    "solo",
+    "text",
+    "upper body",
+    "vintage",
+    "woman"
+   ],
+   "doubt": [
+    "black hair",
+    "dress",
+    "looking at viewer",
+    "watercolor"
+   ],
+   "no": []
+  },
+  "generated/painting-07.org&": {
+   "yes": [
+    "drawing",
+    "flower",
+    "leaves",
+    "painting",
+    "paper",
+    "sky",
+    "tree",
+    "watercolor"
+   ],
+   "doubt": [
+    "illustration",
+    "photo",
+    "spring"
+   ],
+   "no": []
+  },
+  "generated/painting-08.org&": {
+   "yes": [
+    "1girl",
+    "black hair",
+    "dress",
+    "face",
+    "jewelry",
+    "minimalist",
+    "painting",
+    "person",
+    "portrait",
+    "sky",
+    "solo",
+    "upper body",
+    "vintage",
+    "woman"
+   ],
+   "doubt": [
+    "eyes",
+    "looking at viewer",
+    "photo",
+    "tree"
+   ],
+   "no": [
+    "drawing"
+   ]
+  },
+  "generated/painting-09.org&": {
+   "yes": [
+    "crowd",
+    "dancing",
+    "drawing",
+    "festival",
+    "flag",
+    "man",
+    "outdoors",
+    "painting",
+    "people",
+    "person",
+    "sepia",
+    "vintage"
+   ],
+   "doubt": [
+    "building",
+    "dress",
+    "mountain",
+    "night",
+    "party",
+    "performance",
+    "sketch",
+    "sky",
+    "woman"
+   ],
+   "no": []
+  },
+  "generated/painting-10.org&": {
+   "yes": [
+    "1boy",
+    "black hair",
+    "eyes",
+    "face",
+    "jacket",
+    "man",
+    "painting",
+    "person",
+    "portrait",
+    "short hair",
+    "solo",
+    "suit",
+    "upper body",
+    "vintage"
+   ],
+   "doubt": [
+    "box",
+    "coat",
+    "looking at viewer",
+    "tie"
+   ],
+   "no": [
+    "basket",
+    "boat"
+   ]
+  },
+  "generated/photorealistic-ai-01.org&": {
+   "yes": [
+    "3d render",
+    "box",
+    "floor",
+    "wall"
+   ],
+   "doubt": [
+    "digital art",
+    "photo",
+    "text",
+    "toy"
+   ],
+   "no": [
+    "bag",
+    "clock"
+   ]
+  },
+  "generated/photorealistic-ai-02.org&": {
+   "yes": [
+    "arch",
+    "clouds",
+    "columns",
+    "digital art",
+    "fantasy",
+    "grass",
+    "outdoors",
+    "painting",
+    "plant",
+    "ruins",
+    "sky",
+    "tree"
+   ],
+   "doubt": [
+    "building",
+    "church",
+    "concept art",
+    "landscape",
+    "moss",
+    "rocks",
+    "sunlight"
+   ],
+   "no": []
+  },
+  "generated/photorealistic-ai-03.org&": {
+   "yes": [
+    "beard",
+    "bowl",
+    "cap",
+    "chair",
+    "child",
+    "digital art",
+    "eyes",
+    "face",
+    "family",
+    "fast food",
+    "food",
+    "hat",
+    "indoors",
+    "man",
+    "painting",
+    "people",
+    "person",
+    "plate",
+    "restaurant",
+    "sitting",
+    "table"
+   ],
+   "doubt": [
+    "egg",
+    "fork",
+    "illustration",
+    "jacket",
+    "kitchen",
+    "poster",
+    "uniform",
+    "upper body",
+    "wall",
+    "wine glass",
+    "woman"
+   ],
+   "no": []
+  },
+  "generated/photorealistic-ai-04.org&": {
+   "yes": [
+    "1girl",
+    "cartoon",
+    "comic",
+    "costume",
+    "digital art",
+    "eyes",
+    "face",
+    "gloves",
+    "illustration",
+    "mask",
+    "person",
+    "smile",
+    "solo",
+    "upper body",
+    "woman"
+   ],
+   "doubt": [
+    "armor",
+    "looking at viewer",
+    "manga"
+   ],
+   "no": []
+  },
+  "generated/photorealistic-ai-05.org&": {
+   "yes": [
+    "arch",
+    "building",
+    "digital art",
+    "fantasy",
+    "grass",
+    "outdoors",
+    "painting",
+    "rocks",
+    "ruins",
+    "sky",
+    "wall"
+   ],
+   "doubt": [
+    "church",
+    "columns",
+    "concept art",
+    "landscape",
+    "monument",
+    "tree"
+   ],
+   "no": []
+  },
+  "generated/photorealistic-ai-06.org&": {
+   "yes": [
+    "arch",
+    "boat",
+    "building",
+    "city",
+    "clouds",
+    "curtain",
+    "house",
+    "outdoors",
+    "painting",
+    "people",
+    "person",
+    "sky",
+    "tree",
+    "water"
+   ],
+   "doubt": [
+    "bridge",
+    "church",
+    "crowd",
+    "digital art",
+    "fence",
+    "river",
+    "street",
+    "tower",
+    "vintage",
+    "window"
+   ],
+   "no": []
+  },
+  "generated/photorealistic-ai-07.org&": {
+   "yes": [
+    "arch",
+    "boat",
+    "bridge",
+    "building",
+    "city",
+    "cityscape",
+    "clouds",
+    "coast",
+    "harbor",
+    "hill",
+    "house",
+    "mountain",
+    "outdoors",
+    "painting",
+    "people",
+    "person",
+    "sea",
+    "sky",
+    "tower",
+    "tree",
+    "water"
+   ],
+   "doubt": [
+    "aerial view",
+    "castle",
+    "church",
+    "crowd",
+    "digital art",
+    "man",
+    "ship",
+    "village",
+    "vintage",
+    "walkway"
+   ],
+   "no": []
+  },
+  "generated/photorealistic-ai-08.org&": {
+   "yes": [
+    "3d render",
+    "building",
+    "city",
+    "cityscape",
+    "digital art",
+    "fog",
+    "night",
+    "outdoors",
+    "science fiction",
+    "skyscraper"
+   ],
+   "doubt": [
+    "concept art",
+    "reflection",
+    "sky",
+    "water"
+   ],
+   "no": []
+  },
+  "generated/photorealistic-ai-09.org&": {
+   "yes": [
+    "digital art",
+    "grass",
+    "night",
+    "road"
+   ],
+   "doubt": [
+    "clouds",
+    "collage",
+    "costume",
+    "fantasy",
+    "illustration",
+    "painting",
+    "person",
+    "sky",
+    "stars",
+    "walkway"
+   ],
+   "no": []
+  },
+  "generated/photorealistic-ai-10.org&": {
+   "yes": [
+    "animal",
+    "field",
+    "grass",
+    "hill",
+    "meadow",
+    "mountain",
+    "outdoors",
+    "plant",
+    "rabbit",
+    "sky",
+    "sunlight"
+   ],
+   "doubt": [
+    "bokeh",
+    "clouds",
+    "digital art",
+    "landscape",
+    "pet",
+    "photo",
+    "sunset",
+    "valley",
+    "wildflowers",
+    "wildlife"
+   ],
+   "no": []
+  },
+  "generated/pixel-art-01.org&": {
+   "yes": [
+    "animal",
+    "cartoon",
+    "chart",
+    "digital art",
+    "meme",
+    "monitor",
+    "pixel art",
+    "suit",
+    "text",
+    "tie"
+   ],
+   "doubt": [
+    "face",
+    "illustration",
+    "screenshot"
+   ],
+   "no": [
+    "person",
+    "swimwear",
+    "toy"
+   ]
+  },
+  "generated/pixel-art-02.org&": {
+   "yes": [
+    "1girl",
+    "anime",
+    "black hair",
+    "clouds",
+    "digital art",
+    "dress",
+    "eyes",
+    "face",
+    "fantasy",
+    "full body",
+    "illustration",
+    "jar",
+    "jewelry",
+    "long hair",
+    "person",
+    "pixel art",
+    "sitting",
+    "sky",
+    "solo",
+    "stars",
+    "woman"
+   ],
+   "doubt": [
+    "cartoon",
+    "gown",
+    "looking at viewer",
+    "night",
+    "smile",
+    "vase"
+   ],
+   "no": [
+    "painting"
+   ]
+  },
+  "generated/pixel-art-03.org&": {
+   "yes": [
+    "cartoon",
+    "digital art",
+    "grass",
+    "illustration",
+    "indoors",
+    "pixel art",
+    "table",
+    "tea",
+    "tree",
+    "window"
+   ],
+   "doubt": [
+    "countryside",
+    "field",
+    "hill",
+    "kitchen",
+    "room",
+    "wall"
+   ],
+   "no": [
+    "bowl",
+    "curry",
+    "screenshot",
+    "soup"
+   ]
+  },
+  "generated/pixel-art-04.org&": {
+   "yes": [
+    "digital art",
+    "pixel art"
+   ],
+   "doubt": [
+    "carpet",
+    "minimalist"
+   ],
+   "no": [
+    "leaves",
+    "paper",
+    "symmetry"
+   ]
+  },
+  "generated/pixel-art-05.org&": {
+   "yes": [
+    "1boy",
+    "beard",
+    "black hair",
+    "digital art",
+    "dragon",
+    "eyes",
+    "face",
+    "fantasy",
+    "illustration",
+    "jewelry",
+    "long hair",
+    "looking at viewer",
+    "man",
+    "person",
+    "pixel art",
+    "portrait",
+    "solo",
+    "upper body",
+    "water",
+    "waves"
+   ],
+   "doubt": [
+    "anime",
+    "concept art",
+    "sea"
+   ],
+   "no": []
+  },
+  "generated/screenshot-01.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "aerial view",
+    "building",
+    "document",
+    "photo",
+    "sky"
+   ],
+   "no": [
+    "map"
+   ]
+  },
+  "generated/screenshot-02.org&": {
+   "yes": [
+    "building",
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "document",
+    "house",
+    "man",
+    "person",
+    "photo",
+    "sky",
+    "tree"
+   ],
+   "no": []
+  },
+  "generated/screenshot-03.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "chart"
+   ],
+   "no": [
+    "drawing",
+    "monitor"
+   ]
+  },
+  "generated/screenshot-04.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "document"
+   ],
+   "no": [
+    "illustration"
+   ]
+  },
+  "generated/screenshot-05.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "document"
+   ],
+   "no": [
+    "paper",
+    "wall"
+   ]
+  },
+  "generated/screenshot-06.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "chart",
+    "document"
+   ],
+   "no": [
+    "illustration",
+    "paper"
+   ]
+  },
+  "generated/screenshot-07.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "document",
+    "logo"
+   ],
+   "no": [
+    "face",
+    "person"
+   ]
+  },
+  "generated/screenshot-08.org&": {
+   "yes": [
+    "logo",
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "chart",
+    "digital art",
+    "phone",
+    "poster"
+   ],
+   "no": []
+  },
+  "generated/screenshot-09.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "chart",
+    "collage",
+    "document",
+    "face",
+    "logo",
+    "person"
+   ],
+   "no": []
+  },
+  "generated/screenshot-10.org&": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "doubt": [
+    "document"
+   ],
+   "no": [
+    "face",
+    "highway",
+    "illustration"
+   ]
+  }
+ }
+}

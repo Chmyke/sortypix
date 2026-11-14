@@ -18,8 +18,9 @@ pub(crate) const PERCENT_DEFAULT: u32 = 20;
 /// The badge at the top right of a marked photo.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) enum Badge {
-    /// Suggested for its low score, shown with one decimal (red).
-    Score(f32),
+    /// Suggested for its low score, shown as its rank: "Bottom 8%" of the analysed photos shown
+    /// (red). The raw LAION score is only in the hover text and the card.
+    Low(u32),
     /// Unlike the rest of the folder (amber).
     OffTopic,
     /// One of a burst of similar shots (grey).
@@ -29,7 +30,7 @@ pub(crate) enum Badge {
 impl Badge {
     pub(crate) fn kind(self) -> Kind {
         match self {
-            Badge::Score(_) => Kind::Low,
+            Badge::Low(_) => Kind::Low,
             Badge::OffTopic => Kind::OffTopic,
             Badge::Burst => Kind::Burst,
         }
@@ -63,6 +64,40 @@ pub(crate) struct Marks {
     pub suggested: Vec<PhotoId>,
 }
 
+/// What the score measures, under every place it shows (badge, card, legend).
+pub(crate) const SCORE_TIP: &str = "Visual appeal: the LAION aesthetic score (about 1 to 10) rates light, colour and composition as people online rated photos. It does not know what the photo shows or what matters to you.";
+
+/// Where a score stands among the analysed photos of the folder.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Standing {
+    /// In the lowest `n` % (the photo is in the lower half).
+    Lowest(u32),
+    /// In the highest `n` %.
+    Highest(u32),
+}
+
+/// Share of `n` photos covered from one end down to rank `rank` (0: the first), in whole
+/// percents, at least 1.
+fn share(rank: usize, n: usize) -> u32 {
+    ((100 * (rank + 1)).div_ceil(n.max(1))).clamp(1, 100) as u32
+}
+
+/// The standing of `score` among `scores` (the folder's, the photo's own included). `None`
+/// with fewer than two scores. Ties count in the photo's favour on both sides.
+pub(crate) fn standing(score: f32, scores: &[f32]) -> Option<Standing> {
+    let n = scores.len();
+    if n < 2 {
+        return None;
+    }
+    let below = scores.iter().filter(|&&s| s < score).count();
+    let above = scores.iter().filter(|&&s| s > score).count();
+    Some(if below <= above {
+        Standing::Lowest(share(below, n))
+    } else {
+        Standing::Highest(share(above, n))
+    })
+}
+
 /// Marks of `shown` (display order, with their facts). With `percent` 0 nothing is suggested;
 /// otherwise the lowest `percent` % of the analysed photos by score, every off-topic photo
 /// (above [`OFF_TOPIC_Z`]) and, when `burst_suggest`, each burst's photos but its best-scored one.
@@ -85,6 +120,9 @@ pub(crate) fn suggest(shown: &[(PhotoId, Facts)], percent: u32, burst_suggest: b
         .take(analysed.len() * percent / 100)
         .copied()
         .collect();
+    // Rank from the bottom, ties in the photo's favour (as `standing`).
+    let sorted: Vec<f32> = analysed.iter().filter_map(|&i| shown[i].1.score).collect();
+    let bottom = |score: f32| share(sorted.partition_point(|&s| s < score), sorted.len());
     // Best score of each burst among the shown photos (ties: first shown).
     let mut best: HashMap<usize, (f32, usize)> = HashMap::new();
     for (i, (_, facts)) in shown.iter().enumerate() {
@@ -111,11 +149,14 @@ pub(crate) fn suggest(shown: &[(PhotoId, Facts)], percent: u32, burst_suggest: b
         if low.contains(&i)
             && let Some(score) = facts.score
         {
-            tip.push(format!("Low score {score:.1}"));
+            tip.push(format!(
+                "Bottom {}% of this folder for visual appeal (score {score:.1})",
+                bottom(score)
+            ));
         }
         if let Some(burst) = facts.burst {
             tip.push(match better {
-                Some(score) if burst_suggest => format!("Burst: a better shot scores {score:.1}"),
+                Some(_) if burst_suggest => "Burst: another shot of it scores higher".to_string(),
                 _ => format!("Burst: one of {} similar shots taken together", burst.size),
             });
         }
@@ -129,7 +170,7 @@ pub(crate) fn suggest(shown: &[(PhotoId, Facts)], percent: u32, burst_suggest: b
             && (is_low || burst_suggested)
             && let Some(score) = facts.score
         {
-            badges.push(Badge::Score(score));
+            badges.push(Badge::Low(bottom(score)));
         }
         if facts.burst.is_some() {
             badges.push(Badge::Burst);
@@ -203,9 +244,16 @@ mod tests {
         assert_eq!(marks.suggested, [PhotoId(3), PhotoId(6)]);
         assert_eq!(
             marks.by_id[&3].badge(Kinds::default()),
-            Some(Badge::Score(1.))
+            Some(Badge::Low(10))
         );
-        assert_eq!(marks.by_id[&3].tip, "Low score 1.0");
+        assert_eq!(
+            marks.by_id[&3].tip,
+            "Bottom 10% of this folder for visual appeal (score 1.0)"
+        );
+        assert_eq!(
+            marks.by_id[&6].badge(Kinds::default()),
+            Some(Badge::Low(20))
+        );
         assert!(!marks.by_id.contains_key(&10));
         assert_eq!(suggest(&shown, 50, false).suggested.len(), 5);
         assert_eq!(suggest(&shown, 5, false).suggested.len(), 0);
@@ -256,10 +304,13 @@ mod tests {
         let suggested = suggest(&shown, 5, true);
         // The best of the burst (id 1, 8.0) stays; the two others are suggested.
         assert_eq!(suggested.suggested, [PhotoId(0), PhotoId(2)]);
-        assert_eq!(suggested.by_id[&0].tip, "Burst: a better shot scores 8.0");
+        assert_eq!(
+            suggested.by_id[&0].tip,
+            "Burst: another shot of it scores higher"
+        );
         assert_eq!(
             suggested.by_id[&0].badge(Kinds::default()),
-            Some(Badge::Score(6.))
+            Some(Badge::Low(25))
         );
     }
 
@@ -274,7 +325,7 @@ mod tests {
         let first = &marks.by_id[&0];
         assert_eq!(
             first.badges,
-            [Badge::OffTopic, Badge::Score(1.), Badge::Burst]
+            [Badge::OffTopic, Badge::Low(25), Badge::Burst]
         );
         assert!(first.kinds.low && first.kinds.off_topic && first.kinds.burst);
         let hide = |kinds: &[Kind]| {
@@ -284,7 +335,7 @@ mod tests {
             }
             hidden
         };
-        assert_eq!(first.badge(hide(&[Kind::OffTopic])), Some(Badge::Score(1.)));
+        assert_eq!(first.badge(hide(&[Kind::OffTopic])), Some(Badge::Low(25)));
         assert_eq!(
             first.badge(hide(&[Kind::OffTopic, Kind::Low])),
             Some(Badge::Burst)

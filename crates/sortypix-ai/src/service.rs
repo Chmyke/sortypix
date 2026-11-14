@@ -17,6 +17,7 @@ use crate::engine::{DEFAULT_PRECISION, Embedding, Engine, recommended_threads};
 use crate::error::AiError;
 use crate::preprocess::preprocess;
 use crate::reasons::{Likely, ReasonProbes, folder_reasons};
+use crate::tags::{Tag, TagSet};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::{self, Receiver, RecvTimeoutError, Sender};
@@ -38,6 +39,8 @@ const ANALYSIS_INTERVAL: Duration = Duration::from_secs(2);
 const ANALYSIS_PAUSE_FACTOR: u32 = 4;
 /// Seed of the coverage order: the same folder always gives the same order.
 const COVERAGE_SEED: u64 = 1;
+/// Analysis threads per visual session (see `Pilot::run`).
+const WORKERS_PER_SESSION: usize = 2;
 
 /// Where the analysis stands.
 #[derive(Clone, Debug, PartialEq)]
@@ -82,14 +85,17 @@ pub struct Results {
     pub failed: usize,
     /// Latest folder analyses, if any were computed in this generation.
     pub analysis: Option<Arc<FolderAnalysis>>,
+    /// Zero-shot tags by path, for the photos of `records` (none when the tag set was refused).
+    pub tags: HashMap<PathBuf, Arc<[Tag]>>,
 }
 
 /// The model as the service uses it; a fake stands in for it in tests.
 pub(crate) trait Model: Send + Sync {
     /// How many photos can be embedded at once.
     fn sessions(&self) -> usize;
-    /// Embedding and aesthetic score of one preprocessed image.
-    fn embed(&self, input: &[f32]) -> Result<Record, AiError>;
+    /// Embedding and aesthetic score of one preprocessed image, which it takes over so the
+    /// tensor is built without a copy.
+    fn embed(&self, input: Vec<f32>) -> Result<Record, AiError>;
     fn embed_text(&self, text: &str) -> Result<Embedding, AiError>;
     /// Runs each session once, one after the other, before the analysis starts.
     fn warm_up(&self) {}
@@ -100,11 +106,8 @@ impl Model for Engine {
         self.visual_sessions()
     }
 
-    fn embed(&self, input: &[f32]) -> Result<Record, AiError> {
-        let embedding = self
-            .embed_images(&[input.to_vec()])?
-            .pop()
-            .ok_or_else(|| AiError::Model("visual model returned nothing".into()))?;
+    fn embed(&self, input: Vec<f32>) -> Result<Record, AiError> {
+        let embedding = self.embed_one(input)?;
         let score = self.aesthetic().score(&embedding);
         Ok(Record { embedding, score })
     }
@@ -128,6 +131,8 @@ enum Message {
         path: PathBuf,
         /// Boxed: a record is 3 KB, the other messages a few words.
         record: Option<Box<Record>>,
+        /// The photo's tags, computed with the record (empty without the tag set).
+        tags: Box<[Tag]>,
     },
     Quit,
 }
@@ -148,6 +153,9 @@ struct Shared {
     progress: Mutex<(usize, usize)>,
     queue: Mutex<Queue>,
     work: Condvar,
+    /// The tag set built into the executable, or why it was refused; set once by the pilot
+    /// before the workers start.
+    tags: OnceLock<Result<Arc<TagSet>, String>>,
 }
 
 fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
@@ -171,10 +179,16 @@ impl Analyzer {
             let engine = Engine::load(&models_dir, DEFAULT_PRECISION, recommended_threads(cores))?;
             Ok(Arc::new(engine) as Arc<dyn Model>)
         });
-        Self::start_with(loader, cache_root, decode)
+        Self::start_with(loader, cache_root, decode, WORKERS_PER_SESSION)
     }
 
-    pub(crate) fn start_with(loader: Loader, cache_root: PathBuf, decode: Decoder) -> Analyzer {
+    /// `workers_per_session` analysis threads per visual session of the model.
+    pub(crate) fn start_with(
+        loader: Loader,
+        cache_root: PathBuf,
+        decode: Decoder,
+        workers_per_session: usize,
+    ) -> Analyzer {
         let shared = Arc::new(Shared {
             status: Mutex::new(Status::Loading),
             model: OnceLock::new(),
@@ -182,6 +196,7 @@ impl Analyzer {
             progress: Mutex::new((0, 0)),
             queue: Mutex::new(Queue::default()),
             work: Condvar::new(),
+            tags: OnceLock::new(),
         });
         let (messages, inbox) = mpsc::channel();
         let pilot = Pilot {
@@ -198,6 +213,7 @@ impl Analyzer {
             completed: false,
             next_analysis: Instant::now(),
             probes: None,
+            workers_per_session: workers_per_session.max(1),
         };
         let spawned = std::thread::Builder::new()
             .name("sortypix-ai-pilot".into())
@@ -218,6 +234,11 @@ impl Analyzer {
 
     pub fn status(&self) -> Status {
         lock(&self.shared.status).clone()
+    }
+
+    /// Why there are no tags, once the model is loaded: the built-in tag set was refused.
+    pub fn tags_error(&self) -> Option<String> {
+        self.shared.tags.get()?.as_ref().err().cloned()
     }
 
     /// Photos of the current folder analysed or skipped, and photos in it.
@@ -289,6 +310,7 @@ struct Pilot {
     next_analysis: Instant,
     /// Text embeddings of the reason probes, once the model is loaded.
     probes: Option<ReasonProbes>,
+    workers_per_session: usize,
 }
 
 impl Pilot {
@@ -303,7 +325,14 @@ impl Pilot {
         };
         model.warm_up();
         let _ = self.shared.model.set(model.clone());
-        for index in 0..model.sessions().max(1) {
+        // Tags: text embeddings built into the executable, parsed once (a few ms).
+        let _ = self
+            .shared
+            .tags
+            .set(TagSet::embedded().map(Arc::new).map_err(|e| e.to_string()));
+        // Two workers per session: one decodes and prepares its photo while the other has
+        // the session, so the model never waits for the disk and the decoder.
+        for index in 0..model.sessions().max(1) * self.workers_per_session {
             let worker = Worker {
                 shared: self.shared.clone(),
                 model: model.clone(),
@@ -346,7 +375,8 @@ impl Pilot {
                     generation,
                     path,
                     record,
-                } => self.done(generation, path, record),
+                    tags,
+                } => self.done(generation, path, record, tags),
                 Message::Quit => return,
             }
             // The last photo of the folder: analyse at once, without waiting for the pause. Later
@@ -362,11 +392,16 @@ impl Pilot {
         if fresh {
             self.generation = generation;
             self.failed.clear();
-            let mut results = self.results_mut();
-            *results = Results {
-                generation,
-                ..Results::default()
-            };
+            // The previous folder's records are dropped after the lock is released: the
+            // interface reads under it, and this thread runs below it.
+            let previous = std::mem::replace(
+                &mut *self.results_mut(),
+                Results {
+                    generation,
+                    ..Results::default()
+                },
+            );
+            drop(previous);
         }
         self.members = photos.iter().map(|(path, _)| path.clone()).collect();
         // A photo that left the folder (kept, rejected) may come back (undo): what failed while
@@ -410,7 +445,13 @@ impl Pilot {
         self.dirty = true;
     }
 
-    fn done(&mut self, generation: u64, path: PathBuf, record: Option<Box<Record>>) {
+    fn done(
+        &mut self,
+        generation: u64,
+        path: PathBuf,
+        record: Option<Box<Record>>,
+        tags: Box<[Tag]>,
+    ) {
         lock(&self.shared.queue)
             .in_flight
             .remove(&(generation, path.clone()));
@@ -420,7 +461,9 @@ impl Pilot {
         let counted = self.members.contains(&path);
         match record {
             Some(record) => {
-                self.results_mut().records.insert(path, *record);
+                let mut results = self.results_mut();
+                results.tags.insert(path.clone(), tags.into());
+                results.records.insert(path, *record);
             }
             // A photo no longer in the folder failed because it was being moved: not a failure.
             None if counted => {
@@ -536,10 +579,15 @@ impl Worker {
             let record =
                 std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.analyse(&path)))
                     .unwrap_or(None);
+            let tags = match (&record, self.shared.tags.get()) {
+                (Some(record), Some(Ok(set))) => set.tags(&record.embedding).into(),
+                _ => Box::default(),
+            };
             let done = Message::Done {
                 generation,
                 path,
                 record: record.map(Box::new),
+                tags,
             };
             if self.outbox.send(done).is_err() {
                 return;
@@ -575,7 +623,7 @@ impl Worker {
         let (rgba, width, height) = (self.decode)(path)?;
         let input = preprocess(&rgba, width, height).ok()?;
         drop(rgba);
-        let record = self.model.embed(&input).ok()?;
+        let record = self.model.embed(input).ok()?;
         // A file changed while it was read gets no record: the next analysis redoes it.
         if ContentKey::of(path, MODEL_LABEL) == Some(key) {
             let _ = self.cache.put(&key, &record);
@@ -613,7 +661,7 @@ mod tests {
             1
         }
 
-        fn embed(&self, input: &[f32]) -> Result<Record, AiError> {
+        fn embed(&self, input: Vec<f32>) -> Result<Record, AiError> {
             if let Some((entered, release)) = lock(&self.gate).take() {
                 let _ = entered.send(());
                 let _ = release.recv();
@@ -650,12 +698,18 @@ mod tests {
         })
     }
 
+    /// One worker, so the model sees the photos in the order the queue hands them out.
     fn start(fake: &Arc<Fake>, cache: &Path) -> Analyzer {
+        start_workers(fake, cache, 1)
+    }
+
+    fn start_workers(fake: &Arc<Fake>, cache: &Path, workers_per_session: usize) -> Analyzer {
         let model = fake.clone();
         Analyzer::start_with(
             Box::new(move || Ok(model as Arc<dyn Model>)),
             cache.to_path_buf(),
             decoder(),
+            workers_per_session,
         )
     }
 
@@ -727,6 +781,26 @@ mod tests {
         assert!(order[0] > order[2] && order[2] > order[1], "{order:?}");
         assert_eq!(analyzer.status(), Status::Ready);
         assert!(analyzer.embed_text("a dog").recv().unwrap().is_ok());
+    }
+
+    #[test]
+    fn several_workers_per_session_analyse_every_photo_once() {
+        let dir = tempfile::tempdir().unwrap();
+        let fake = Fake::new();
+        let analyzer = start_workers(&fake, &dir.path().join("cache"), WORKERS_PER_SESSION);
+        let photos: Vec<PathBuf> = (0..12)
+            .map(|n| photo(dir.path(), &format!("{n:02}.jpg"), [n as u8 * 10, 0, 0]))
+            .collect();
+        analyzer.set_folder(1, photos.iter().map(|p| (p.clone(), None)).collect());
+        let analysis = complete(&analyzer, 1, 12);
+        assert_eq!(analyzer.progress(), (12, 12));
+        assert_eq!(analysis.paths, photos);
+        assert_eq!(
+            fake.calls.load(Ordering::SeqCst),
+            12,
+            "each photo embedded once"
+        );
+        assert_eq!(analyzer.results().records.len(), 12);
     }
 
     #[test]

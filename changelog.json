@@ -1,5 +1,40 @@
 [
   {
+    "version": "0.4.1",
+    "date": "2026-11-14",
+    "items": [
+      {
+        "en": "Folders open much faster, RAW folders and memory cards most of all: Sortypix now reads only the few bytes it needs from each photo instead of the whole file, and reads several photos at once.",
+        "fr": "Les dossiers s'ouvrent bien plus vite, surtout les dossiers RAW et les cartes mémoire : Sortypix ne lit plus que les quelques octets utiles de chaque photo au lieu du fichier entier, et plusieurs photos à la fois."
+      },
+      {
+        "en": "Undo is instant: the photo comes back to its place without the whole folder being read again.",
+        "fr": "Annuler est instantané : la photo revient à sa place sans que tout le dossier soit relu."
+      },
+      {
+        "en": "Thumbnails are decoded at the size of their cell, so the grid fills faster and scrolling back finds them still there. Your eyes will not notice the difference, your laptop fan will.",
+        "fr": "Les vignettes sont décodées à la taille de leur case : la grille se remplit plus vite et un retour en arrière les retrouve encore là. Vos yeux ne verront pas la différence, le ventilateur du portable si."
+      },
+      {
+        "en": "Sortypix now sleeps when you do nothing: no more quiet redrawing in the background ten times a second.",
+        "fr": "Sortypix dort désormais quand vous ne faites rien : fini le redessin discret dix fois par seconde en coulisses."
+      },
+      {
+        "en": "Sortypix AI keeps its model busy while photos are decoded, so the analysis of a folder finishes sooner.",
+        "fr": "Sortypix AI occupe son modèle pendant que les photos se décodent : l'analyse d'un dossier se termine plus tôt."
+      },
+      {
+        "tag": "new",
+        "en": "Sortypix AI tags your photos (dog, beach, night, crowd, 1girl...): up to four words per photo from a small layer trained on labels checked by people, a couple per drawing or generated image. Click in Search to see the folder's tags with their counts, pick one or type a few separated by commas, like a prompt. Nothing is written in your files.",
+        "fr": "Sortypix AI étiquette vos photos (dog, beach, night, crowd, 1girl...) : jusqu'à quatre mots par photo grâce à une petite couche apprise sur des étiquettes vérifiées par des humains, un ou deux par dessin ou image générée. Cliquez dans Search pour voir les étiquettes du dossier avec leur compte, choisissez-en une ou tapez-en plusieurs séparées par des virgules, comme un prompt. Rien n'est écrit dans vos fichiers."
+      },
+      {
+        "en": "The score stops pretending: instead of a mysterious 4.7, a suggested photo says Bottom 8% of this folder, and the photo details explain that it rates visual appeal, not what the photo means to you.",
+        "fr": "La note arrête de faire semblant : au lieu d'un mystérieux 4.7, une photo suggérée dit Bottom 8% of this folder, et la fiche explique qu'elle juge l'attrait visuel, pas ce que la photo représente pour vous."
+      }
+    ]
+  },
+  {
     "version": "0.4.0",
     "date": "2026-10-30",
     "items": [

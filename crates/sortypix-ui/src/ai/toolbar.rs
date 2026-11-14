@@ -4,6 +4,7 @@
 //! INVARIANTS: "Reject suggested" goes through `Gallery::decide`: one gesture, one Ctrl+Z.
 //! Controls that do not fit are left out, the button last.
 use super::filters::{self, Kind};
+use super::search::{complete, completions, last_term, step, terms};
 use super::suggest::{PERCENT_MAX, PERCENT_STEP, reject_ids};
 use super::view::Order;
 use super::{SEARCH_ID, State, prefs};
@@ -11,6 +12,7 @@ use crate::gallery::Gallery;
 use crate::icons::{self, Icon};
 use crate::theme;
 use eframe::egui::{self, Align, Layout, Rect, RichText, Sense, Stroke};
+use sortypix_ai::vocabulary::VOCABULARY;
 use sortypix_core::Decision;
 use std::time::Instant;
 
@@ -20,6 +22,10 @@ const SLIDER_GROUP_WIDTH: f32 = 150.;
 const SEARCH_WIDTH: f32 = 180.;
 /// Left for the photo count and the folder name.
 const RESERVED: f32 = 140.;
+/// Words offered under the search field.
+const COMPLETIONS: usize = 12;
+/// Height of one offered word.
+const COMPLETION_ROW: f32 = 22.;
 
 /// `1240` as "1,240" (the board's English figures).
 pub(crate) fn grouped(n: usize) -> String {
@@ -129,7 +135,7 @@ impl Gallery {
     /// "14 of 3,260" in place of the photo count while a search or a "show only" filter is
     /// applied.
     pub(crate) fn ai_count_label(&self) -> Option<String> {
-        let narrowed = self.ai.search.query().is_some() || self.ai_show().is_some();
+        let narrowed = self.ai.search.active() || self.ai_show().is_some();
         (narrowed && !self.viewer).then(|| {
             format!(
                 "{} of {}",
@@ -148,9 +154,38 @@ impl Gallery {
         }
         let id = egui::Id::new(SEARCH_ID);
         let focused = ui.ctx().memory(|m| m.has_focus(id));
-        let active = focused || self.ai.search.query().is_some();
+        let active = focused || self.ai.search.active();
         let now = Instant::now();
-        ui.allocate_ui_with_layout(
+        let offered = self.ai_offered(focused);
+        // The keys of the list, before the field sees them: arrows choose a row, Tab takes the
+        // chosen row (else the first), Enter takes the chosen row (else searches as before).
+        if offered != self.ai.completion {
+            self.ai.completion_cursor = None;
+        }
+        if focused && !offered.is_empty() {
+            let (down, up, tab, enter) = ui.input_mut(|i| {
+                (
+                    i.consume_key(egui::Modifiers::NONE, egui::Key::ArrowDown),
+                    i.consume_key(egui::Modifiers::NONE, egui::Key::ArrowUp),
+                    i.consume_key(egui::Modifiers::NONE, egui::Key::Tab),
+                    self.ai.completion_cursor.is_some()
+                        && i.consume_key(egui::Modifiers::NONE, egui::Key::Enter),
+                )
+            });
+            let cursor = &mut self.ai.completion_cursor;
+            if down {
+                *cursor = step(*cursor, offered.len(), true);
+            }
+            if up {
+                *cursor = step(*cursor, offered.len(), false);
+            }
+            let row = cursor.unwrap_or(0).min(offered.len() - 1);
+            if tab || enter {
+                self.ai.completion_cursor = None;
+                self.ai_take_word(ui.ctx(), offered[row].0);
+            }
+        }
+        let field = ui.allocate_ui_with_layout(
             egui::vec2(SEARCH_WIDTH, 26.),
             Layout::left_to_right(Align::Center),
             |ui| {
@@ -185,7 +220,7 @@ impl Gallery {
                         } else if self.ai.search.waiting() {
                             "Searching…".to_string()
                         } else {
-                            "Find photos by what they show, in English (cat, beach, red car). Photos not analysed yet join as they are.".to_string()
+                            "Find photos by what they show, in English. Tags from the list filter exactly; other words search freely. Separate them with commas (dog, beach, red car). Photos not analysed yet join as they are.".to_string()
                         };
                         response.on_hover_text(tip);
                         let (clear, clear_response) =
@@ -208,6 +243,104 @@ impl Gallery {
                     });
             },
         );
+        self.ai_completion(ui.ctx(), field.response.rect, &offered);
+    }
+
+    /// The words to offer under the search field: shown while it has the keyboard (or while the
+    /// pointer is on the list, which takes the focus on a click), once the model is ready.
+    fn ai_offered(&self, focused: bool) -> Vec<(u16, usize)> {
+        if !(focused || self.ai.completion_hovered) || self.ai.state() != State::Ready {
+            return Vec::new();
+        }
+        let text = &self.ai.search.text;
+        completions(
+            last_term(text),
+            &self.ai.tag_counts,
+            &terms(text).0,
+            COMPLETIONS,
+        )
+    }
+
+    /// Puts the word `word` in place of the term being typed, applies it at once and gives the
+    /// keyboard back to the field, cursor at the end.
+    pub(crate) fn ai_take_word(&mut self, ctx: &egui::Context, word: u16) {
+        let Some(w) = VOCABULARY.get(usize::from(word)) else {
+            return;
+        };
+        self.ai.search.text = complete(&self.ai.search.text, w.name);
+        self.ai.search.submit();
+        let id = egui::Id::new(SEARCH_ID);
+        ctx.memory_mut(|m| m.request_focus(id));
+        if let Some(mut state) = egui::text_edit::TextEditState::load(ctx, id) {
+            let end = egui::text::CCursor::new(self.ai.search.text.chars().count());
+            state
+                .cursor
+                .set_char_range(Some(egui::text::CCursorRange::one(end)));
+            state.store(ctx, id);
+        }
+    }
+
+    /// The list of `offered` words under the search field `field`, each with its photo count.
+    fn ai_completion(&mut self, ctx: &egui::Context, field: Rect, offered: &[(u16, usize)]) {
+        self.ai.completion = offered.to_vec();
+        self.ai.targets.completions.clear();
+        if offered.is_empty() {
+            self.ai.completion_hovered = false;
+            return;
+        }
+        let mut picked = None;
+        let area = egui::Area::new(egui::Id::new("sortypix-ai-completion"))
+            .order(egui::Order::Foreground)
+            .fixed_pos(field.left_bottom() + egui::vec2(0., 4.))
+            .show(ctx, |ui| {
+                egui::Frame::new()
+                    .fill(theme::CARD)
+                    .stroke(Stroke::new(1., theme::LINE))
+                    .corner_radius(5)
+                    .inner_margin(egui::Margin::symmetric(4, 4))
+                    .show(ui, |ui| {
+                        ui.spacing_mut().item_spacing.y = 0.;
+                        let width = field.width() - 8.;
+                        for (rank, &(word, count)) in offered.iter().enumerate() {
+                            let (row, response) = ui.allocate_exact_size(
+                                egui::vec2(width, COMPLETION_ROW),
+                                Sense::click(),
+                            );
+                            let first = rank == self.ai.completion_cursor.unwrap_or(0);
+                            if response.hovered() {
+                                ui.painter().rect_filled(row, 3, theme::LINE);
+                            }
+                            let name = VOCABULARY.get(usize::from(word)).map_or("", |w| w.name);
+                            ui.painter().text(
+                                row.left_center() + egui::vec2(6., 0.),
+                                egui::Align2::LEFT_CENTER,
+                                name,
+                                egui::FontId::proportional(13.),
+                                if first { theme::BLUE } else { theme::TEXT },
+                            );
+                            ui.painter().text(
+                                row.right_center() - egui::vec2(6., 0.),
+                                egui::Align2::RIGHT_CENTER,
+                                grouped(count),
+                                egui::FontId::proportional(12.),
+                                theme::DIM,
+                            );
+                            self.ai.targets.completions.push((word, row.center()));
+                            let response = if first {
+                                response.on_hover_text("Click, Tab or Enter to filter by this tag. Arrows choose another.")
+                            } else {
+                                response.on_hover_text("Click to filter by this tag")
+                            };
+                            if response.clicked() {
+                                picked = Some(word);
+                            }
+                        }
+                    });
+            });
+        self.ai.completion_hovered = area.response.contains_pointer();
+        if let Some(word) = picked {
+            self.ai_take_word(ctx, word);
+        }
     }
 
     /// The order menu, in place of Sortypix's oldest/newest toggle.

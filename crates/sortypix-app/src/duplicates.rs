@@ -44,7 +44,7 @@ pub fn exact_duplicate_groups(photos: &[PhysicalPhoto]) -> Result<Vec<PhotoId>, 
             let mut duplicate = false;
             for kept in matches.iter() {
                 let mut equal = true;
-                for (a, b) in kept.members.iter().zip(&photo.members) {
+                for (a, b) in kept.members.iter().zip(photo.members.iter()) {
                     if !same_bytes(a, b)? {
                         equal = false;
                         break;

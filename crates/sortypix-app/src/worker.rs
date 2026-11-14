@@ -77,7 +77,7 @@ fn analyse_duplicates(job: DuplicateJob) -> Result<DuplicateResult, String> {
     let stamps = job
         .photos
         .iter()
-        .flat_map(|p| &p.members)
+        .flat_map(|p| p.members.iter())
         .map(|p| Ok((p.clone(), stamp(p)?)))
         .collect::<Result<Vec<_>, String>>()?;
     let ids = exact_duplicate_groups(&job.photos)?;
@@ -162,7 +162,16 @@ impl Worker {
             let mut catalog_final = true;
             let mut visible_ready = false;
             loop {
-                match receive.recv_timeout(Duration::from_millis(15)) {
+                // Polled only while a metadata or duplicate job can report; idle otherwise,
+                // so an open folder costs no wake-ups.
+                let received = if catalog_final && !scanning {
+                    receive
+                        .recv()
+                        .map_err(|_| mpsc::RecvTimeoutError::Disconnected)
+                } else {
+                    receive.recv_timeout(Duration::from_millis(15))
+                };
+                match received {
                     Ok(command) => {
                         revision += 1;
                         let result = match command {
@@ -394,7 +403,8 @@ mod tests {
                 capture_time: None,
                 bytes: 0,
                 id: PhotoId(1),
-                members: vec![path.clone()],
+                members: vec![path.clone()].into(),
+                modified: 0,
             }],
         })
         .unwrap();
@@ -420,7 +430,8 @@ mod tests {
                     capture_time: None,
                     bytes: 0,
                     id: PhotoId(i as u64),
-                    members: vec![path.clone()],
+                    members: vec![path.clone()].into(),
+                    modified: 0,
                 })
                 .collect(),
         })

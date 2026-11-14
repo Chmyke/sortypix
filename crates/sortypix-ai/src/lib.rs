@@ -10,7 +10,10 @@ mod preprocess;
 pub mod priority;
 pub mod reasons;
 pub mod service;
+pub mod tag_classes;
+pub mod tags;
 mod tokenizer;
+pub mod vocabulary;
 
 pub use aesthetic::Aesthetic;
 pub use analysis::{
@@ -23,6 +26,7 @@ pub use error::AiError;
 pub use paths::models_dir;
 pub use preprocess::{INPUT, preprocess};
 pub use reasons::{Likely, REASON_MIN, Reason, ReasonProbes};
+pub use tags::{Tag, TagSet};
 pub use tokenizer::ClipTokenizer;
 
 // The engine, the head and the tokenizer are shared between the analysis threads and the UI.

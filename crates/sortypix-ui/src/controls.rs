@@ -52,7 +52,7 @@ impl Gallery {
     }
     pub(crate) fn perform(&mut self, action: Action, ctx: &egui::Context) {
         match action {
-            Action::Open => self.choose(),
+            Action::Open => self.choose(ctx.clone()),
             Action::OpenSource => {
                 if let Some(root) = self.root.clone() {
                     self.open_explorer(root);

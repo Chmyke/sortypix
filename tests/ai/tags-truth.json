@@ -1,0 +1,7391 @@
+{
+ "schema": 1,
+ "comment": "Pairs (photo, word) judged present (yes) or absent (no) by eye on 512 px copies, for the ai_tags probe. Photos: the 120 of corpus.json and every fourth photo of each day of calibration.json. Judged by Claude subagents on 2026-11-13 with written rules (doubt counts as no); reviewable by anyone with the ai-dev folder. A third pass judged the pairs the softmax selection adds (probability 0.02, six words). Gender words (man, woman, 1girl, 1boy) judged in a second pass the same day. A fourth pass (2026-11-13, learned head) judged the pairs of the widest selection of the head and zero-shot words (minimum 0.02, twelve tags), doubt counted as no. Tuning generated images (tuning-generated/, ai-dev tags-tuning/generated/manifest.json, Wikimedia Commons, another seed and none of the test titles) added the same day, their pairs judged like the others.",
+ "judged": {
+  "calibration/amsterdam-walk/001.jpg": {
+   "yes": [
+    "building",
+    "cityscape",
+    "tower",
+    "city",
+    "tree",
+    "neighborhood",
+    "fence",
+    "sky",
+    "facade"
+   ],
+   "no": [
+    "classroom",
+    "field",
+    "harbor",
+    "house",
+    "library",
+    "market",
+    "mosque",
+    "office",
+    "panorama",
+    "park",
+    "stadium",
+    "clouds",
+    "road",
+    "street",
+    "skyscraper"
+   ]
+  },
+  "calibration/amsterdam-walk/005.jpg": {
+   "yes": [
+    "building",
+    "hdr",
+    "street",
+    "tree",
+    "facade",
+    "sky",
+    "city",
+    "plant",
+    "window",
+    "neighborhood",
+    "road",
+    "car"
+   ],
+   "no": [
+    "house",
+    "library",
+    "mosque",
+    "museum",
+    "office",
+    "panorama",
+    "stadium",
+    "tower",
+    "village",
+    "windmill",
+    "cityscape"
+   ]
+  },
+  "calibration/amsterdam-walk/009.jpg": {
+   "yes": [
+    "bicycle",
+    "boat",
+    "building",
+    "harbor",
+    "panorama",
+    "sky",
+    "tree",
+    "plant",
+    "neighborhood",
+    "road",
+    "city"
+   ],
+   "no": [
+    "hdr",
+    "lighthouse",
+    "sailboat",
+    "ship",
+    "tower",
+    "tram",
+    "village",
+    "windmill",
+    "clouds",
+    "bridge",
+    "river",
+    "water"
+   ]
+  },
+  "calibration/amsterdam-walk/013.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "sign",
+    "facade",
+    "sky",
+    "text"
+   ],
+   "no": [
+    "harbor",
+    "house",
+    "museum",
+    "office",
+    "panorama",
+    "restaurant",
+    "shoes",
+    "shop",
+    "stadium",
+    "train station",
+    "roof",
+    "person",
+    "banner",
+    "clouds",
+    "fence",
+    "road"
+   ]
+  },
+  "calibration/amsterdam-walk/017.jpg": {
+   "yes": [
+    "building",
+    "facade",
+    "tree",
+    "neighborhood",
+    "city",
+    "sky",
+    "plant",
+    "window",
+    "road"
+   ],
+   "no": [
+    "castle",
+    "graffiti",
+    "hdr",
+    "house",
+    "library",
+    "mosque",
+    "museum",
+    "office",
+    "panorama",
+    "tower",
+    "village",
+    "windmill",
+    "skyscraper",
+    "countryside"
+   ]
+  },
+  "calibration/amsterdam-walk/021.jpg": {
+   "yes": [
+    "building",
+    "reflection",
+    "window",
+    "facade",
+    "wall"
+   ],
+   "no": [
+    "bedroom",
+    "door",
+    "graffiti",
+    "house",
+    "library",
+    "living room",
+    "mirror",
+    "office",
+    "screenshot",
+    "tower",
+    "neighborhood",
+    "sky",
+    "indoors",
+    "skyscraper",
+    "road",
+    "roof",
+    "tree"
+   ]
+  },
+  "calibration/amsterdam-walk/025.jpg": {
+   "yes": [
+    "building",
+    "window",
+    "tree",
+    "sky",
+    "facade",
+    "plant",
+    "wall"
+   ],
+   "no": [
+    "classroom",
+    "graffiti",
+    "hdr",
+    "library",
+    "office",
+    "panorama",
+    "reflection",
+    "sunrise",
+    "sunset",
+    "tower",
+    "windmill",
+    "skyscraper",
+    "person",
+    "road",
+    "columns",
+    "fence",
+    "roof"
+   ]
+  },
+  "calibration/amsterdam-walk/029.jpg": {
+   "yes": [
+    "building",
+    "reflection",
+    "river",
+    "water",
+    "sky"
+   ],
+   "no": [
+    "boat",
+    "harbor",
+    "hdr",
+    "lake",
+    "panorama",
+    "sailboat",
+    "ship",
+    "swimming",
+    "swimming pool",
+    "bridge",
+    "clouds",
+    "skyscraper",
+    "sea",
+    "wall"
+   ]
+  },
+  "calibration/amsterdam-walk/033.jpg": {
+   "yes": [
+    "building",
+    "reflection",
+    "water",
+    "sky",
+    "wall"
+   ],
+   "no": [
+    "boat",
+    "bridge",
+    "castle",
+    "graffiti",
+    "harbor",
+    "lake",
+    "painting",
+    "river",
+    "watercolor",
+    "house",
+    "tree",
+    "fence",
+    "road",
+    "plant"
+   ]
+  },
+  "calibration/amsterdam-walk/037.jpg": {
+   "yes": [
+    "building",
+    "city",
+    "river",
+    "sky",
+    "tree",
+    "water",
+    "roof"
+   ],
+   "no": [
+    "boat",
+    "cityscape",
+    "harbor",
+    "mosque",
+    "panorama",
+    "reflection",
+    "sailboat",
+    "train station",
+    "bridge",
+    "clouds",
+    "skyscraper",
+    "fence",
+    "travel"
+   ]
+  },
+  "calibration/amsterdam-walk/041.jpg": {
+   "yes": [
+    "building",
+    "window",
+    "wall",
+    "plant",
+    "tree",
+    "houseplant",
+    "facade"
+   ],
+   "no": [
+    "3d render",
+    "bench",
+    "chair",
+    "door",
+    "garden",
+    "graffiti",
+    "house",
+    "living room",
+    "sofa",
+    "tower",
+    "vase",
+    "indoors",
+    "arch",
+    "floor",
+    "backyard"
+   ]
+  },
+  "calibration/amsterdam-walk/045.jpg": {
+   "yes": [
+    "building",
+    "reflection",
+    "window",
+    "facade",
+    "tree",
+    "plant",
+    "sky",
+    "wall"
+   ],
+   "no": [
+    "classroom",
+    "graffiti",
+    "hdr",
+    "house",
+    "library",
+    "office",
+    "tower",
+    "car",
+    "road",
+    "water",
+    "neighborhood",
+    "skyscraper"
+   ]
+  },
+  "calibration/amsterdam-walk/049.jpg": {
+   "yes": [
+    "building",
+    "city",
+    "outdoors",
+    "tree",
+    "window",
+    "plant",
+    "neighborhood",
+    "facade",
+    "sky",
+    "bicycle",
+    "car",
+    "street",
+    "road",
+    "wall"
+   ],
+   "no": [
+    "cityscape",
+    "graffiti",
+    "harbor",
+    "hdr",
+    "house",
+    "panorama",
+    "sunrise",
+    "sunset",
+    "tower",
+    "village"
+   ]
+  },
+  "calibration/amsterdam-walk/053.jpg": {
+   "yes": [
+    "building",
+    "city",
+    "reflection",
+    "window",
+    "tree",
+    "sky",
+    "plant",
+    "facade",
+    "wall",
+    "car"
+   ],
+   "no": [
+    "cityscape",
+    "graffiti",
+    "harbor",
+    "house",
+    "library",
+    "mirror",
+    "panorama",
+    "stadium",
+    "tower",
+    "village",
+    "skyscraper",
+    "roof",
+    "road"
+   ]
+  },
+  "calibration/amsterdam-walk/057.jpg": {
+   "yes": [
+    "building",
+    "indoors",
+    "stairs",
+    "floor",
+    "wall",
+    "ceiling"
+   ],
+   "no": [
+    "aerial view",
+    "bathroom",
+    "classroom",
+    "door",
+    "house",
+    "long exposure",
+    "mirror",
+    "office",
+    "panorama",
+    "reflection",
+    "roof",
+    "facade",
+    "room",
+    "walkway"
+   ]
+  },
+  "calibration/amsterdam-walk/061.jpg": {
+   "yes": [
+    "building",
+    "reflection",
+    "tree",
+    "window",
+    "facade",
+    "plant",
+    "sky",
+    "leaves",
+    "sunlight",
+    "wall"
+   ],
+   "no": [
+    "cityscape",
+    "forest",
+    "hdr",
+    "house",
+    "library",
+    "office",
+    "panorama",
+    "screenshot",
+    "tower",
+    "skyscraper",
+    "clouds",
+    "water"
+   ]
+  },
+  "calibration/amsterdam-walk/065.jpg": {
+   "yes": [
+    "building",
+    "door",
+    "reflection",
+    "stairs",
+    "window",
+    "facade",
+    "wall"
+   ],
+   "no": [
+    "classroom",
+    "hdr",
+    "house",
+    "indoors",
+    "library",
+    "office",
+    "tower",
+    "sky",
+    "phone",
+    "road",
+    "tree"
+   ]
+  },
+  "calibration/amsterdam-walk/069.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "house",
+    "outdoors",
+    "road",
+    "street",
+    "sky",
+    "neighborhood",
+    "plant",
+    "tree",
+    "facade"
+   ],
+   "no": [
+    "city",
+    "cityscape",
+    "harbor",
+    "hdr",
+    "landscape",
+    "panorama",
+    "village",
+    "clouds",
+    "countryside"
+   ]
+  },
+  "calibration/amsterdam-walk/073.jpg": {
+   "yes": [
+    "bench",
+    "boat",
+    "outdoors",
+    "park",
+    "river",
+    "ship",
+    "tree",
+    "plant",
+    "sky",
+    "water",
+    "landscape"
+   ],
+   "no": [
+    "bicycle",
+    "forest",
+    "harbor",
+    "lake",
+    "panorama",
+    "sailboat",
+    "sunrise",
+    "swimming",
+    "pond",
+    "bridge",
+    "wildlife",
+    "reflection",
+    "sculpture",
+    "morning"
+   ]
+  },
+  "calibration/amsterdam-walk/077.jpg": {
+   "yes": [
+    "boat",
+    "building",
+    "city",
+    "harbor",
+    "reflection",
+    "river",
+    "tower",
+    "sky",
+    "water",
+    "tree",
+    "skyscraper",
+    "plant"
+   ],
+   "no": [
+    "cityscape",
+    "island",
+    "panorama",
+    "sailboat",
+    "ship",
+    "swimming",
+    "village",
+    "bridge",
+    "clouds"
+   ]
+  },
+  "calibration/bukhara-visit/001.jpg": {
+   "yes": [
+    "garden",
+    "outdoors",
+    "people",
+    "travel",
+    "person",
+    "woman",
+    "man",
+    "building",
+    "roof",
+    "shoes",
+    "wall"
+   ],
+   "no": [
+    "crowd",
+    "hiking",
+    "indoors",
+    "swimming pool",
+    "tent",
+    "shed",
+    "sky",
+    "house",
+    "walking"
+   ]
+  },
+  "calibration/bukhara-visit/005.jpg": {
+   "yes": [
+    "sign",
+    "tree",
+    "text",
+    "sky"
+   ],
+   "no": [
+    "document",
+    "door",
+    "farm",
+    "graffiti",
+    "harbor",
+    "logo",
+    "map",
+    "mosque",
+    "panorama",
+    "road",
+    "street",
+    "train station",
+    "village",
+    "person",
+    "wall",
+    "tent",
+    "banner",
+    "walkway",
+    "stairs",
+    "indoors"
+   ]
+  },
+  "calibration/bukhara-visit/009.jpg": {
+   "yes": [
+    "food",
+    "market",
+    "shop",
+    "person",
+    "tree",
+    "plant",
+    "box",
+    "sky"
+   ],
+   "no": [
+    "bar",
+    "bench",
+    "farm",
+    "indoors",
+    "kitchen",
+    "park",
+    "playground",
+    "restaurant",
+    "stage",
+    "swimming pool",
+    "table",
+    "shed",
+    "city",
+    "chair",
+    "tent"
+   ]
+  },
+  "calibration/bukhara-visit/013.jpg": {
+   "yes": [
+    "train",
+    "tree",
+    "plant",
+    "road",
+    "sky"
+   ],
+   "no": [
+    "bench",
+    "bus",
+    "car",
+    "harbor",
+    "park",
+    "playground",
+    "sofa",
+    "tractor",
+    "train station",
+    "tram",
+    "truck",
+    "person",
+    "fence",
+    "van",
+    "text",
+    "wall"
+   ]
+  },
+  "calibration/bukhara-visit/017.jpg": {
+   "yes": [
+    "building",
+    "shop",
+    "sign",
+    "bottle",
+    "text",
+    "sky",
+    "road",
+    "fence"
+   ],
+   "no": [
+    "bar",
+    "dog",
+    "fireworks",
+    "food",
+    "house",
+    "market",
+    "park",
+    "playground",
+    "restaurant",
+    "temple",
+    "tram",
+    "monument",
+    "street"
+   ]
+  },
+  "calibration/bukhara-visit/021.jpg": {
+   "yes": [
+    "building",
+    "sky",
+    "facade",
+    "arch",
+    "plant",
+    "wall",
+    "columns",
+    "monument"
+   ],
+   "no": [
+    "camel",
+    "castle",
+    "desert",
+    "fountain",
+    "house",
+    "library",
+    "mosque",
+    "museum",
+    "ruins",
+    "temple",
+    "tower",
+    "clouds",
+    "road",
+    "stairs"
+   ]
+  },
+  "calibration/bukhara-visit/025.jpg": {
+   "yes": [
+    "garden",
+    "park",
+    "tree",
+    "plant",
+    "sky",
+    "grass",
+    "wall"
+   ],
+   "no": [
+    "camel",
+    "desert",
+    "farm",
+    "forest",
+    "fountain",
+    "landscape",
+    "mosque",
+    "outdoors",
+    "panorama",
+    "ruins",
+    "swimming pool",
+    "village",
+    "road",
+    "backyard",
+    "countryside",
+    "fence"
+   ]
+  },
+  "calibration/bukhara-visit/029.jpg": {
+   "yes": [
+    "building",
+    "door",
+    "arch",
+    "sky",
+    "wall",
+    "facade",
+    "person",
+    "columns"
+   ],
+   "no": [
+    "camel",
+    "castle",
+    "desert",
+    "house",
+    "library",
+    "mosque",
+    "museum",
+    "ruins",
+    "temple",
+    "tower",
+    "clouds",
+    "stairs",
+    "travel"
+   ]
+  },
+  "calibration/bukhara-visit/033.jpg": {
+   "yes": [
+    "building",
+    "window",
+    "facade",
+    "arch",
+    "wall",
+    "symmetry",
+    "columns"
+   ],
+   "no": [
+    "camel",
+    "castle",
+    "clock",
+    "door",
+    "graffiti",
+    "house",
+    "mosque",
+    "ruins",
+    "temple",
+    "tower",
+    "sky",
+    "text",
+    "rocks",
+    "animal",
+    "painting",
+    "sculpture"
+   ]
+  },
+  "calibration/bukhara-visit/037.jpg": {
+   "yes": [
+    "building",
+    "door",
+    "arch",
+    "facade",
+    "stairs",
+    "wall",
+    "columns",
+    "symmetry"
+   ],
+   "no": [
+    "camel",
+    "castle",
+    "graffiti",
+    "house",
+    "mosque",
+    "museum",
+    "ruins",
+    "temple",
+    "tower",
+    "window",
+    "sky",
+    "clouds",
+    "fence",
+    "road",
+    "rocks"
+   ]
+  },
+  "calibration/bukhara-visit/041.jpg": {
+   "yes": [
+    "building",
+    "indoors",
+    "window",
+    "arch",
+    "wall",
+    "columns",
+    "ceiling"
+   ],
+   "no": [
+    "3d render",
+    "castle",
+    "digital art",
+    "graffiti",
+    "hdr",
+    "mirror",
+    "mosque",
+    "panorama",
+    "reflection",
+    "temple",
+    "tower",
+    "roof",
+    "sky",
+    "painting",
+    "stairs",
+    "symmetry"
+   ]
+  },
+  "calibration/bukhara-visit/045.jpg": {
+   "yes": [
+    "indoors",
+    "people",
+    "travel",
+    "man",
+    "shoes",
+    "person",
+    "woman",
+    "wall",
+    "chair",
+    "hands",
+    "floor",
+    "bag",
+    "photo",
+    "face"
+   ],
+   "no": [
+    "classroom",
+    "concert",
+    "crowd",
+    "dress",
+    "mosque",
+    "party",
+    "ruins",
+    "selfie",
+    "sunglasses",
+    "wedding",
+    "houseplant"
+   ]
+  },
+  "calibration/bukhara-visit/049.jpg": {
+   "yes": [
+    "outdoors",
+    "park",
+    "road",
+    "tree",
+    "plant",
+    "sky",
+    "walkway"
+   ],
+   "no": [
+    "bench",
+    "bicycle",
+    "boat",
+    "bridge",
+    "frog",
+    "harbor",
+    "hiking",
+    "long exposure",
+    "river",
+    "running",
+    "street",
+    "tram",
+    "water",
+    "fence",
+    "stairs",
+    "weapon",
+    "wall"
+   ]
+  },
+  "calibration/bukhara-visit/053.jpg": {
+   "yes": [
+    "outdoors",
+    "park",
+    "tree",
+    "plant",
+    "sky",
+    "person",
+    "grass"
+   ],
+   "no": [
+    "airport",
+    "farm",
+    "fountain",
+    "garden",
+    "hiking",
+    "mosque",
+    "museum",
+    "river",
+    "running",
+    "swimming pool",
+    "train station",
+    "village",
+    "road",
+    "bridge",
+    "clouds",
+    "stairs",
+    "countryside"
+   ]
+  },
+  "calibration/bukhara-visit/057.jpg": {
+   "yes": [
+    "sign",
+    "text",
+    "wall"
+   ],
+   "no": [
+    "building",
+    "clock",
+    "document",
+    "graffiti",
+    "logo",
+    "mosque",
+    "museum",
+    "ruins",
+    "stadium",
+    "statue",
+    "tower",
+    "facade",
+    "monument",
+    "sky",
+    "illustration",
+    "road",
+    "stairs",
+    "rocks",
+    "clouds"
+   ]
+  },
+  "calibration/bukhara-visit/061.jpg": {
+   "yes": [
+    "logo",
+    "sign",
+    "text",
+    "wall"
+   ],
+   "no": [
+    "cheese",
+    "document",
+    "farm",
+    "graffiti",
+    "mosque",
+    "museum",
+    "ruins",
+    "swimming pool",
+    "symmetry",
+    "temple",
+    "vase",
+    "sky",
+    "monument",
+    "suit",
+    "rocks",
+    "road",
+    "illustration",
+    "stairs",
+    "animal",
+    "people"
+   ]
+  },
+  "calibration/bukhara-visit/065.jpg": {
+   "yes": [
+    "building",
+    "window",
+    "facade",
+    "sky",
+    "wall",
+    "arch",
+    "sunlight"
+   ],
+   "no": [
+    "castle",
+    "door",
+    "graffiti",
+    "house",
+    "mosque",
+    "museum",
+    "restaurant",
+    "shop",
+    "temple",
+    "tower",
+    "indoors",
+    "houseplant",
+    "roof",
+    "clouds"
+   ]
+  },
+  "calibration/bukhara-visit/069.jpg": {
+   "yes": [
+    "indoors",
+    "painting",
+    "wall"
+   ],
+   "no": [
+    "bedroom",
+    "bench",
+    "fantasy",
+    "graffiti",
+    "hdr",
+    "market",
+    "mosque",
+    "museum",
+    "ruins",
+    "shop",
+    "table",
+    "watercolor",
+    "basket",
+    "street",
+    "paper",
+    "text",
+    "person",
+    "room",
+    "carpet",
+    "stairs"
+   ]
+  },
+  "calibration/bukhara-visit/073.jpg": {
+   "yes": [
+    "building",
+    "indoors",
+    "map",
+    "museum",
+    "person",
+    "exhibition",
+    "shoes",
+    "floor",
+    "wall",
+    "man",
+    "room",
+    "text"
+   ],
+   "no": [
+    "airport",
+    "cave",
+    "classroom",
+    "mosque",
+    "ruins",
+    "shop",
+    "swimming pool",
+    "train station",
+    "roof",
+    "suit"
+   ]
+  },
+  "calibration/bukhara-visit/077.jpg": {
+   "yes": [
+    "document",
+    "museum",
+    "exhibition",
+    "poster",
+    "text",
+    "illustration",
+    "wall"
+   ],
+   "no": [
+    "beach",
+    "boat",
+    "desert",
+    "harbor",
+    "island",
+    "lamp",
+    "lighthouse",
+    "sailboat",
+    "sea",
+    "sign",
+    "banner",
+    "suit",
+    "rope",
+    "person",
+    "collage",
+    "sky"
+   ]
+  },
+  "calibration/bukhara-visit/081.jpg": {
+   "yes": [
+    "sand"
+   ],
+   "no": [
+    "3d render",
+    "cake",
+    "desert",
+    "farm",
+    "lamp",
+    "lighthouse",
+    "ruins",
+    "statue",
+    "tower",
+    "toy",
+    "turtle",
+    "vase",
+    "box",
+    "monument",
+    "tent",
+    "rocks",
+    "sky",
+    "bowl",
+    "animal",
+    "paper",
+    "wall",
+    "text"
+   ]
+  },
+  "calibration/bukhara-visit/085.jpg": {
+   "yes": [
+    "bus",
+    "train",
+    "tree",
+    "person",
+    "sky",
+    "fence",
+    "plant",
+    "roof",
+    "text"
+   ],
+   "no": [
+    "bench",
+    "car",
+    "harbor",
+    "park",
+    "playground",
+    "toy",
+    "tractor",
+    "train station",
+    "tram",
+    "truck",
+    "clouds",
+    "road"
+   ]
+  },
+  "calibration/bukhara-visit/089.jpg": {
+   "yes": [
+    "building",
+    "outdoors",
+    "shop",
+    "tree",
+    "plant",
+    "person",
+    "sky",
+    "road",
+    "wall",
+    "roof",
+    "text"
+   ],
+   "no": [
+    "bar",
+    "car",
+    "farm",
+    "harbor",
+    "house",
+    "kitchen",
+    "market",
+    "mosque",
+    "restaurant",
+    "temple",
+    "village",
+    "tent",
+    "fence"
+   ]
+  },
+  "calibration/bukhara-visit/093.jpg": {
+   "yes": [
+    "building",
+    "sky",
+    "tree",
+    "road",
+    "plant",
+    "facade",
+    "wall",
+    "fence"
+   ],
+   "no": [
+    "camel",
+    "farm",
+    "fountain",
+    "house",
+    "library",
+    "mosque",
+    "museum",
+    "ruins",
+    "stadium",
+    "temple",
+    "village",
+    "car",
+    "clouds",
+    "stairs"
+   ]
+  },
+  "calibration/bukhara-visit/097.jpg": {
+   "yes": [
+    "building",
+    "car",
+    "facade",
+    "window",
+    "sky",
+    "road",
+    "wall",
+    "text"
+   ],
+   "no": [
+    "graffiti",
+    "house",
+    "library",
+    "mosque",
+    "museum",
+    "office",
+    "shop",
+    "stadium",
+    "tower",
+    "uniform",
+    "village",
+    "clouds",
+    "fence"
+   ]
+  },
+  "calibration/bukhara-visit/101.jpg": {
+   "yes": [
+    "building",
+    "restaurant",
+    "shop",
+    "street",
+    "road",
+    "window",
+    "plant",
+    "chair",
+    "wall",
+    "bench",
+    "facade"
+   ],
+   "no": [
+    "bar",
+    "bottle",
+    "coffee",
+    "graffiti",
+    "house",
+    "market",
+    "mosque",
+    "tea",
+    "tram",
+    "person",
+    "painting",
+    "soft drink"
+   ]
+  },
+  "calibration/bukhara-visit/105.jpg": {
+   "yes": [
+    "building",
+    "columns",
+    "wall",
+    "ceiling"
+   ],
+   "no": [
+    "3d render",
+    "castle",
+    "graffiti",
+    "hdr",
+    "mirror",
+    "mosque",
+    "panorama",
+    "reflection",
+    "swimming pool",
+    "temple",
+    "tower",
+    "vase",
+    "sky",
+    "stairs",
+    "sculpture",
+    "facade",
+    "roof",
+    "painting"
+   ]
+  },
+  "calibration/bukhara-visit/109.jpg": {
+   "yes": [
+    "water",
+    "tree",
+    "pond",
+    "building",
+    "plant",
+    "reflection",
+    "sky",
+    "road",
+    "stairs",
+    "person"
+   ],
+   "no": [
+    "fish",
+    "fountain",
+    "garden",
+    "lake",
+    "mosque",
+    "park",
+    "river",
+    "swimming",
+    "swimming pool",
+    "turtle",
+    "waterfall",
+    "backyard",
+    "fence"
+   ]
+  },
+  "calibration/bukhara-visit/113.jpg": {
+   "yes": [
+    "sign",
+    "text",
+    "wall"
+   ],
+   "no": [
+    "building",
+    "castle",
+    "document",
+    "graffiti",
+    "mosque",
+    "museum",
+    "ruins",
+    "statue",
+    "temple",
+    "tower",
+    "windmill",
+    "columns",
+    "stairs",
+    "roof",
+    "sculpture",
+    "paper",
+    "suit",
+    "monument",
+    "facade",
+    "sky"
+   ]
+  },
+  "calibration/bukhara-visit/117.jpg": {
+   "yes": [
+    "building",
+    "lamp",
+    "person",
+    "sky",
+    "columns",
+    "wall",
+    "man",
+    "roof"
+   ],
+   "no": [
+    "camel",
+    "fountain",
+    "long exposure",
+    "market",
+    "mosque",
+    "museum",
+    "panorama",
+    "ruins",
+    "temple",
+    "tower",
+    "vase",
+    "road",
+    "clouds",
+    "floor",
+    "stairs"
+   ]
+  },
+  "calibration/concert/001.jpg": {
+   "yes": [
+    "1girl",
+    "long hair",
+    "smile",
+    "woman",
+    "eyes",
+    "face",
+    "hands",
+    "wall"
+   ],
+   "no": [
+    "blonde hair",
+    "costume",
+    "dress",
+    "full body",
+    "short hair",
+    "suit",
+    "sky"
+   ]
+  },
+  "calibration/concert/005.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "microphone",
+    "stage",
+    "woman",
+    "musician",
+    "performance",
+    "eyes",
+    "curtain",
+    "face",
+    "hands"
+   ],
+   "no": [
+    "wall",
+    "text",
+    "soft drink"
+   ]
+  },
+  "calibration/concert/009.jpg": {
+   "yes": [
+    "concert",
+    "guitar",
+    "piano",
+    "stage",
+    "woman",
+    "microphone",
+    "performance",
+    "curtain",
+    "face",
+    "musician",
+    "eyes",
+    "hands",
+    "person"
+   ],
+   "no": [
+    "1girl",
+    "bar"
+   ]
+  },
+  "calibration/concert/013.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "stage",
+    "woman",
+    "performance",
+    "musician",
+    "hands",
+    "curtain",
+    "person",
+    "face",
+    "eyes",
+    "microphone"
+   ],
+   "no": [
+    "bar",
+    "piano"
+   ]
+  },
+  "calibration/concert/017.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "stage",
+    "woman",
+    "performance",
+    "musician",
+    "microphone",
+    "curtain",
+    "eyes",
+    "hands",
+    "face"
+   ],
+   "no": [
+    "bar",
+    "bokeh",
+    "piano",
+    "wall"
+   ]
+  },
+  "calibration/concert/021.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "stage",
+    "woman",
+    "performance",
+    "microphone",
+    "musician",
+    "eyes",
+    "hands",
+    "face"
+   ],
+   "no": [
+    "bokeh",
+    "wall",
+    "text"
+   ]
+  },
+  "calibration/concert/025.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "stage",
+    "woman",
+    "performance",
+    "microphone",
+    "eyes",
+    "face",
+    "musician",
+    "hands",
+    "person"
+   ],
+   "no": [
+    "bar",
+    "wall"
+   ]
+  },
+  "calibration/concert/029.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "microphone",
+    "woman",
+    "performance",
+    "musician",
+    "curtain",
+    "hands",
+    "eyes",
+    "face"
+   ],
+   "no": [
+    "bar",
+    "piano",
+    "stage",
+    "wall"
+   ]
+  },
+  "calibration/concert/033.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "microphone",
+    "smile",
+    "stage",
+    "woman",
+    "performance",
+    "musician",
+    "curtain",
+    "hands",
+    "eyes",
+    "face"
+   ],
+   "no": [
+    "bokeh",
+    "dress",
+    "piano",
+    "wall"
+   ]
+  },
+  "calibration/concert/037.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "stage",
+    "woman",
+    "microphone",
+    "hands",
+    "face",
+    "curtain",
+    "performance",
+    "person"
+   ],
+   "no": [
+    "bar",
+    "black and white",
+    "dress",
+    "guitar",
+    "night",
+    "piano",
+    "stars",
+    "wall",
+    "eyes"
+   ]
+  },
+  "calibration/concert/041.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "microphone",
+    "stage",
+    "woman",
+    "eyes",
+    "face",
+    "performance",
+    "hands",
+    "curtain"
+   ],
+   "no": [
+    "bar",
+    "dancing",
+    "night",
+    "smile",
+    "wall",
+    "text"
+   ]
+  },
+  "calibration/concert/045.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "stage",
+    "woman",
+    "microphone",
+    "eyes",
+    "hands",
+    "face",
+    "performance",
+    "musician"
+   ],
+   "no": [
+    "black and white",
+    "minimalist",
+    "text",
+    "wall",
+    "banner",
+    "guitar"
+   ]
+  },
+  "calibration/concert/049.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "stage",
+    "woman",
+    "microphone",
+    "eyes",
+    "performance",
+    "face",
+    "hands",
+    "curtain"
+   ],
+   "no": [
+    "bar",
+    "black and white",
+    "bokeh",
+    "guitar",
+    "night",
+    "piano",
+    "audience",
+    "wall"
+   ]
+  },
+  "calibration/concert/053.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "microphone",
+    "woman",
+    "eyes",
+    "performance",
+    "hands",
+    "curtain",
+    "face",
+    "person"
+   ],
+   "no": [
+    "bar",
+    "black and white",
+    "bokeh",
+    "dress",
+    "night",
+    "party",
+    "piano",
+    "stage",
+    "stars",
+    "wall",
+    "soft drink"
+   ]
+  },
+  "calibration/concert/057.jpg": {
+   "yes": [
+    "concert",
+    "piano",
+    "stage",
+    "woman",
+    "microphone",
+    "performance",
+    "musician",
+    "hands",
+    "person",
+    "eyes",
+    "face",
+    "curtain"
+   ],
+   "no": [
+    "1girl",
+    "bar",
+    "minimalist",
+    "wall"
+   ]
+  },
+  "calibration/concert/061.jpg": {
+   "yes": [
+    "concert",
+    "piano",
+    "stage",
+    "woman",
+    "microphone",
+    "performance",
+    "eyes",
+    "musician",
+    "person",
+    "hands",
+    "face",
+    "curtain"
+   ],
+   "no": [
+    "1girl",
+    "bar",
+    "minimalist",
+    "wall"
+   ]
+  },
+  "calibration/concert/065.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "stage",
+    "microphone",
+    "woman",
+    "eyes",
+    "performance",
+    "face",
+    "hands",
+    "smile"
+   ],
+   "no": [
+    "bar",
+    "black and white",
+    "minimalist",
+    "wall",
+    "guitar",
+    "text"
+   ]
+  },
+  "calibration/concert/069.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "stage",
+    "woman",
+    "microphone",
+    "performance",
+    "musician",
+    "hands",
+    "eyes",
+    "curtain",
+    "face"
+   ],
+   "no": [
+    "bar",
+    "wall"
+   ]
+  },
+  "calibration/concert/073.jpg": {
+   "yes": [
+    "1girl",
+    "concert",
+    "guitar",
+    "smile",
+    "stage",
+    "woman",
+    "musician",
+    "hands",
+    "eyes",
+    "face",
+    "microphone",
+    "performance",
+    "curtain"
+   ],
+   "no": [
+    "wall",
+    "text"
+   ]
+  },
+  "calibration/forest-march/001.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "building",
+    "woman",
+    "person",
+    "stairs",
+    "man",
+    "wall",
+    "columns"
+   ],
+   "no": [
+    "concert",
+    "festival",
+    "panorama",
+    "sky",
+    "clouds",
+    "sculpture",
+    "shoes"
+   ]
+  },
+  "calibration/forest-march/005.jpg": {
+   "yes": [
+    "full body",
+    "people",
+    "sign",
+    "person",
+    "woman",
+    "shoes",
+    "building",
+    "text",
+    "wall",
+    "man",
+    "stairs"
+   ],
+   "no": [
+    "concert",
+    "costume",
+    "panorama",
+    "sepia",
+    "symmetry",
+    "sculpture",
+    "sky",
+    "crowd"
+   ]
+  },
+  "calibration/forest-march/009.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "sign",
+    "stairs",
+    "building",
+    "person",
+    "woman",
+    "sky",
+    "shoes",
+    "wall",
+    "man",
+    "text"
+   ],
+   "no": [
+    "concert",
+    "flag",
+    "panorama",
+    "tree"
+   ]
+  },
+  "calibration/forest-march/013.jpg": {
+   "yes": [
+    "hat",
+    "microphone",
+    "people",
+    "person",
+    "face",
+    "text",
+    "wall"
+   ],
+   "no": [
+    "concert",
+    "couple",
+    "crowd",
+    "party",
+    "sky",
+    "eyes",
+    "road",
+    "banner",
+    "man",
+    "woman",
+    "performance"
+   ]
+  },
+  "calibration/forest-march/017.jpg": {
+   "yes": [
+    "1girl",
+    "portrait",
+    "short hair",
+    "woman",
+    "face",
+    "glasses",
+    "close-up",
+    "t-shirt"
+   ],
+   "no": [
+    "full body",
+    "microphone",
+    "eyes",
+    "road",
+    "sky",
+    "man"
+   ]
+  },
+  "calibration/forest-march/021.jpg": {
+   "yes": [
+    "1girl",
+    "document",
+    "glasses",
+    "portrait",
+    "sunglasses",
+    "woman",
+    "face",
+    "text",
+    "t-shirt",
+    "person"
+   ],
+   "no": [
+    "dress",
+    "full body",
+    "hat",
+    "sign",
+    "microphone",
+    "smile",
+    "eyes",
+    "road",
+    "man"
+   ]
+  },
+  "calibration/forest-march/025.jpg": {
+   "yes": [
+    "glasses",
+    "hat",
+    "sunglasses",
+    "tattoo",
+    "microphone",
+    "face",
+    "hands",
+    "person"
+   ],
+   "no": [
+    "1girl",
+    "concert",
+    "dress",
+    "graffiti",
+    "suit",
+    "woman",
+    "eyes",
+    "people",
+    "man",
+    "performance",
+    "musician"
+   ]
+  },
+  "calibration/forest-march/029.jpg": {
+   "yes": [
+    "sign",
+    "person",
+    "text",
+    "building",
+    "banner",
+    "wall",
+    "face",
+    "man"
+   ],
+   "no": [
+    "crowd",
+    "document",
+    "festival",
+    "flag",
+    "graffiti",
+    "panorama",
+    "suit",
+    "tree",
+    "sky",
+    "rocks",
+    "leaves"
+   ]
+  },
+  "calibration/forest-march/033.jpg": {
+   "yes": [
+    "people",
+    "sign",
+    "person",
+    "woman",
+    "shoes",
+    "hands",
+    "man"
+   ],
+   "no": [
+    "festival",
+    "fog",
+    "meat",
+    "motion blur",
+    "plant",
+    "flower",
+    "leaves",
+    "rocks",
+    "sky",
+    "road"
+   ]
+  },
+  "calibration/forest-march/037.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "woman",
+    "person",
+    "sign",
+    "poster",
+    "man",
+    "face"
+   ],
+   "no": [
+    "festival",
+    "building",
+    "bridge",
+    "sport",
+    "road"
+   ]
+  },
+  "calibration/forest-march/041.jpg": {
+   "yes": [
+    "sign",
+    "person",
+    "tree",
+    "text",
+    "sky",
+    "woman",
+    "people",
+    "stairs"
+   ],
+   "no": [
+    "crowd",
+    "flag",
+    "logo",
+    "panorama",
+    "sepia",
+    "uniform",
+    "sculpture",
+    "rocks",
+    "smile"
+   ]
+  },
+  "calibration/forest-march/045.jpg": {
+   "yes": [
+    "sign",
+    "building",
+    "tree",
+    "person",
+    "text",
+    "sky",
+    "stairs",
+    "banner",
+    "wall",
+    "woman"
+   ],
+   "no": [
+    "document",
+    "flag",
+    "logo",
+    "meme",
+    "panorama",
+    "phone",
+    "sepia",
+    "skyscraper",
+    "road"
+   ]
+  },
+  "calibration/forest-march/049.jpg": {
+   "yes": [
+    "sign",
+    "person",
+    "building",
+    "woman",
+    "text",
+    "tree",
+    "sky",
+    "man",
+    "shoes",
+    "wall"
+   ],
+   "no": [
+    "costume",
+    "document",
+    "festival",
+    "flag",
+    "panorama",
+    "running",
+    "suit",
+    "wedding",
+    "windmill",
+    "sculpture",
+    "road"
+   ]
+  },
+  "calibration/forest-march/053.jpg": {
+   "yes": [
+    "crowd",
+    "dress",
+    "people",
+    "sunglasses",
+    "woman",
+    "person",
+    "walking",
+    "shoes",
+    "building",
+    "man",
+    "bag"
+   ],
+   "no": [
+    "concert",
+    "costume",
+    "dancing",
+    "festival",
+    "from behind",
+    "hiking",
+    "running",
+    "travel",
+    "uniform",
+    "car",
+    "road"
+   ]
+  },
+  "calibration/forest-march/057.jpg": {
+   "yes": [
+    "sign",
+    "text",
+    "person",
+    "sky",
+    "banner",
+    "man",
+    "road"
+   ],
+   "no": [
+    "concert",
+    "crowd",
+    "document",
+    "festival",
+    "flag",
+    "logo",
+    "panorama",
+    "running",
+    "sailboat",
+    "sepia",
+    "stadium",
+    "sushi",
+    "rocks",
+    "stairs",
+    "smile"
+   ]
+  },
+  "calibration/forest-march/061.jpg": {
+   "yes": [
+    "people",
+    "sign",
+    "building",
+    "person",
+    "sky",
+    "road",
+    "text",
+    "tree",
+    "woman",
+    "walking",
+    "man"
+   ],
+   "no": [
+    "crowd",
+    "festival",
+    "flag",
+    "long exposure",
+    "running",
+    "tram",
+    "uniform",
+    "bicycle"
+   ]
+  },
+  "calibration/forest-march/065.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "sign",
+    "person",
+    "tree",
+    "building",
+    "sky",
+    "plant",
+    "walking",
+    "text",
+    "road"
+   ],
+   "no": [
+    "festival",
+    "flag",
+    "panorama",
+    "pasta",
+    "running",
+    "woman",
+    "man"
+   ]
+  },
+  "calibration/forest-march/069.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "sign",
+    "tree",
+    "building",
+    "person",
+    "sky",
+    "text",
+    "leaves",
+    "road"
+   ],
+   "no": [
+    "festival",
+    "flag",
+    "skyscraper",
+    "man"
+   ]
+  },
+  "calibration/forest-march/073.jpg": {
+   "yes": [
+    "sign",
+    "tree",
+    "text",
+    "person",
+    "leaves",
+    "sky",
+    "people",
+    "road",
+    "sunlight"
+   ],
+   "no": [
+    "crowd",
+    "festival",
+    "flag",
+    "hiking",
+    "logo",
+    "long exposure",
+    "panorama",
+    "running",
+    "sushi",
+    "tram",
+    "sport",
+    "smile"
+   ]
+  },
+  "calibration/forest-march/077.jpg": {
+   "yes": [
+    "sign",
+    "tree",
+    "text",
+    "person",
+    "crowd",
+    "road",
+    "people",
+    "walking",
+    "sky"
+   ],
+   "no": [
+    "festival",
+    "running",
+    "skyscraper",
+    "sushi",
+    "train",
+    "train station",
+    "tram",
+    "smile",
+    "flag",
+    "woman"
+   ]
+  },
+  "calibration/forest-march/081.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "sign",
+    "woman",
+    "man",
+    "sunglasses",
+    "person",
+    "tree",
+    "shoes",
+    "road",
+    "face",
+    "t-shirt",
+    "text"
+   ],
+   "no": [
+    "bicycle",
+    "graffiti",
+    "ice cream",
+    "panorama",
+    "running",
+    "skyscraper"
+   ]
+  },
+  "calibration/forest-march/085.jpg": {
+   "yes": [
+    "people",
+    "photo",
+    "sign",
+    "woman",
+    "person",
+    "tree",
+    "crowd",
+    "leaves",
+    "text",
+    "man",
+    "shoes",
+    "sculpture"
+   ],
+   "no": [
+    "document",
+    "pixel art",
+    "skyscraper",
+    "sport",
+    "balloon"
+   ]
+  },
+  "calibration/forest-march/089.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "sign",
+    "tree",
+    "woman",
+    "person",
+    "man",
+    "plant",
+    "text"
+   ],
+   "no": [
+    "festival",
+    "flag",
+    "running",
+    "sky",
+    "building",
+    "road"
+   ]
+  },
+  "calibration/forest-march/093.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "sign",
+    "building",
+    "person",
+    "tree",
+    "text",
+    "woman",
+    "man",
+    "road"
+   ],
+   "no": [
+    "flag",
+    "sepia",
+    "skyscraper",
+    "sushi",
+    "sky"
+   ]
+  },
+  "calibration/forest-march/097.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "woman",
+    "person",
+    "tree",
+    "man",
+    "road",
+    "sign",
+    "flag"
+   ],
+   "no": [
+    "festival",
+    "panorama",
+    "sky",
+    "sculpture",
+    "building"
+   ]
+  },
+  "calibration/forest-march/101.jpg": {
+   "yes": [
+    "people",
+    "sign",
+    "woman",
+    "sunglasses",
+    "tree",
+    "man",
+    "leaves",
+    "person",
+    "road",
+    "plant",
+    "flag"
+   ],
+   "no": [
+    "crowd",
+    "festival",
+    "bridge"
+   ]
+  },
+  "calibration/forest-march/105.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "sign",
+    "woman",
+    "person",
+    "man",
+    "building",
+    "banner",
+    "text",
+    "flag",
+    "road",
+    "face"
+   ],
+   "no": [
+    "festival",
+    "skyscraper",
+    "sky"
+   ]
+  },
+  "calibration/forest-march/109.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "person",
+    "woman",
+    "man",
+    "tree",
+    "flag",
+    "sign",
+    "text",
+    "face",
+    "leaves"
+   ],
+   "no": [
+    "festival",
+    "panorama",
+    "building"
+   ]
+  },
+  "calibration/forest-march/113.jpg": {
+   "yes": [
+    "crowd",
+    "people",
+    "sign",
+    "woman",
+    "tree",
+    "person",
+    "man",
+    "road",
+    "text",
+    "flag",
+    "leaves",
+    "face"
+   ],
+   "no": [
+    "festival",
+    "building"
+   ]
+  },
+  "calibration/forest-march/117.jpg": {
+   "yes": [
+    "crowd",
+    "dress",
+    "glasses",
+    "hat",
+    "people",
+    "sunglasses",
+    "woman",
+    "man",
+    "person",
+    "face",
+    "sign"
+   ],
+   "no": [
+    "costume",
+    "festival",
+    "hiking",
+    "party",
+    "running",
+    "suit",
+    "uniform",
+    "sky",
+    "stairs",
+    "road"
+   ]
+  },
+  "calibration/sequoia-hike/001.jpg": {
+   "yes": [
+    "hill",
+    "landscape",
+    "mountain",
+    "river",
+    "tree",
+    "valley",
+    "plant",
+    "sky",
+    "rocks",
+    "sunlight"
+   ],
+   "no": [
+    "cave",
+    "desert",
+    "farm",
+    "forest",
+    "hdr",
+    "hiking",
+    "waterfall",
+    "countryside",
+    "meadow"
+   ]
+  },
+  "calibration/sequoia-hike/005.jpg": {
+   "yes": [
+    "flower",
+    "plant",
+    "rocks",
+    "sky",
+    "leaves"
+   ],
+   "no": [
+    "cave",
+    "desert",
+    "garden",
+    "hiking",
+    "hill",
+    "mountain",
+    "tower",
+    "vase",
+    "waterfall",
+    "clouds",
+    "wildflowers",
+    "landscape",
+    "spring"
+   ]
+  },
+  "calibration/sequoia-hike/009.jpg": {
+   "yes": [
+    "forest",
+    "plant",
+    "tree",
+    "sky",
+    "sunlight",
+    "rocks",
+    "fence"
+   ],
+   "no": [
+    "christmas tree",
+    "giraffe",
+    "hdr",
+    "hiking",
+    "landscape",
+    "panorama",
+    "park",
+    "ruins",
+    "squirrel",
+    "tower",
+    "mountain",
+    "clouds",
+    "hill",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/013.jpg": {
+   "yes": [
+    "forest",
+    "hiking",
+    "rocks",
+    "tree",
+    "plant",
+    "leaves"
+   ],
+   "no": [
+    "bear",
+    "bench",
+    "bicycle",
+    "cave",
+    "deer",
+    "hdr",
+    "panorama",
+    "squirrel",
+    "turtle",
+    "waterfall",
+    "canyon",
+    "landscape",
+    "sky",
+    "wildlife",
+    "mountain",
+    "countryside",
+    "hill"
+   ]
+  },
+  "calibration/sequoia-hike/017.jpg": {
+   "yes": [
+    "bear",
+    "forest",
+    "tree",
+    "plant",
+    "wildlife",
+    "animal",
+    "sunlight"
+   ],
+   "no": [
+    "autumn leaves",
+    "christmas tree",
+    "deer",
+    "frog",
+    "hdr",
+    "hiking",
+    "landscape",
+    "monkey",
+    "panorama",
+    "squirrel",
+    "jungle",
+    "rocks",
+    "sky",
+    "water",
+    "mountain",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/021.jpg": {
+   "yes": [
+    "forest",
+    "hiking",
+    "park",
+    "tree",
+    "sunlight",
+    "sky",
+    "rocks"
+   ],
+   "no": [
+    "autumn leaves",
+    "cave",
+    "christmas tree",
+    "garden",
+    "landscape",
+    "macro",
+    "plant",
+    "ruins",
+    "spring",
+    "water",
+    "jungle",
+    "mountain",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/025.jpg": {
+   "yes": [
+    "forest",
+    "hiking",
+    "tree",
+    "plant",
+    "person",
+    "sky",
+    "rocks"
+   ],
+   "no": [
+    "bench",
+    "cave",
+    "christmas tree",
+    "deer",
+    "door",
+    "hdr",
+    "landscape",
+    "mountain",
+    "panorama",
+    "road",
+    "snow",
+    "arch",
+    "leaves",
+    "man"
+   ]
+  },
+  "calibration/sequoia-hike/029.jpg": {
+   "yes": [
+    "forest",
+    "landscape",
+    "plant",
+    "tree",
+    "sky",
+    "rocks",
+    "sunlight"
+   ],
+   "no": [
+    "cave",
+    "christmas tree",
+    "door",
+    "hdr",
+    "hiking",
+    "panorama",
+    "ruins",
+    "squirrel",
+    "tower",
+    "water",
+    "tent",
+    "clouds",
+    "countryside",
+    "snow",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/033.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "plant",
+    "sunlight",
+    "sky"
+   ],
+   "no": [
+    "autumn leaves",
+    "cave",
+    "christmas tree",
+    "hdr",
+    "hiking",
+    "landscape",
+    "macro",
+    "panorama",
+    "reflection",
+    "tower",
+    "waterfall",
+    "mountain",
+    "spring",
+    "jungle",
+    "hill",
+    "rocks",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/037.jpg": {
+   "yes": [
+    "forest",
+    "hiking",
+    "landscape",
+    "tree",
+    "sky",
+    "sunlight",
+    "rocks"
+   ],
+   "no": [
+    "bench",
+    "cave",
+    "christmas tree",
+    "deer",
+    "macro",
+    "panorama",
+    "park",
+    "plant",
+    "ruins",
+    "wildlife",
+    "jungle",
+    "clouds",
+    "water",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/041.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "sky",
+    "sunlight"
+   ],
+   "no": [
+    "autumn leaves",
+    "christmas tree",
+    "garden",
+    "giraffe",
+    "hiking",
+    "landscape",
+    "macro",
+    "plant",
+    "ruins",
+    "tower",
+    "jungle",
+    "clouds",
+    "close-up",
+    "rocks",
+    "water",
+    "mountain",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/045.jpg": {
+   "yes": [
+    "forest",
+    "hiking",
+    "outdoors",
+    "park",
+    "tree",
+    "plant",
+    "rocks"
+   ],
+   "no": [
+    "3d render",
+    "bench",
+    "cave",
+    "christmas tree",
+    "hdr",
+    "landscape",
+    "panorama",
+    "road",
+    "ruins",
+    "wildlife",
+    "sky",
+    "countryside",
+    "snow",
+    "sand",
+    "water",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/049.jpg": {
+   "yes": [
+    "forest",
+    "park",
+    "tree",
+    "sunlight"
+   ],
+   "no": [
+    "autumn leaves",
+    "christmas tree",
+    "garden",
+    "hiking",
+    "landscape",
+    "panorama",
+    "plant",
+    "ruins",
+    "sky",
+    "savanna",
+    "spring",
+    "water",
+    "mountain",
+    "rocks",
+    "sand",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/053.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "plant"
+   ],
+   "no": [
+    "autumn leaves",
+    "cave",
+    "christmas tree",
+    "hdr",
+    "hiking",
+    "landscape",
+    "macro",
+    "panorama",
+    "reflection",
+    "road",
+    "ruins",
+    "sky",
+    "jungle",
+    "water",
+    "clouds",
+    "wildlife",
+    "rocks",
+    "mountain",
+    "leaves",
+    "sunlight"
+   ]
+  },
+  "calibration/sequoia-hike/057.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "plant",
+    "sky",
+    "sunlight"
+   ],
+   "no": [
+    "cave",
+    "christmas tree",
+    "door",
+    "hdr",
+    "hiking",
+    "landscape",
+    "mirror",
+    "panorama",
+    "reflection",
+    "shoes",
+    "window",
+    "rocks",
+    "water",
+    "wildlife",
+    "clouds",
+    "close-up",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/061.jpg": {
+   "yes": [
+    "forest",
+    "hiking",
+    "landscape",
+    "mountain",
+    "outdoors",
+    "tree",
+    "sky",
+    "plant",
+    "rocks"
+   ],
+   "no": [
+    "christmas tree",
+    "farm",
+    "hdr",
+    "hill",
+    "panorama",
+    "snow",
+    "winter",
+    "clouds",
+    "countryside",
+    "meadow",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/065.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "sunlight"
+   ],
+   "no": [
+    "cave",
+    "christmas tree",
+    "deer",
+    "hdr",
+    "hiking",
+    "macro",
+    "owl",
+    "plant",
+    "ruins",
+    "squirrel",
+    "rocks",
+    "wildlife",
+    "sky",
+    "van",
+    "water",
+    "leaves",
+    "close-up"
+   ]
+  },
+  "calibration/sequoia-hike/069.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "sky",
+    "leaves",
+    "sunlight"
+   ],
+   "no": [
+    "christmas tree",
+    "garden",
+    "giraffe",
+    "hiking",
+    "landscape",
+    "park",
+    "plant",
+    "ruins",
+    "squirrel",
+    "tower",
+    "jungle",
+    "clouds",
+    "water",
+    "fence",
+    "rocks",
+    "sand"
+   ]
+  },
+  "calibration/sequoia-hike/073.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "plant",
+    "sky",
+    "sunlight"
+   ],
+   "no": [
+    "cave",
+    "christmas tree",
+    "hiking",
+    "squirrel",
+    "rocks",
+    "jungle",
+    "clouds",
+    "water",
+    "macro",
+    "wildlife",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/077.jpg": {
+   "yes": [
+    "forest",
+    "plant",
+    "tree",
+    "sky",
+    "sunlight"
+   ],
+   "no": [
+    "christmas tree",
+    "garden",
+    "giraffe",
+    "hdr",
+    "hiking",
+    "landscape",
+    "park",
+    "squirrel",
+    "tower",
+    "jungle",
+    "mountain",
+    "clouds",
+    "wildlife",
+    "hill",
+    "water",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/081.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "plant",
+    "person",
+    "man"
+   ],
+   "no": [
+    "bear",
+    "cave",
+    "christmas tree",
+    "deer",
+    "hiking",
+    "landscape",
+    "panorama",
+    "park",
+    "reflection",
+    "ruins",
+    "squirrel",
+    "spring",
+    "sky",
+    "water",
+    "painting",
+    "rocks",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/085.jpg": {
+   "yes": [
+    "forest",
+    "park",
+    "tree",
+    "fence",
+    "sunlight",
+    "road"
+   ],
+   "no": [
+    "autumn leaves",
+    "bench",
+    "cave",
+    "christmas tree",
+    "garden",
+    "hiking",
+    "landscape",
+    "plant",
+    "ruins",
+    "shoes",
+    "sky",
+    "rocks",
+    "water",
+    "sand",
+    "close-up",
+    "leaves"
+   ]
+  },
+  "calibration/sequoia-hike/089.jpg": {
+   "yes": [
+    "forest",
+    "tree",
+    "plant",
+    "sky",
+    "sunlight"
+   ],
+   "no": [
+    "christmas tree",
+    "hdr",
+    "hiking",
+    "tower",
+    "jungle",
+    "clouds",
+    "wildlife",
+    "mountain",
+    "rocks",
+    "water",
+    "leaves"
+   ]
+  },
+  "corpus/apple-01.jpg": {
+   "yes": [
+    "food",
+    "fruit",
+    "market"
+   ],
+   "no": [
+    "autumn leaves",
+    "desert",
+    "farm",
+    "forest",
+    "kitchen",
+    "salad",
+    "soup",
+    "table",
+    "vegetables",
+    "box",
+    "wall",
+    "tomato",
+    "animal",
+    "sky",
+    "leaves",
+    "carpet",
+    "basket",
+    "paper",
+    "text"
+   ]
+  },
+  "corpus/beach-01.jpg": {
+   "yes": [
+    "beach",
+    "sea",
+    "umbrella",
+    "sand",
+    "coast",
+    "ocean",
+    "water"
+   ],
+   "no": [
+    "bed",
+    "bench",
+    "chair",
+    "harbor",
+    "hdr",
+    "sunrise",
+    "swimming",
+    "swimming pool",
+    "table",
+    "text",
+    "sky",
+    "fence",
+    "landscape"
+   ]
+  },
+  "corpus/beach-02.jpg": {
+   "yes": [
+    "beach",
+    "clouds",
+    "landscape",
+    "panorama",
+    "sea",
+    "sunrise",
+    "sunset",
+    "water",
+    "waves",
+    "coast",
+    "ocean",
+    "sky",
+    "sand"
+   ],
+   "no": [
+    "fog",
+    "hdr",
+    "long exposure",
+    "seagull",
+    "storm",
+    "swimming",
+    "underwater",
+    "morning",
+    "reflection"
+   ]
+  },
+  "corpus/beach-03.jpg": {
+   "yes": [
+    "beach",
+    "boat",
+    "harbor",
+    "sea",
+    "travel",
+    "sky",
+    "water",
+    "sand",
+    "coast",
+    "person",
+    "ocean"
+   ],
+   "no": [
+    "island",
+    "sailboat",
+    "ship",
+    "swimming",
+    "swimming pool",
+    "underwater",
+    "village",
+    "vacation"
+   ]
+  },
+  "corpus/beach-04.jpg": {
+   "yes": [
+    "beach",
+    "panorama",
+    "sky",
+    "person",
+    "clouds",
+    "sand",
+    "city"
+   ],
+   "no": [
+    "crowd",
+    "desert",
+    "festival",
+    "field",
+    "harbor",
+    "island",
+    "park",
+    "running",
+    "stadium",
+    "swimming",
+    "swimming pool",
+    "water",
+    "road",
+    "waves",
+    "sea",
+    "man",
+    "tent"
+   ]
+  },
+  "corpus/beach-05.jpg": {
+   "yes": [
+    "landscape",
+    "rocks",
+    "sea",
+    "water",
+    "coast",
+    "waves",
+    "sky",
+    "ocean",
+    "clouds",
+    "hill"
+   ],
+   "no": [
+    "beach",
+    "harbor",
+    "island",
+    "lake",
+    "river",
+    "swimming",
+    "swimming pool",
+    "underwater",
+    "stream",
+    "mountain"
+   ]
+  },
+  "corpus/beach-06.jpg": {
+   "yes": [
+    "beach",
+    "landscape",
+    "sea",
+    "water",
+    "coast",
+    "waves",
+    "ocean",
+    "sky",
+    "person",
+    "sand",
+    "man"
+   ],
+   "no": [
+    "1boy",
+    "dolphin",
+    "island",
+    "panorama",
+    "running",
+    "seagull",
+    "sunrise",
+    "swimming",
+    "swimming pool",
+    "underwater",
+    "swimwear"
+   ]
+  },
+  "corpus/beach-07.jpg": {
+   "yes": [
+    "beach",
+    "chair",
+    "sailboat",
+    "travel",
+    "sea",
+    "coast",
+    "vacation",
+    "sky",
+    "tree",
+    "umbrella",
+    "water",
+    "clouds",
+    "person"
+   ],
+   "no": [
+    "airport",
+    "bar",
+    "bench",
+    "harbor",
+    "hdr",
+    "island",
+    "panorama",
+    "restaurant",
+    "swimming",
+    "swimming pool",
+    "tent",
+    "palm tree"
+   ]
+  },
+  "corpus/beach-08.jpg": {
+   "yes": [
+    "beach",
+    "clouds",
+    "sea",
+    "coast",
+    "sand",
+    "sky",
+    "water",
+    "waves",
+    "ocean",
+    "landscape"
+   ],
+   "no": [
+    "bench",
+    "boat",
+    "bridge",
+    "hdr",
+    "island",
+    "lighthouse",
+    "sailboat",
+    "seagull",
+    "swimming",
+    "tower",
+    "river",
+    "surfing"
+   ]
+  },
+  "corpus/beach-09.jpg": {
+   "yes": [
+    "beach",
+    "city",
+    "cityscape",
+    "clouds",
+    "landscape",
+    "sea",
+    "sky",
+    "palm tree",
+    "tree",
+    "coast",
+    "water",
+    "road",
+    "ocean"
+   ],
+   "no": [
+    "boat",
+    "harbor",
+    "island",
+    "lighthouse",
+    "sailboat",
+    "swimming pool",
+    "travel",
+    "bridge",
+    "skyscraper"
+   ]
+  },
+  "corpus/beach-10.jpg": {
+   "yes": [
+    "beach",
+    "sea",
+    "sunrise",
+    "sunset",
+    "water",
+    "ocean",
+    "coast",
+    "waves",
+    "sky",
+    "sunlight",
+    "clouds"
+   ],
+   "no": [
+    "dolphin",
+    "harbor",
+    "hdr",
+    "panorama",
+    "sailboat",
+    "seagull",
+    "swimming",
+    "underwater",
+    "morning"
+   ]
+  },
+  "corpus/beach-11.jpg": {
+   "yes": [
+    "beach",
+    "boat",
+    "landscape",
+    "sea",
+    "water",
+    "coast",
+    "ocean",
+    "sky",
+    "waves",
+    "sand"
+   ],
+   "no": [
+    "harbor",
+    "island",
+    "lake",
+    "panorama",
+    "river",
+    "sailboat",
+    "swimming",
+    "swimming pool",
+    "underwater",
+    "road",
+    "clouds",
+    "rocks"
+   ]
+  },
+  "corpus/beach-12.jpg": {
+   "yes": [
+    "beach",
+    "guitar",
+    "sea",
+    "solo",
+    "ocean",
+    "coast",
+    "waves",
+    "sand",
+    "water",
+    "person",
+    "sky"
+   ],
+   "no": [
+    "1boy",
+    "bench",
+    "concert",
+    "hdr",
+    "piano",
+    "sailboat",
+    "seagull",
+    "sunglasses",
+    "swimming",
+    "man",
+    "landscape"
+   ]
+  },
+  "corpus/beach-13.jpg": {
+   "yes": [
+    "beach",
+    "chair",
+    "landscape",
+    "sunrise",
+    "sunset",
+    "sky",
+    "clouds",
+    "coast",
+    "person",
+    "sand",
+    "water"
+   ],
+   "no": [
+    "bench",
+    "harbor",
+    "hdr",
+    "panorama",
+    "pasta",
+    "sea",
+    "swimming",
+    "travel",
+    "reflection",
+    "text",
+    "waves",
+    "ocean"
+   ]
+  },
+  "corpus/beach-14.jpg": {
+   "yes": [
+    "beach",
+    "clouds",
+    "sunrise",
+    "sunset",
+    "sky",
+    "sand",
+    "sea",
+    "water",
+    "sunlight"
+   ],
+   "no": [
+    "boat",
+    "fireworks",
+    "fog",
+    "hdr",
+    "long exposure",
+    "panorama",
+    "reflection",
+    "seagull",
+    "swimming",
+    "bridge",
+    "bird",
+    "fire",
+    "morning"
+   ]
+  },
+  "corpus/beach-15.jpg": {
+   "yes": [
+    "beach",
+    "clouds",
+    "photo",
+    "reflection",
+    "sea",
+    "water",
+    "coast",
+    "sky",
+    "ocean",
+    "waves",
+    "landscape",
+    "sunlight",
+    "sand"
+   ],
+   "no": [
+    "hdr",
+    "long exposure",
+    "panorama",
+    "seagull",
+    "storm",
+    "sunrise",
+    "sunset",
+    "underwater",
+    "morning"
+   ]
+  },
+  "corpus/car-01.jpg": {
+   "yes": [
+    "car",
+    "plant",
+    "tree",
+    "road",
+    "leaves",
+    "fence"
+   ],
+   "no": [
+    "tractor",
+    "tram",
+    "windmill",
+    "stairs",
+    "suv",
+    "clouds",
+    "sports car",
+    "van",
+    "sky"
+   ]
+  },
+  "corpus/car-02.jpg": {
+   "yes": [
+    "car",
+    "crowd",
+    "festival",
+    "vintage car",
+    "person",
+    "man",
+    "race car",
+    "woman",
+    "shoes",
+    "people"
+   ],
+   "no": [
+    "boat",
+    "dress",
+    "ice cream",
+    "motorcycle",
+    "spaceship",
+    "suit",
+    "tractor",
+    "tram",
+    "truck",
+    "sports car",
+    "sky",
+    "banner"
+   ]
+  },
+  "corpus/car-03.jpg": {
+   "yes": [
+    "car",
+    "from behind",
+    "building",
+    "plant",
+    "road",
+    "city",
+    "tree",
+    "sign",
+    "sky",
+    "fence"
+   ],
+   "no": [
+    "bicycle",
+    "boat",
+    "duck",
+    "fox",
+    "harbor",
+    "hdr",
+    "motorcycle",
+    "panorama",
+    "pasta",
+    "tractor",
+    "village",
+    "bus",
+    "bridge"
+   ]
+  },
+  "corpus/car-04.jpg": {
+   "yes": [
+    "car",
+    "tree",
+    "vintage car",
+    "plant",
+    "text",
+    "leaves"
+   ],
+   "no": [
+    "boat",
+    "food",
+    "motorcycle",
+    "pasta",
+    "soup",
+    "spaceship",
+    "tractor",
+    "truck",
+    "tent",
+    "race car",
+    "sign",
+    "flag",
+    "logo",
+    "road"
+   ]
+  },
+  "corpus/car-05.jpg": {
+   "yes": [
+    "car",
+    "from behind",
+    "road",
+    "text",
+    "logo"
+   ],
+   "no": [
+    "armor",
+    "deer",
+    "food",
+    "harbor",
+    "motorcycle",
+    "panorama",
+    "park",
+    "pasta",
+    "phone",
+    "running",
+    "sport",
+    "tractor",
+    "van",
+    "fence",
+    "motorsport",
+    "sky",
+    "sports car",
+    "stairs",
+    "suv"
+   ]
+  },
+  "corpus/car-06.jpg": {
+   "yes": [
+    "car",
+    "vintage car",
+    "building",
+    "road",
+    "sky"
+   ],
+   "no": [
+    "bar",
+    "bench",
+    "boat",
+    "chair",
+    "harbor",
+    "motorcycle",
+    "panorama",
+    "restaurant",
+    "sailboat",
+    "sandwich",
+    "sofa",
+    "tractor",
+    "truck",
+    "van",
+    "wall",
+    "floor",
+    "bridge",
+    "stairs",
+    "race car",
+    "fence"
+   ]
+  },
+  "corpus/car-07.jpg": {
+   "yes": [
+    "car",
+    "road",
+    "wall",
+    "leaves"
+   ],
+   "no": [
+    "boat",
+    "frog",
+    "lizard",
+    "motorcycle",
+    "pig",
+    "spaceship",
+    "spider",
+    "toy",
+    "tractor",
+    "tram",
+    "turtle",
+    "race car",
+    "sky",
+    "banner",
+    "stairs",
+    "hill",
+    "sports car",
+    "vintage car"
+   ]
+  },
+  "corpus/car-08.jpg": {
+   "yes": [
+    "car",
+    "graffiti",
+    "road",
+    "text"
+   ],
+   "no": [
+    "boat",
+    "cat",
+    "digital art",
+    "hdr",
+    "illustration",
+    "motorcycle",
+    "painting",
+    "sketch",
+    "sofa",
+    "tiger",
+    "sign",
+    "wall",
+    "man",
+    "sky",
+    "map",
+    "clouds",
+    "sports car"
+   ]
+  },
+  "corpus/car-09.jpg": {
+   "yes": [
+    "car",
+    "plant",
+    "fence",
+    "leaves"
+   ],
+   "no": [
+    "bee",
+    "cheese",
+    "duck",
+    "motorcycle",
+    "parrot",
+    "pig",
+    "smile",
+    "tractor",
+    "tram",
+    "truck",
+    "zebra",
+    "tree",
+    "stairs",
+    "wall",
+    "van",
+    "sky",
+    "clouds",
+    "ceiling",
+    "road"
+   ]
+  },
+  "corpus/car-10.jpg": {
+   "yes": [
+    "car",
+    "road",
+    "street",
+    "truck",
+    "tree",
+    "plant",
+    "sky",
+    "pickup truck"
+   ],
+   "no": [
+    "bicycle",
+    "boat",
+    "bus",
+    "deer",
+    "goat",
+    "hiking",
+    "motion blur",
+    "motorcycle",
+    "running",
+    "tractor",
+    "sports car",
+    "van",
+    "suv",
+    "highway",
+    "clouds"
+   ]
+  },
+  "corpus/car-11.jpg": {
+   "yes": [
+    "car",
+    "vintage car",
+    "building",
+    "road",
+    "wall",
+    "text"
+   ],
+   "no": [
+    "bee",
+    "bicycle",
+    "boat",
+    "motorcycle",
+    "pig",
+    "sailboat",
+    "sandwich",
+    "spaceship",
+    "spider",
+    "toy",
+    "tractor",
+    "van",
+    "sky",
+    "bridge",
+    "stairs",
+    "banner",
+    "fence"
+   ]
+  },
+  "corpus/car-12.jpg": {
+   "yes": [
+    "car",
+    "truck",
+    "vintage",
+    "vintage car",
+    "sky",
+    "savanna",
+    "tree",
+    "plant",
+    "landscape"
+   ],
+   "no": [
+    "desert",
+    "farm",
+    "garden",
+    "harbor",
+    "museum",
+    "ruins",
+    "shoes",
+    "tractor",
+    "village",
+    "safari",
+    "clouds",
+    "suv",
+    "sand",
+    "meadow"
+   ]
+  },
+  "corpus/car-13.jpg": {
+   "yes": [
+    "car",
+    "vintage car",
+    "building",
+    "road",
+    "wall",
+    "sky",
+    "roof"
+   ],
+   "no": [
+    "boat",
+    "burger",
+    "duck",
+    "full body",
+    "motorcycle",
+    "sailboat",
+    "ship",
+    "shoes",
+    "spaceship",
+    "tractor",
+    "truck",
+    "floor",
+    "fence",
+    "tram",
+    "stairs",
+    "van"
+   ]
+  },
+  "corpus/car-14.jpg": {
+   "yes": [
+    "car",
+    "door",
+    "vintage",
+    "vintage car",
+    "road",
+    "wall",
+    "text"
+   ],
+   "no": [
+    "bee",
+    "bicycle",
+    "bus",
+    "chair",
+    "hdr",
+    "motorcycle",
+    "sofa",
+    "tractor",
+    "truck",
+    "sky",
+    "fence",
+    "painting",
+    "leaves",
+    "clouds",
+    "sign",
+    "mirror"
+   ]
+  },
+  "corpus/car-15.jpg": {
+   "yes": [
+    "car",
+    "vintage car",
+    "building",
+    "person",
+    "road",
+    "man",
+    "wall"
+   ],
+   "no": [
+    "motorcycle",
+    "tractor",
+    "race car",
+    "floor",
+    "tent",
+    "columns",
+    "sports car"
+   ]
+  },
+  "corpus/cat-01.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "close-up",
+    "face",
+    "pet"
+   ],
+   "no": [
+    "baby",
+    "cocktail",
+    "hdr",
+    "lion",
+    "macro",
+    "sushi",
+    "tiger",
+    "zebra",
+    "wall",
+    "wildlife",
+    "sky",
+    "rocks",
+    "guitar",
+    "leaves",
+    "kitten"
+   ]
+  },
+  "corpus/cat-02.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "pet",
+    "close-up"
+   ],
+   "no": [
+    "lion",
+    "tiger",
+    "wildlife",
+    "rocks",
+    "wall",
+    "leaves",
+    "carpet",
+    "road",
+    "sky",
+    "box"
+   ]
+  },
+  "corpus/cat-03.jpg": {
+   "yes": [
+    "animal",
+    "bed",
+    "cat",
+    "pet"
+   ],
+   "no": [
+    "3d render",
+    "bedroom",
+    "family",
+    "fox",
+    "hdr",
+    "night",
+    "panorama",
+    "rabbit",
+    "shoes",
+    "squirrel",
+    "wall",
+    "carpet",
+    "basket",
+    "wildlife",
+    "baby",
+    "leaves"
+   ]
+  },
+  "corpus/cat-04.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "hands",
+    "outdoors",
+    "pet",
+    "leaves"
+   ],
+   "no": [
+    "1boy",
+    "dog",
+    "sushi",
+    "tiger",
+    "zebra",
+    "road",
+    "rocks",
+    "wildlife",
+    "gloves",
+    "wall",
+    "sky",
+    "fence"
+   ]
+  },
+  "corpus/cat-05.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "face",
+    "looking at viewer",
+    "pet",
+    "close-up",
+    "basket"
+   ],
+   "no": [
+    "1boy",
+    "baby",
+    "bokeh",
+    "chocolate",
+    "dog",
+    "macro",
+    "selfie",
+    "sushi",
+    "tiger",
+    "wall",
+    "floor",
+    "carpet",
+    "paper",
+    "ceiling",
+    "bag",
+    "bowl"
+   ]
+  },
+  "corpus/cat-06.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "full body",
+    "sitting",
+    "floor",
+    "wall"
+   ],
+   "no": [
+    "1boy",
+    "bench",
+    "chair",
+    "dress",
+    "lion",
+    "shoes",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "hands",
+    "road",
+    "houseplant",
+    "rocks",
+    "pet",
+    "stairs"
+   ]
+  },
+  "corpus/cat-07.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "pet",
+    "box"
+   ],
+   "no": [
+    "1boy",
+    "bench",
+    "blonde hair",
+    "bread",
+    "lion",
+    "pasta",
+    "snow",
+    "sofa",
+    "sushi",
+    "tiger",
+    "vase",
+    "wall",
+    "shelf",
+    "rodent",
+    "basket",
+    "carpet",
+    "rocks",
+    "bowl",
+    "room"
+   ]
+  },
+  "corpus/cat-08.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "sitting",
+    "pet",
+    "carpet"
+   ],
+   "no": [
+    "blonde hair",
+    "dress",
+    "lion",
+    "long hair",
+    "monkey",
+    "short hair",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "wall",
+    "rabbit",
+    "leaves",
+    "close-up",
+    "guitar",
+    "box",
+    "rocks",
+    "floor"
+   ]
+  },
+  "corpus/cat-09.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "chair",
+    "full body",
+    "lying down",
+    "pet"
+   ],
+   "no": [
+    "bear",
+    "dog",
+    "fox",
+    "lion",
+    "lizard",
+    "sofa",
+    "squirrel",
+    "teddy bear",
+    "tiger",
+    "wildlife",
+    "wall",
+    "carpet",
+    "houseplant",
+    "stairs",
+    "rocks",
+    "zoo",
+    "leaves"
+   ]
+  },
+  "corpus/cat-10.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "face",
+    "pet",
+    "close-up"
+   ],
+   "no": [
+    "1boy",
+    "cheese",
+    "chocolate",
+    "dog",
+    "giraffe",
+    "lion",
+    "sushi",
+    "tiger",
+    "wall",
+    "leaves",
+    "illustration",
+    "wildlife",
+    "text",
+    "sky",
+    "carpet",
+    "bag"
+   ]
+  },
+  "corpus/cat-11.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "full body",
+    "outdoors",
+    "pet",
+    "wall",
+    "leaves"
+   ],
+   "no": [
+    "1boy",
+    "dog",
+    "fox",
+    "giraffe",
+    "lion",
+    "lizard",
+    "owl",
+    "squirrel",
+    "tiger",
+    "zebra",
+    "houseplant",
+    "rocks",
+    "sky",
+    "stairs",
+    "road",
+    "wildlife",
+    "fence"
+   ]
+  },
+  "corpus/cat-12.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "pet"
+   ],
+   "no": [
+    "bench",
+    "close-up",
+    "lion",
+    "macro",
+    "sandwich",
+    "sofa",
+    "soup",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "wildlife",
+    "rocks",
+    "wall",
+    "rope",
+    "fence",
+    "rodent",
+    "leaves"
+   ]
+  },
+  "corpus/cat-13.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "full body",
+    "pet",
+    "floor"
+   ],
+   "no": [
+    "burger",
+    "hands",
+    "lion",
+    "monkey",
+    "short hair",
+    "soup",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "t-shirt",
+    "carpet",
+    "bowl",
+    "ceiling",
+    "wall",
+    "cupboard"
+   ]
+  },
+  "corpus/cat-14.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "sofa",
+    "pet",
+    "close-up"
+   ],
+   "no": [
+    "chocolate",
+    "sushi",
+    "tiger",
+    "wall",
+    "carpet",
+    "leaves",
+    "bag",
+    "rocks",
+    "basket",
+    "illustration"
+   ]
+  },
+  "corpus/cat-15.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "face",
+    "portrait",
+    "pet",
+    "close-up",
+    "wall"
+   ],
+   "no": [
+    "baby",
+    "hat",
+    "monkey",
+    "panorama",
+    "reflection",
+    "short hair",
+    "soup",
+    "sushi",
+    "tiger",
+    "carpet",
+    "bed",
+    "basket",
+    "bowl",
+    "paper",
+    "leaves",
+    "t-shirt"
+   ]
+  },
+  "corpus/cat-16.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "lying down"
+   ],
+   "no": [
+    "1boy",
+    "bear",
+    "dog",
+    "fox",
+    "lion",
+    "monkey",
+    "night",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "wall",
+    "bench",
+    "stairs",
+    "carpet",
+    "wildlife",
+    "rocks",
+    "floor",
+    "road",
+    "pet"
+   ]
+  },
+  "corpus/cat-17.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "kitten",
+    "pet",
+    "wall",
+    "close-up"
+   ],
+   "no": [
+    "baby",
+    "child",
+    "couple",
+    "family",
+    "harbor",
+    "macro",
+    "reflection",
+    "shoes",
+    "sushi",
+    "tiger",
+    "rocks",
+    "road",
+    "sand",
+    "sky",
+    "phone"
+   ]
+  },
+  "corpus/cat-18.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "hdr",
+    "pet",
+    "close-up"
+   ],
+   "no": [
+    "baby",
+    "bench",
+    "fox",
+    "lion",
+    "macro",
+    "owl",
+    "squirrel",
+    "tiger",
+    "zebra",
+    "wildlife",
+    "rocks",
+    "rope",
+    "sky",
+    "fence",
+    "wall",
+    "leaves"
+   ]
+  },
+  "corpus/cat-19.jpg": {
+   "yes": [
+    "bottle",
+    "cat",
+    "pet",
+    "wall",
+    "animal",
+    "room",
+    "text"
+   ],
+   "no": [
+    "cheese",
+    "toy",
+    "dog",
+    "cupboard",
+    "carpet",
+    "close-up"
+   ]
+  },
+  "corpus/cat-20.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "computer",
+    "laptop",
+    "pet",
+    "wall",
+    "text"
+   ],
+   "no": [
+    "close-up",
+    "digital art",
+    "lion",
+    "meme",
+    "office",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "zebra",
+    "carpet",
+    "sky",
+    "bag",
+    "black and white"
+   ]
+  },
+  "corpus/cat-21.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "from behind",
+    "full body",
+    "outdoors",
+    "pet",
+    "wall",
+    "fence"
+   ],
+   "no": [
+    "bear",
+    "dog",
+    "fox",
+    "goat",
+    "lion",
+    "looking at viewer",
+    "squirrel",
+    "tiger",
+    "rocks",
+    "sky",
+    "houseplant",
+    "road",
+    "clouds",
+    "wildlife",
+    "plant"
+   ]
+  },
+  "corpus/cat-22.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "market",
+    "shop",
+    "sitting",
+    "wall",
+    "columns"
+   ],
+   "no": [
+    "1boy",
+    "cow",
+    "dog",
+    "lion",
+    "monkey",
+    "sushi",
+    "tiger",
+    "zebra",
+    "carpet",
+    "ceiling",
+    "houseplant",
+    "stairs",
+    "close-up",
+    "pet",
+    "box"
+   ]
+  },
+  "corpus/cat-23.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "close-up",
+    "face",
+    "sofa",
+    "pet"
+   ],
+   "no": [
+    "bokeh",
+    "lion",
+    "macro",
+    "monkey",
+    "motion blur",
+    "panorama",
+    "sushi",
+    "tiger",
+    "bed",
+    "wall",
+    "t-shirt",
+    "bowl",
+    "carpet",
+    "shark",
+    "phone"
+   ]
+  },
+  "corpus/cat-24.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "photo",
+    "leaves",
+    "fence"
+   ],
+   "no": [
+    "3d render",
+    "digital art",
+    "full body",
+    "hands",
+    "hdr",
+    "lizard",
+    "monkey",
+    "spider",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "tree",
+    "wildlife",
+    "palm tree",
+    "road",
+    "wall",
+    "rocks",
+    "sky",
+    "pet"
+   ]
+  },
+  "corpus/cat-25.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "full body",
+    "leaves"
+   ],
+   "no": [
+    "camel",
+    "dog",
+    "dress",
+    "from behind",
+    "lion",
+    "lizard",
+    "squirrel",
+    "tiger",
+    "zebra",
+    "car",
+    "box",
+    "wildlife",
+    "wall",
+    "rocks",
+    "water",
+    "sky",
+    "road",
+    "pet"
+   ]
+  },
+  "corpus/cat-26.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "close-up",
+    "pet",
+    "wall"
+   ],
+   "no": [
+    "dog",
+    "lion",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "t-shirt",
+    "sky",
+    "wildlife",
+    "rodent",
+    "fence",
+    "bag",
+    "hill"
+   ]
+  },
+  "corpus/cat-27.jpg": {
+   "yes": [
+    "animal",
+    "bokeh",
+    "book",
+    "cat",
+    "looking at viewer",
+    "photo",
+    "pet"
+   ],
+   "no": [
+    "glasses",
+    "hdr",
+    "lion",
+    "macro",
+    "owl",
+    "sushi",
+    "tiger",
+    "wall",
+    "carpet",
+    "close-up",
+    "dog",
+    "sky",
+    "rope",
+    "bird",
+    "text"
+   ]
+  },
+  "corpus/cat-28.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "outdoors",
+    "photo",
+    "wall",
+    "floor"
+   ],
+   "no": [
+    "bench",
+    "couple",
+    "family",
+    "mosque",
+    "motion blur",
+    "panorama",
+    "shoes",
+    "tiger",
+    "wedding",
+    "road",
+    "rocks",
+    "wildlife",
+    "sky",
+    "pet"
+   ]
+  },
+  "corpus/cat-29.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "snow",
+    "winter",
+    "wall",
+    "stairs"
+   ],
+   "no": [
+    "1boy",
+    "bench",
+    "lion",
+    "macro",
+    "owl",
+    "squirrel",
+    "sushi",
+    "tiger",
+    "zebra",
+    "road",
+    "houseplant",
+    "rocks",
+    "close-up",
+    "pet",
+    "ice"
+   ]
+  },
+  "corpus/cat-30.jpg": {
+   "yes": [
+    "animal",
+    "cat",
+    "outdoors"
+   ],
+   "no": [
+    "bar",
+    "farm",
+    "house",
+    "indoors",
+    "kitchen",
+    "market",
+    "shop",
+    "temple",
+    "tiger",
+    "village",
+    "basket",
+    "person",
+    "wall",
+    "box",
+    "road",
+    "text",
+    "bird",
+    "fence",
+    "pet"
+   ]
+  },
+  "corpus/dog-01.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "landscape",
+    "mountain",
+    "snow",
+    "winter",
+    "sky",
+    "pet",
+    "hill"
+   ],
+   "no": [
+    "1boy",
+    "1girl",
+    "bear",
+    "deer",
+    "fox",
+    "hiking",
+    "macro",
+    "clouds",
+    "rocks"
+   ]
+  },
+  "corpus/dog-02.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "outdoors",
+    "sea",
+    "rocks",
+    "sky",
+    "water"
+   ],
+   "no": [
+    "1boy",
+    "beach",
+    "bench",
+    "boat",
+    "couple",
+    "dolphin",
+    "goat",
+    "harbor",
+    "sailboat",
+    "ship",
+    "puppy",
+    "river",
+    "wall",
+    "stairs",
+    "pet",
+    "ocean"
+   ]
+  },
+  "corpus/dog-03.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "full body",
+    "looking at viewer",
+    "pet"
+   ],
+   "no": [
+    "1boy",
+    "bear",
+    "blonde hair",
+    "chocolate",
+    "hat",
+    "hiking",
+    "lion",
+    "monkey",
+    "short hair",
+    "teddy bear",
+    "puppy",
+    "bench",
+    "hands",
+    "rope",
+    "wall",
+    "road",
+    "sky",
+    "coat",
+    "fence"
+   ]
+  },
+  "corpus/dog-04.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "full body",
+    "looking at viewer",
+    "outdoors",
+    "road",
+    "pet"
+   ],
+   "no": [
+    "1boy",
+    "baby",
+    "chicken",
+    "deer",
+    "fox",
+    "hiking",
+    "macro",
+    "running",
+    "short hair",
+    "walking",
+    "wall",
+    "fence",
+    "leaves",
+    "rope",
+    "carpet",
+    "scooter",
+    "text"
+   ]
+  },
+  "corpus/dog-05.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "outdoors",
+    "pet",
+    "rocks",
+    "leaves"
+   ],
+   "no": [
+    "1boy",
+    "bear",
+    "deer",
+    "fox",
+    "giraffe",
+    "hdr",
+    "hiking",
+    "lion",
+    "macro",
+    "squirrel",
+    "tiger",
+    "wildlife",
+    "water",
+    "sky",
+    "rope",
+    "landscape",
+    "wall",
+    "hill"
+   ]
+  },
+  "corpus/dog-06.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "window",
+    "pet",
+    "close-up"
+   ],
+   "no": [
+    "1boy",
+    "bear",
+    "cat",
+    "fox",
+    "looking at viewer",
+    "macro",
+    "rain",
+    "squirrel",
+    "sushi",
+    "toy",
+    "sofa",
+    "wall",
+    "sky",
+    "road",
+    "mirror",
+    "leaves",
+    "van"
+   ]
+  },
+  "corpus/dog-07.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "full body",
+    "grass",
+    "lying down",
+    "pet"
+   ],
+   "no": [
+    "1boy",
+    "bear",
+    "blonde hair",
+    "camel",
+    "deer",
+    "lion",
+    "looking at viewer",
+    "short hair",
+    "sitting",
+    "tiger",
+    "leaves",
+    "wall",
+    "sky",
+    "carpet",
+    "fence",
+    "road",
+    "hill",
+    "meadow"
+   ]
+  },
+  "corpus/dog-08.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "full body",
+    "outdoors",
+    "park",
+    "pet",
+    "bench"
+   ],
+   "no": [
+    "1boy",
+    "bear",
+    "deer",
+    "fox",
+    "hiking",
+    "lion",
+    "pig",
+    "running",
+    "squirrel",
+    "zebra",
+    "road",
+    "fence",
+    "man",
+    "sky",
+    "wall",
+    "tent"
+   ]
+  },
+  "corpus/dog-09.jpg": {
+   "yes": [
+    "animal",
+    "beach",
+    "dog",
+    "pet",
+    "sand"
+   ],
+   "no": [
+    "1boy",
+    "baby",
+    "bear",
+    "blonde hair",
+    "chocolate",
+    "ice cream",
+    "lion",
+    "monkey",
+    "panorama",
+    "reflection",
+    "teddy bear",
+    "wildlife",
+    "rocks",
+    "tram",
+    "water",
+    "ocean",
+    "wall",
+    "basket",
+    "sky"
+   ]
+  },
+  "corpus/dog-10.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "uniform",
+    "person",
+    "man",
+    "road"
+   ],
+   "no": [
+    "bag",
+    "t-shirt",
+    "sport",
+    "wall",
+    "leaves",
+    "pet"
+   ]
+  },
+  "corpus/dog-11.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "leaves"
+   ],
+   "no": [
+    "1boy",
+    "bear",
+    "bed",
+    "child",
+    "deer",
+    "fox",
+    "giraffe",
+    "lion",
+    "sushi",
+    "tiger",
+    "zebra",
+    "zoo",
+    "close-up",
+    "wall",
+    "sand",
+    "rocks",
+    "fence",
+    "pet",
+    "wildlife"
+   ]
+  },
+  "corpus/dog-12.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "face",
+    "portrait",
+    "pet",
+    "close-up"
+   ],
+   "no": [
+    "bear",
+    "camel",
+    "chocolate",
+    "cow",
+    "deer",
+    "giraffe",
+    "glasses",
+    "hat",
+    "wall",
+    "sky",
+    "fence",
+    "leaves",
+    "rope",
+    "carpet",
+    "wildlife"
+   ]
+  },
+  "corpus/dog-13.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "stairs"
+   ],
+   "no": [
+    "bear",
+    "pig",
+    "puppy",
+    "close-up",
+    "rocks",
+    "sky",
+    "rope",
+    "carpet",
+    "water",
+    "pet",
+    "wall"
+   ]
+  },
+  "corpus/dog-14.jpg": {
+   "yes": [
+    "animal",
+    "dog",
+    "full body",
+    "window",
+    "pet",
+    "floor",
+    "fence"
+   ],
+   "no": [
+    "1boy",
+    "bear",
+    "cat",
+    "dress",
+    "fox",
+    "monkey",
+    "squirrel",
+    "teddy bear",
+    "vase",
+    "wall",
+    "houseplant",
+    "sky",
+    "road",
+    "carpet",
+    "zoo"
+   ]
+  },
+  "corpus/dog-15.jpg": {
+   "yes": [
+    "bench",
+    "dog",
+    "outdoors",
+    "park",
+    "pet",
+    "person",
+    "animal",
+    "fence",
+    "wall"
+   ],
+   "no": [
+    "concert",
+    "family",
+    "farm",
+    "field",
+    "harbor",
+    "panorama",
+    "party",
+    "playground",
+    "stage",
+    "sky",
+    "zoo",
+    "uniform",
+    "tent"
+   ]
+  },
+  "corpus/flower-01.jpg": {
+   "yes": [
+    "flower",
+    "garden",
+    "plant",
+    "tree",
+    "leaves"
+   ],
+   "no": [
+    "bee",
+    "butterfly",
+    "insect",
+    "macro",
+    "spider",
+    "vase",
+    "windmill",
+    "zebra",
+    "rose",
+    "houseplant",
+    "sky",
+    "wildflowers",
+    "road",
+    "spring",
+    "close-up"
+   ]
+  },
+  "corpus/flower-02.jpg": {
+   "yes": [
+    "flower",
+    "plant",
+    "leaves",
+    "close-up"
+   ],
+   "no": [
+    "boat",
+    "butterfly",
+    "garden",
+    "lake",
+    "macro",
+    "sailboat",
+    "sushi",
+    "swimming pool",
+    "temple",
+    "vase",
+    "woman",
+    "water",
+    "rose",
+    "sky",
+    "wall",
+    "illustration",
+    "rocks",
+    "lily"
+   ]
+  },
+  "corpus/flower-03.jpg": {
+   "yes": [
+    "flower",
+    "plant",
+    "leaves",
+    "close-up"
+   ],
+   "no": [
+    "bee",
+    "forest",
+    "garden",
+    "grass",
+    "hdr",
+    "insect",
+    "macro",
+    "salad",
+    "spider",
+    "vase",
+    "sky",
+    "meadow",
+    "rose",
+    "wall",
+    "animal",
+    "text",
+    "wildflowers"
+   ]
+  },
+  "corpus/flower-04.jpg": {
+   "yes": [
+    "flower",
+    "plant",
+    "leaves",
+    "close-up",
+    "water"
+   ],
+   "no": [
+    "3d render",
+    "bee",
+    "butterfly",
+    "digital art",
+    "frog",
+    "garden",
+    "grass",
+    "hdr",
+    "macro",
+    "vase",
+    "wildflowers",
+    "lavender",
+    "sky",
+    "rose",
+    "wall",
+    "animal"
+   ]
+  },
+  "corpus/flower-05.jpg": {
+   "yes": [
+    "bokeh",
+    "flower",
+    "macro",
+    "plant",
+    "close-up"
+   ],
+   "no": [
+    "christmas tree",
+    "garden",
+    "grass",
+    "parrot",
+    "spider",
+    "tree",
+    "vase",
+    "vegetables",
+    "wildflowers",
+    "leaves",
+    "sky",
+    "animal",
+    "wall",
+    "rocks",
+    "sunlight"
+   ]
+  },
+  "corpus/flower-06.jpg": {
+   "yes": [
+    "bee",
+    "close-up",
+    "flower",
+    "insect",
+    "plant",
+    "wildflowers",
+    "animal",
+    "leaves",
+    "sky",
+    "sunlight"
+   ],
+   "no": [
+    "autumn leaves",
+    "butterfly",
+    "forest",
+    "garden",
+    "macro",
+    "spider",
+    "vase",
+    "meadow"
+   ]
+  },
+  "corpus/flower-07.jpg": {
+   "yes": [
+    "flower",
+    "garden",
+    "plant",
+    "leaves",
+    "wall"
+   ],
+   "no": [
+    "autumn leaves",
+    "graffiti",
+    "grass",
+    "macro",
+    "pigeon",
+    "salad",
+    "tree",
+    "vase",
+    "vegetables",
+    "houseplant",
+    "fence",
+    "rose",
+    "road",
+    "animal",
+    "text",
+    "backyard"
+   ]
+  },
+  "corpus/flower-08.jpg": {
+   "yes": [
+    "flower",
+    "macro",
+    "plant",
+    "leaves",
+    "close-up"
+   ],
+   "no": [
+    "3d render",
+    "autumn leaves",
+    "bee",
+    "butterfly",
+    "frog",
+    "garden",
+    "spider",
+    "turtle",
+    "vase",
+    "wildflowers",
+    "animal",
+    "rocks",
+    "wall",
+    "lily",
+    "carpet",
+    "sky"
+   ]
+  },
+  "corpus/flower-09.jpg": {
+   "yes": [
+    "flower",
+    "photo",
+    "plant",
+    "leaves",
+    "close-up"
+   ],
+   "no": [
+    "bee",
+    "bokeh",
+    "christmas tree",
+    "garden",
+    "insect",
+    "macro",
+    "panorama",
+    "phone",
+    "spider",
+    "tree",
+    "vase",
+    "sky",
+    "meadow",
+    "animal",
+    "wildflowers",
+    "sunlight"
+   ]
+  },
+  "corpus/flower-10.jpg": {
+   "yes": [
+    "flower",
+    "plant",
+    "leaves",
+    "sky"
+   ],
+   "no": [
+    "autumn leaves",
+    "bokeh",
+    "christmas tree",
+    "fireworks",
+    "forest",
+    "garden",
+    "grass",
+    "hdr",
+    "macro",
+    "tree",
+    "sunlight",
+    "animal",
+    "wall",
+    "butterfly",
+    "clouds",
+    "spring",
+    "wildflowers"
+   ]
+  },
+  "corpus/flower-11.jpg": {
+   "yes": [
+    "flower",
+    "plant",
+    "leaves"
+   ],
+   "no": [
+    "autumn leaves",
+    "bokeh",
+    "christmas tree",
+    "forest",
+    "garden",
+    "gift",
+    "grass",
+    "macro",
+    "tree",
+    "vase",
+    "sky",
+    "wall",
+    "fence",
+    "animal",
+    "clouds",
+    "paper",
+    "rose",
+    "close-up"
+   ]
+  },
+  "corpus/flower-12.jpg": {
+   "yes": [
+    "close-up",
+    "flower",
+    "plant",
+    "leaves"
+   ],
+   "no": [
+    "bee",
+    "butterfly",
+    "christmas tree",
+    "fruit",
+    "garden",
+    "macro",
+    "spider",
+    "tree",
+    "vase",
+    "wildflowers",
+    "rose",
+    "wall",
+    "animal",
+    "water",
+    "spring",
+    "sky"
+   ]
+  },
+  "corpus/flower-13.jpg": {
+   "yes": [
+    "bokeh",
+    "butterfly",
+    "flower",
+    "insect",
+    "plant",
+    "wildflowers",
+    "animal",
+    "wildlife"
+   ],
+   "no": [
+    "autumn leaves",
+    "bee",
+    "garden",
+    "macro",
+    "pigeon",
+    "spider",
+    "tiger",
+    "sky",
+    "rocks",
+    "close-up",
+    "meadow",
+    "leaves"
+   ]
+  },
+  "corpus/flower-14.jpg": {
+   "yes": [
+    "bee",
+    "bokeh",
+    "flower",
+    "garden",
+    "insect",
+    "plant",
+    "animal"
+   ],
+   "no": [
+    "1girl",
+    "butterfly",
+    "farm",
+    "macro",
+    "spider",
+    "vase",
+    "woman",
+    "zebra",
+    "meadow",
+    "rocks",
+    "wildflowers",
+    "close-up",
+    "leaves",
+    "spring",
+    "wall"
+   ]
+  },
+  "corpus/food-01.jpg": {
+   "yes": [
+    "food",
+    "meat",
+    "restaurant",
+    "plate",
+    "person",
+    "phone"
+   ],
+   "no": [
+    "burger",
+    "chicken",
+    "dessert",
+    "pasta",
+    "pig",
+    "salad",
+    "sandwich",
+    "soup",
+    "sushi",
+    "breakfast",
+    "fast food",
+    "steak",
+    "wall",
+    "bowl",
+    "paper"
+   ]
+  },
+  "corpus/food-02.jpg": {
+   "yes": [
+    "cheese",
+    "food",
+    "pizza",
+    "paper"
+   ],
+   "no": [
+    "bread",
+    "burger",
+    "cake",
+    "dessert",
+    "kitchen",
+    "meat",
+    "pasta",
+    "salad",
+    "sandwich",
+    "plate",
+    "knife",
+    "bowl",
+    "wall",
+    "leaves",
+    "cooking",
+    "box",
+    "fast food",
+    "pastry"
+   ]
+  },
+  "corpus/food-03.jpg": {
+   "yes": [
+    "bread",
+    "cake",
+    "dessert",
+    "food",
+    "restaurant",
+    "pastry",
+    "person",
+    "cookie",
+    "paper"
+   ],
+   "no": [
+    "birthday",
+    "burger",
+    "chocolate",
+    "coffee",
+    "kitchen",
+    "meat",
+    "pasta",
+    "fast food",
+    "bowl",
+    "spoon",
+    "breakfast",
+    "plate"
+   ]
+  },
+  "corpus/food-04.jpg": {
+   "yes": [
+    "bread",
+    "food"
+   ],
+   "no": [
+    "balloon",
+    "burger",
+    "cake",
+    "chocolate",
+    "dessert",
+    "hands",
+    "meat",
+    "pasta",
+    "pizza",
+    "sandwich",
+    "soup",
+    "plate",
+    "fast food",
+    "paper",
+    "wall",
+    "cookie",
+    "leaves",
+    "bowl",
+    "animal",
+    "pastry",
+    "text"
+   ]
+  },
+  "corpus/food-05.jpg": {
+   "yes": [
+    "food",
+    "vegetables",
+    "leaves",
+    "plant",
+    "plate"
+   ],
+   "no": [
+    "burger",
+    "cheese",
+    "fruit",
+    "grass",
+    "hdr",
+    "meat",
+    "pasta",
+    "salad",
+    "sandwich",
+    "soup",
+    "tomato",
+    "spoon",
+    "bowl",
+    "fork",
+    "knife",
+    "fast food"
+   ]
+  },
+  "corpus/food-06.jpg": {
+   "yes": [
+    "food",
+    "meat",
+    "table",
+    "vegetables",
+    "plate",
+    "curry",
+    "fork"
+   ],
+   "no": [
+    "dessert",
+    "hdr",
+    "kitchen",
+    "office",
+    "pasta",
+    "restaurant",
+    "salad",
+    "soup",
+    "breakfast",
+    "fast food",
+    "wall",
+    "spoon",
+    "bowl",
+    "person",
+    "paper"
+   ]
+  },
+  "corpus/food-07.jpg": {
+   "yes": [
+    "food",
+    "rice",
+    "bowl"
+   ],
+   "no": [
+    "birthday",
+    "dessert",
+    "macro",
+    "meat",
+    "pasta",
+    "restaurant",
+    "salad",
+    "soup",
+    "sushi",
+    "table",
+    "vegetables",
+    "plate",
+    "train",
+    "person",
+    "spoon",
+    "fork",
+    "fast food",
+    "people",
+    "paper"
+   ]
+  },
+  "corpus/food-08.jpg": {
+   "yes": [
+    "food",
+    "market",
+    "vegetables",
+    "leaves",
+    "bowl"
+   ],
+   "no": [
+    "chicken",
+    "chocolate",
+    "farm",
+    "fruit",
+    "hdr",
+    "meat",
+    "pasta",
+    "salad",
+    "soup",
+    "basket",
+    "tomato",
+    "box",
+    "knife",
+    "text",
+    "paper"
+   ]
+  },
+  "corpus/food-09.jpg": {
+   "yes": [
+    "food",
+    "meat",
+    "table",
+    "vegetables",
+    "plate",
+    "bowl",
+    "rice",
+    "spoon",
+    "curry"
+   ],
+   "no": [
+    "3d render",
+    "dessert",
+    "hdr",
+    "kitchen",
+    "pasta",
+    "restaurant",
+    "salad",
+    "soup",
+    "fast food",
+    "fork",
+    "person",
+    "paper",
+    "wall"
+   ]
+  },
+  "corpus/food-10.jpg": {
+   "yes": [
+    "food",
+    "fruit",
+    "pizza",
+    "vegetables"
+   ],
+   "no": [
+    "bread",
+    "burger",
+    "cheese",
+    "dessert",
+    "kitchen",
+    "pasta",
+    "salad",
+    "sandwich",
+    "knife",
+    "bowl",
+    "pastry",
+    "cupboard",
+    "basket",
+    "fast food",
+    "paper",
+    "box",
+    "wall"
+   ]
+  },
+  "corpus/food-11.jpg": {
+   "yes": [
+    "cheese",
+    "food",
+    "plate"
+   ],
+   "no": [
+    "bread",
+    "burger",
+    "cake",
+    "dessert",
+    "meat",
+    "pasta",
+    "pizza",
+    "restaurant",
+    "salad",
+    "sandwich",
+    "breakfast",
+    "knife",
+    "paper",
+    "curry",
+    "flag",
+    "fork",
+    "wall",
+    "fast food"
+   ]
+  },
+  "corpus/food-12.jpg": {
+   "yes": [
+    "food",
+    "meat",
+    "fast food",
+    "bowl",
+    "box"
+   ],
+   "no": [
+    "burger",
+    "cheese",
+    "dessert",
+    "ice cream",
+    "panorama",
+    "pasta",
+    "pizza",
+    "restaurant",
+    "salad",
+    "sandwich",
+    "soup",
+    "breakfast",
+    "spoon",
+    "fork",
+    "curry",
+    "paper"
+   ]
+  },
+  "corpus/food-13.jpg": {
+   "yes": [
+    "food",
+    "restaurant",
+    "vegetables",
+    "plate",
+    "spoon",
+    "bowl",
+    "rice",
+    "fork",
+    "leaves",
+    "curry"
+   ],
+   "no": [
+    "birthday",
+    "cake",
+    "dessert",
+    "kitchen",
+    "pasta",
+    "salad",
+    "soup",
+    "sushi",
+    "table",
+    "phone",
+    "paper",
+    "wall"
+   ]
+  },
+  "corpus/food-14.jpg": {
+   "yes": [
+    "chicken",
+    "food",
+    "meat",
+    "vegetables",
+    "plate",
+    "wall"
+   ],
+   "no": [
+    "burger",
+    "hdr",
+    "kitchen",
+    "pasta",
+    "pizza",
+    "salad",
+    "sandwich",
+    "soup",
+    "noodles",
+    "paper",
+    "animal",
+    "fast food",
+    "curry"
+   ]
+  },
+  "corpus/food-15.jpg": {
+   "yes": [
+    "bread",
+    "fish",
+    "food",
+    "salad",
+    "vegetables",
+    "plate",
+    "tomato"
+   ],
+   "no": [
+    "burger",
+    "dessert",
+    "meat",
+    "pasta",
+    "pizza",
+    "sandwich",
+    "sushi",
+    "fast food",
+    "cookie",
+    "basket",
+    "egg",
+    "breakfast",
+    "animal"
+   ]
+  },
+  "corpus/portrait-01.jpg": {
+   "yes": [
+    "blonde hair",
+    "face",
+    "long hair",
+    "looking at viewer",
+    "man",
+    "person",
+    "portrait",
+    "eyes",
+    "sky"
+   ],
+   "no": [
+    "beard",
+    "hat",
+    "selfie",
+    "short hair",
+    "smile",
+    "suit",
+    "wall",
+    "clouds",
+    "close-up"
+   ]
+  },
+  "corpus/portrait-02.jpg": {
+   "yes": [
+    "1girl",
+    "child",
+    "face",
+    "long hair",
+    "looking at viewer",
+    "portrait",
+    "smile",
+    "eyes",
+    "close-up",
+    "brown hair"
+   ],
+   "no": [
+    "baby",
+    "birthday",
+    "dress",
+    "hat",
+    "macro",
+    "short hair",
+    "blonde hair",
+    "wall",
+    "sky"
+   ]
+  },
+  "corpus/portrait-03.jpg": {
+   "yes": [
+    "black and white",
+    "portrait",
+    "sheep",
+    "smile",
+    "man",
+    "face",
+    "eyes",
+    "photo",
+    "beard",
+    "hands",
+    "wall"
+   ],
+   "no": [
+    "bear",
+    "camel",
+    "cow",
+    "dog",
+    "farm",
+    "glasses",
+    "goat",
+    "teddy bear",
+    "pet"
+   ]
+  },
+  "corpus/portrait-04.jpg": {
+   "yes": [
+    "1girl",
+    "costume",
+    "long hair",
+    "smile",
+    "upper body",
+    "woman",
+    "eyes",
+    "face",
+    "hands"
+   ],
+   "no": [
+    "anime",
+    "blonde hair",
+    "dress",
+    "full body",
+    "hat",
+    "hdr",
+    "short hair",
+    "suit",
+    "wall",
+    "gloves",
+    "performance"
+   ]
+  },
+  "corpus/portrait-05.jpg": {
+   "yes": [
+    "face",
+    "looking at viewer",
+    "man",
+    "person",
+    "selfie",
+    "short hair",
+    "smile",
+    "uniform",
+    "eyes",
+    "wall"
+   ],
+   "no": [
+    "1boy",
+    "child",
+    "classroom",
+    "goat",
+    "hat",
+    "turtle",
+    "sky",
+    "shed",
+    "bag",
+    "stadium",
+    "drawing",
+    "tie",
+    "roof"
+   ]
+  },
+  "corpus/portrait-06.jpg": {
+   "yes": [
+    "1girl",
+    "person",
+    "portrait",
+    "solo",
+    "sunrise",
+    "sunset",
+    "woman",
+    "photo",
+    "face",
+    "eyes",
+    "hands",
+    "sunlight",
+    "long hair"
+   ],
+   "no": [
+    "child",
+    "dress",
+    "from behind",
+    "glasses",
+    "looking at viewer",
+    "macro",
+    "reflection",
+    "sunglasses",
+    "sky",
+    "close-up",
+    "morning"
+   ]
+  },
+  "corpus/portrait-07.jpg": {
+   "yes": [
+    "1girl",
+    "long hair",
+    "person",
+    "solo",
+    "woman",
+    "hands",
+    "t-shirt",
+    "photo",
+    "face"
+   ],
+   "no": [
+    "anime",
+    "autumn leaves",
+    "blonde hair",
+    "dress",
+    "flower",
+    "grass",
+    "park",
+    "sport",
+    "stadium",
+    "uniform",
+    "spring",
+    "eyes"
+   ]
+  },
+  "corpus/portrait-08.jpg": {
+   "yes": [
+    "1girl",
+    "blonde hair",
+    "face",
+    "woman",
+    "eyes",
+    "portrait",
+    "leaves",
+    "close-up",
+    "long hair"
+   ],
+   "no": [
+    "camel",
+    "costume",
+    "dress",
+    "hat",
+    "smile",
+    "rocks",
+    "text"
+   ]
+  },
+  "corpus/portrait-09.jpg": {
+   "yes": [
+    "beard",
+    "glasses",
+    "portrait",
+    "smile",
+    "uniform",
+    "man",
+    "face",
+    "eyes",
+    "wall"
+   ],
+   "no": [
+    "food",
+    "kitchen",
+    "suit",
+    "bowl",
+    "fast food",
+    "shelf",
+    "t-shirt",
+    "tie",
+    "cooking",
+    "coat"
+   ]
+  },
+  "corpus/portrait-10.jpg": {
+   "yes": [
+    "1boy",
+    "face",
+    "man",
+    "portrait",
+    "short hair",
+    "smile",
+    "suit",
+    "sunrise",
+    "eyes",
+    "sky",
+    "person",
+    "close-up",
+    "tie",
+    "coat"
+   ],
+   "no": [
+    "blonde hair",
+    "dress",
+    "hat",
+    "looking at viewer",
+    "selfie",
+    "hands"
+   ]
+  },
+  "corpus/portrait-11.jpg": {
+   "yes": [
+    "1boy",
+    "full body",
+    "looking at viewer",
+    "man",
+    "portrait",
+    "shoes",
+    "sitting",
+    "suit",
+    "hands",
+    "face",
+    "eyes"
+   ],
+   "no": [
+    "bench",
+    "chair",
+    "costume",
+    "dress",
+    "hat",
+    "upper body",
+    "gloves",
+    "sky",
+    "text",
+    "coat",
+    "wall"
+   ]
+  },
+  "corpus/portrait-12.jpg": {
+   "yes": [
+    "face",
+    "glasses",
+    "man",
+    "portrait",
+    "smile",
+    "suit",
+    "eyes",
+    "person"
+   ],
+   "no": [
+    "tie",
+    "people",
+    "close-up",
+    "water",
+    "wall"
+   ]
+  },
+  "corpus/portrait-13.jpg": {
+   "yes": [
+    "1girl",
+    "looking at viewer",
+    "smile",
+    "woman",
+    "portrait",
+    "eyes",
+    "face",
+    "hands",
+    "street",
+    "person"
+   ],
+   "no": [
+    "blonde hair",
+    "costume",
+    "couple",
+    "dress",
+    "from behind",
+    "glasses",
+    "hat",
+    "pigeon",
+    "selfie",
+    "suit",
+    "man",
+    "wall",
+    "rose"
+   ]
+  },
+  "corpus/portrait-14.jpg": {
+   "yes": [
+    "hat",
+    "painting",
+    "portrait",
+    "woman",
+    "face",
+    "person",
+    "gloves"
+   ],
+   "no": [
+    "anime",
+    "child",
+    "digital art",
+    "gift",
+    "hdr",
+    "illustration",
+    "mirror",
+    "sketch",
+    "watercolor",
+    "wall",
+    "animal",
+    "drawing",
+    "eyes",
+    "coat"
+   ]
+  },
+  "corpus/portrait-15.jpg": {
+   "yes": [
+    "1girl",
+    "glasses",
+    "portrait",
+    "short hair",
+    "sunglasses",
+    "woman",
+    "face",
+    "black hair",
+    "close-up",
+    "person"
+   ],
+   "no": [
+    "beer",
+    "blonde hair",
+    "dress",
+    "hat",
+    "long hair",
+    "looking at viewer",
+    "suit",
+    "wine",
+    "goggles",
+    "eyes",
+    "hands",
+    "man",
+    "t-shirt"
+   ]
+  },
+  "tuning-generated/anime-01.jpg": {
+   "yes": [
+    "anime",
+    "face",
+    "eyes",
+    "drawing",
+    "illustration",
+    "smile",
+    "person"
+   ],
+   "no": [
+    "man",
+    "concept art",
+    "black and white",
+    "cartoon",
+    "woman"
+   ]
+  },
+  "tuning-generated/anime-02.png": {
+   "yes": [
+    "anime",
+    "illustration",
+    "woman",
+    "person",
+    "cartoon",
+    "hands",
+    "face",
+    "drawing",
+    "wall",
+    "eyes"
+   ],
+   "no": [
+    "swimwear",
+    "animal"
+   ]
+  },
+  "tuning-generated/anime-03.png": {
+   "yes": [
+    "illustration"
+   ],
+   "no": [
+    "text",
+    "wall",
+    "macro",
+    "sky",
+    "3d render",
+    "ice cream",
+    "carpet",
+    "fire",
+    "close-up",
+    "animal",
+    "night"
+   ]
+  },
+  "tuning-generated/anime-04.png": {
+   "yes": [
+    "cartoon",
+    "illustration",
+    "hands",
+    "woman",
+    "person",
+    "eyes",
+    "face",
+    "full body"
+   ],
+   "no": [
+    "wall",
+    "text",
+    "animal",
+    "gloves"
+   ]
+  },
+  "tuning-generated/anime-05.jpg": {
+   "yes": [
+    "anime",
+    "cartoon",
+    "illustration",
+    "face",
+    "eyes",
+    "logo",
+    "person",
+    "smile",
+    "text"
+   ],
+   "no": [
+    "wall",
+    "football",
+    "woman"
+   ]
+  },
+  "tuning-generated/anime-06.png": {
+   "yes": [
+    "illustration",
+    "cartoon",
+    "person",
+    "face",
+    "text",
+    "paper",
+    "1girl"
+   ],
+   "no": [
+    "van",
+    "wall",
+    "phone",
+    "animal",
+    "sky"
+   ]
+  },
+  "tuning-generated/anime-07.png": {
+   "yes": [
+    "cartoon",
+    "illustration",
+    "anime",
+    "text",
+    "person",
+    "face",
+    "eyes"
+   ],
+   "no": [
+    "map",
+    "doll",
+    "wall",
+    "ocean",
+    "poster"
+   ]
+  },
+  "tuning-generated/anime-08.png": {
+   "yes": [
+    "sketch",
+    "illustration",
+    "face",
+    "black and white",
+    "drawing",
+    "beard",
+    "eyes",
+    "man",
+    "person"
+   ],
+   "no": [
+    "cartoon",
+    "woman",
+    "manga"
+   ]
+  },
+  "tuning-generated/3d-render-01.png": {
+   "yes": [],
+   "no": [
+    "rope",
+    "macro",
+    "water",
+    "black and white",
+    "text",
+    "paper",
+    "clouds",
+    "mask",
+    "sky",
+    "candy",
+    "leaves",
+    "illustration"
+   ]
+  },
+  "tuning-generated/3d-render-02.png": {
+   "yes": [
+    "eyes",
+    "face",
+    "3d render"
+   ],
+   "no": [
+    "toy",
+    "text",
+    "swimming",
+    "wall",
+    "carpet",
+    "bowl",
+    "water",
+    "macro",
+    "close-up"
+   ]
+  },
+  "tuning-generated/3d-render-03.png": {
+   "yes": [
+    "airliner",
+    "smoke",
+    "sky",
+    "airplane",
+    "text"
+   ],
+   "no": [
+    "person",
+    "clouds",
+    "sand",
+    "wall",
+    "water",
+    "painting",
+    "rope"
+   ]
+  },
+  "tuning-generated/3d-render-04.jpg": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "no": [
+    "monitor",
+    "wall",
+    "coat",
+    "sky",
+    "indoors",
+    "carpet",
+    "paper",
+    "banner",
+    "computer",
+    "3d render"
+   ]
+  },
+  "tuning-generated/3d-render-05.png": {
+   "yes": [
+    "chart",
+    "text"
+   ],
+   "no": [
+    "suit",
+    "gloves",
+    "coat",
+    "animal",
+    "paper",
+    "illustration",
+    "leaves",
+    "rope",
+    "map",
+    "van"
+   ]
+  },
+  "tuning-generated/3d-render-06.jpg": {
+   "yes": [],
+   "no": [
+    "night",
+    "symmetry",
+    "close-up",
+    "text",
+    "silhouette",
+    "wall",
+    "animal",
+    "logo",
+    "sky",
+    "paper",
+    "black and white",
+    "illustration"
+   ]
+  },
+  "tuning-generated/3d-render-07.png": {
+   "yes": [
+    "3d render",
+    "screenshot"
+   ],
+   "no": [
+    "text",
+    "monitor",
+    "drawing",
+    "paper",
+    "wall",
+    "animal",
+    "map",
+    "knife",
+    "indoors",
+    "collage"
+   ]
+  },
+  "tuning-generated/3d-render-08.png": {
+   "yes": [
+    "sky",
+    "clouds",
+    "sunlight",
+    "flag"
+   ],
+   "no": [
+    "sea",
+    "ocean",
+    "water",
+    "sport",
+    "logo",
+    "leaves",
+    "macro",
+    "symmetry"
+   ]
+  },
+  "tuning-generated/digital-art-01.jpg": {
+   "yes": [
+    "symmetry",
+    "digital art"
+   ],
+   "no": [
+    "sky",
+    "panorama",
+    "rocks",
+    "macro",
+    "roof",
+    "animal",
+    "painting",
+    "wall",
+    "carpet",
+    "illustration"
+   ]
+  },
+  "tuning-generated/digital-art-02.jpg": {
+   "yes": [],
+   "no": [
+    "panorama",
+    "sky",
+    "illustration",
+    "roof",
+    "close-up",
+    "drawing",
+    "water",
+    "animal",
+    "macro",
+    "wall",
+    "black and white",
+    "symmetry"
+   ]
+  },
+  "tuning-generated/digital-art-03.jpg": {
+   "yes": [
+    "symmetry",
+    "digital art"
+   ],
+   "no": [
+    "sky",
+    "macro",
+    "panorama",
+    "hdr",
+    "close-up",
+    "carpet",
+    "wall",
+    "water",
+    "text",
+    "illustration"
+   ]
+  },
+  "tuning-generated/digital-art-04.jpg": {
+   "yes": [
+    "smoke",
+    "person",
+    "silhouette",
+    "man",
+    "sky"
+   ],
+   "no": [
+    "night",
+    "morning",
+    "illustration",
+    "reflection",
+    "sunlight",
+    "face",
+    "screenshot"
+   ]
+  },
+  "tuning-generated/digital-art-05.jpg": {
+   "yes": [
+    "sky",
+    "airplane",
+    "clouds",
+    "sand"
+   ],
+   "no": [
+    "painting",
+    "water",
+    "hill",
+    "symmetry",
+    "text",
+    "macro",
+    "morning",
+    "sunlight"
+   ]
+  },
+  "tuning-generated/digital-art-06.jpg": {
+   "yes": [
+    "digital art",
+    "text"
+   ],
+   "no": [
+    "hdr",
+    "drawing",
+    "watercolor",
+    "graffiti",
+    "pet",
+    "water",
+    "rocks",
+    "painting",
+    "illustration",
+    "wall"
+   ]
+  },
+  "tuning-generated/digital-art-07.jpeg": {
+   "yes": [],
+   "no": [
+    "paper",
+    "wall",
+    "box",
+    "text",
+    "carpet",
+    "fence",
+    "clouds",
+    "doll",
+    "leaves",
+    "mirror",
+    "road",
+    "cupboard"
+   ]
+  },
+  "tuning-generated/digital-art-08.jpg": {
+   "yes": [
+    "painting",
+    "person",
+    "hands",
+    "wall",
+    "face",
+    "text",
+    "logo"
+   ],
+   "no": [
+    "chair",
+    "screenshot",
+    "collage",
+    "room",
+    "illustration"
+   ]
+  },
+  "tuning-generated/painting-01.jpg": {
+   "yes": [
+    "watercolor",
+    "painting",
+    "mountain",
+    "hill",
+    "sky",
+    "clouds"
+   ],
+   "no": [
+    "drawing",
+    "illustration",
+    "sunlight",
+    "fantasy",
+    "animal",
+    "paper"
+   ]
+  },
+  "tuning-generated/painting-02.png": {
+   "yes": [
+    "painting",
+    "face",
+    "eyes",
+    "person",
+    "portrait",
+    "child"
+   ],
+   "no": [
+    "drawing",
+    "baby",
+    "wall",
+    "animal",
+    "basket",
+    "text"
+   ]
+  },
+  "tuning-generated/painting-03.jpg": {
+   "yes": [
+    "sky",
+    "clouds",
+    "water"
+   ],
+   "no": [
+    "animal",
+    "photo",
+    "sand",
+    "savanna",
+    "man",
+    "morning",
+    "black and white",
+    "painting",
+    "sunlight"
+   ]
+  },
+  "tuning-generated/painting-04.jpg": {
+   "yes": [
+    "drawing",
+    "illustration",
+    "watercolor",
+    "sky",
+    "person",
+    "clouds",
+    "paper"
+   ],
+   "no": [
+    "road",
+    "black and white",
+    "painting",
+    "woman",
+    "man"
+   ]
+  },
+  "tuning-generated/painting-05.jpg": {
+   "yes": [
+    "paper",
+    "painting"
+   ],
+   "no": [
+    "illustration",
+    "drawing",
+    "leaves",
+    "hdr",
+    "text",
+    "animal",
+    "carpet",
+    "sky",
+    "watercolor",
+    "wall"
+   ]
+  },
+  "tuning-generated/painting-06.jpg": {
+   "yes": [
+    "painting",
+    "watercolor",
+    "tree",
+    "plant",
+    "sky",
+    "clouds",
+    "reflection",
+    "water"
+   ],
+   "no": [
+    "drawing",
+    "wetland",
+    "illustration",
+    "animal"
+   ]
+  },
+  "tuning-generated/painting-07.jpg": {
+   "yes": [
+    "painting",
+    "face",
+    "watercolor",
+    "eyes",
+    "man"
+   ],
+   "no": [
+    "drawing",
+    "illustration",
+    "wall",
+    "digital art",
+    "roof",
+    "sky",
+    "paper"
+   ]
+  },
+  "tuning-generated/painting-08.jpg": {
+   "yes": [
+    "portrait",
+    "face",
+    "eyes",
+    "man",
+    "person",
+    "painting"
+   ],
+   "no": [
+    "illustration",
+    "boat",
+    "paper",
+    "musician",
+    "drawing",
+    "suit"
+   ]
+  },
+  "tuning-generated/photorealistic-ai-01.png": {
+   "yes": [
+    "watch",
+    "text",
+    "illustration"
+   ],
+   "no": [
+    "clock",
+    "minimalist",
+    "doll",
+    "wall",
+    "gloves",
+    "bag",
+    "sky",
+    "t-shirt",
+    "water"
+   ]
+  },
+  "tuning-generated/photorealistic-ai-02.png": {
+   "yes": [
+    "aerial view",
+    "illustration",
+    "park",
+    "text",
+    "water",
+    "map"
+   ],
+   "no": [
+    "drawing",
+    "logo",
+    "wall",
+    "sky",
+    "stairs",
+    "symmetry"
+   ]
+  },
+  "tuning-generated/photorealistic-ai-03.png": {
+   "yes": [],
+   "no": [
+    "illustration",
+    "bowl",
+    "sky",
+    "flag",
+    "plate",
+    "logo",
+    "text",
+    "cup",
+    "jar",
+    "water",
+    "clouds",
+    "wall"
+   ]
+  },
+  "tuning-generated/photorealistic-ai-04.jpg": {
+   "yes": [
+    "wall",
+    "floor",
+    "animal"
+   ],
+   "no": [
+    "antelope",
+    "toy",
+    "pet",
+    "mirror",
+    "wildlife",
+    "stairs",
+    "sheep",
+    "sky",
+    "family"
+   ]
+  },
+  "tuning-generated/photorealistic-ai-05.png": {
+   "yes": [
+    "face"
+   ],
+   "no": [
+    "painting",
+    "woman",
+    "symmetry",
+    "close-up",
+    "water",
+    "wall",
+    "man",
+    "person",
+    "illustration",
+    "eyes",
+    "hdr"
+   ]
+  },
+  "tuning-generated/photorealistic-ai-06.jpg": {
+   "yes": [
+    "anime",
+    "cartoon",
+    "wall",
+    "hands",
+    "shorts"
+   ],
+   "no": [
+    "swimwear",
+    "costume",
+    "orange",
+    "fox",
+    "sunlight",
+    "woman",
+    "person"
+   ]
+  },
+  "tuning-generated/photorealistic-ai-07.jpg": {
+   "yes": [
+    "guitar",
+    "plant",
+    "animal",
+    "leaves",
+    "bear",
+    "musician"
+   ],
+   "no": [
+    "rocks",
+    "illustration",
+    "sky",
+    "wall",
+    "text",
+    "wildlife"
+   ]
+  },
+  "tuning-generated/photorealistic-ai-08.png": {
+   "yes": [
+    "illustration",
+    "cartoon",
+    "face",
+    "person",
+    "comic",
+    "eyes",
+    "digital art",
+    "drawing",
+    "gloves"
+   ],
+   "no": [
+    "wall",
+    "pixel art",
+    "logo"
+   ]
+  },
+  "tuning-generated/comic-01.jpg": {
+   "yes": [
+    "illustration",
+    "face",
+    "eyes",
+    "person",
+    "woman",
+    "bag",
+    "comic",
+    "hands",
+    "drawing"
+   ],
+   "no": [
+    "anime",
+    "text",
+    "cartoon"
+   ]
+  },
+  "tuning-generated/comic-02.jpg": {
+   "yes": [
+    "black and white",
+    "cartoon",
+    "illustration",
+    "face",
+    "camera",
+    "hands",
+    "eyes"
+   ],
+   "no": [
+    "toy",
+    "man",
+    "poster",
+    "person",
+    "shoes"
+   ]
+  },
+  "tuning-generated/comic-03.jpg": {
+   "yes": [
+    "illustration",
+    "face",
+    "eyes",
+    "animal",
+    "comic",
+    "text"
+   ],
+   "no": [
+    "painting",
+    "crowd",
+    "poster",
+    "person",
+    "man",
+    "digital art"
+   ]
+  },
+  "tuning-generated/comic-04.png": {
+   "yes": [
+    "illustration",
+    "face",
+    "eyes",
+    "animal",
+    "drawing",
+    "chart"
+   ],
+   "no": [
+    "text",
+    "wall",
+    "painting",
+    "person",
+    "man",
+    "digital art"
+   ]
+  },
+  "tuning-generated/comic-05.jpg": {
+   "yes": [
+    "illustration",
+    "cartoon",
+    "plant",
+    "sky",
+    "flower",
+    "man",
+    "person",
+    "face"
+   ],
+   "no": [
+    "painting",
+    "toy",
+    "hut",
+    "leaves"
+   ]
+  },
+  "tuning-generated/comic-06.png": {
+   "yes": [
+    "eyes",
+    "face",
+    "illustration",
+    "drawing",
+    "portrait",
+    "person",
+    "1boy"
+   ],
+   "no": [
+    "painting",
+    "photo",
+    "bridge",
+    "man",
+    "black and white"
+   ]
+  },
+  "tuning-generated/comic-07.png": {
+   "yes": [
+    "cartoon",
+    "illustration",
+    "comic",
+    "drawing",
+    "person",
+    "animal",
+    "flower",
+    "face"
+   ],
+   "no": [
+    "poster",
+    "collage",
+    "pet",
+    "dog"
+   ]
+  },
+  "tuning-generated/comic-08.jpg": {
+   "yes": [
+    "illustration",
+    "person",
+    "tree",
+    "animal",
+    "sky",
+    "road",
+    "woman",
+    "man",
+    "countryside"
+   ],
+   "no": [
+    "painting",
+    "cartoon",
+    "leaves"
+   ]
+  },
+  "tuning-generated/screenshot-01.jpg": {
+   "yes": [
+    "soldier",
+    "weapon",
+    "person",
+    "wall",
+    "gun",
+    "helmet",
+    "man",
+    "face"
+   ],
+   "no": [
+    "sport",
+    "rocks",
+    "arch",
+    "sky"
+   ]
+  },
+  "tuning-generated/screenshot-02.png": {
+   "yes": [
+    "screenshot",
+    "text",
+    "document"
+   ],
+   "no": [
+    "face",
+    "paper",
+    "eyes",
+    "ceiling",
+    "sport",
+    "wall",
+    "sky",
+    "box",
+    "cupboard"
+   ]
+  },
+  "tuning-generated/screenshot-03.png": {
+   "yes": [
+    "screenshot",
+    "text",
+    "chart"
+   ],
+   "no": [
+    "monitor",
+    "illustration",
+    "logo",
+    "concept art",
+    "minimalist",
+    "animal",
+    "child",
+    "wall",
+    "meme"
+   ]
+  },
+  "tuning-generated/screenshot-04.png": {
+   "yes": [
+    "text",
+    "document",
+    "screenshot"
+   ],
+   "no": [
+    "paper",
+    "meme",
+    "logo",
+    "wall",
+    "illustration",
+    "sky",
+    "sand",
+    "flag",
+    "facade"
+   ]
+  },
+  "tuning-generated/screenshot-05.png": {
+   "yes": [
+    "screenshot",
+    "text",
+    "document"
+   ],
+   "no": [
+    "paper",
+    "minimalist",
+    "sky",
+    "close-up",
+    "boots",
+    "dog",
+    "carpet",
+    "fence",
+    "indoors"
+   ]
+  },
+  "tuning-generated/screenshot-06.png": {
+   "yes": [
+    "logo",
+    "text",
+    "illustration"
+   ],
+   "no": [
+    "person",
+    "pixel art",
+    "macro",
+    "water",
+    "sky",
+    "collage",
+    "soup",
+    "minimalist",
+    "symmetry"
+   ]
+  },
+  "tuning-generated/screenshot-07.png": {
+   "yes": [
+    "text",
+    "screenshot"
+   ],
+   "no": [
+    "monitor",
+    "sky",
+    "wall",
+    "sailboat",
+    "coat",
+    "indoors",
+    "mountain",
+    "paper",
+    "cupboard",
+    "fire"
+   ]
+  },
+  "tuning-generated/screenshot-08.png": {
+   "yes": [
+    "screenshot",
+    "text"
+   ],
+   "no": [
+    "computer",
+    "document",
+    "monitor",
+    "face",
+    "wall",
+    "coat",
+    "illustration",
+    "paper",
+    "sky",
+    "clouds"
+   ]
+  }
+ }
+}
